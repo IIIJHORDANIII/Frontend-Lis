@@ -53,7 +53,6 @@ const Login: React.FC = () => {
 
     try {
       const response = await login(formData.email, formData.password);
-      console.log('Login response:', response);
       
       if (response.token && response.user) {
         const userWithId = {
@@ -62,14 +61,15 @@ const Login: React.FC = () => {
         };
         
         authLogin(response.token, userWithId);
-        console.log('Redirecting to products page');
-        navigate('/products');
+        if (userWithId.isAdmin) {
+          navigate('/admin/products');
+        } else {
+          navigate('/user-lists');
+        }
       } else {
-        console.error('Invalid response format');
         setError('Resposta inválida do servidor');
       }
     } catch (err) {
-      console.error('Login error:', err);
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.message || 'Falha no login');
       } else {

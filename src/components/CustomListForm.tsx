@@ -69,12 +69,9 @@ const CustomListForm: React.FC = () => {
           getProducts(),
           getAllUsers()
         ]);
-        console.log('Products loaded:', productsData);
-        console.log('Users loaded:', usersData);
         setProducts(productsData);
         setUsers(usersData);
       } catch (err) {
-        console.error('Error loading data:', err);
         setError('Falha ao carregar dados. Por favor, tente novamente.');
       } finally {
         setDataLoading(false);
@@ -116,7 +113,6 @@ const CustomListForm: React.FC = () => {
         description.trim()
       );
 
-      console.log('Lista criada:', response);
       setSuccess('Lista criada com sucesso!');
       setName('');
       setDescription('');
@@ -129,7 +125,6 @@ const CustomListForm: React.FC = () => {
         navigate('/custom-lists');
       }, 2000);
     } catch (err) {
-      console.error('Erro ao criar lista:', err);
       setError('Falha ao criar lista. Por favor, tente novamente.');
     } finally {
       setLoading(false);

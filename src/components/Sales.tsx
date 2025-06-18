@@ -54,9 +54,7 @@ const Sales: React.FC = () => {
     const loadProducts = async () => {
       try {
         setLoading(true);
-        console.log('Loading products for user:', user?._id);
         const response = await api.get('/products');
-        console.log('Products loaded:', response.data);
         
         const productsWithCommission = response.data.map((product: Product) => ({
           ...product,
@@ -69,18 +67,14 @@ const Sales: React.FC = () => {
         if (user?._id) {
           try {
             const salesResponse = await api.get('/sales'); // Removido /api
-            console.log('Vendas carregadas do backend:', salesResponse.data);
             
             // Calcular quantidades totais por produto
             const salesByProduct: Sales = {};
             salesResponse.data.forEach((sale: any) => {
-              console.log('Processando venda:', sale);
               sale.products.forEach((product: any) => {
-                console.log('Produto na venda:', product);
                 // Verificar se é productId ou _id
                 const productId = product.productId?._id || product.productId || product._id;
                 if (!productId) {
-                  console.error('ProductId não encontrado:', product);
                   return;
                 }
                 if (!salesByProduct[productId]) {
@@ -90,13 +84,11 @@ const Sales: React.FC = () => {
               });
             });
             
-            console.log('Sales by product calculado:', salesByProduct);
             setSales(salesByProduct);
             
             // Manter sincronização com localStorage para persistência visual
             localStorage.setItem(`sales_${user._id}`, JSON.stringify(salesByProduct));
           } catch (error) {
-            console.error('Erro ao carregar vendas do backend:', error);
             // Fallback para localStorage se houver erro
             const savedSales = localStorage.getItem(`sales_${user._id}`);
             if (savedSales) {
@@ -108,7 +100,6 @@ const Sales: React.FC = () => {
         
         setError('');
       } catch (err) {
-        console.error('Error loading products:', err);
         setError('Falha ao carregar produtos. Por favor, tente novamente.');
       } finally {
         setLoading(false);
@@ -123,8 +114,8 @@ const Sales: React.FC = () => {
     if (!product) return;
 
     const currentQuantity = sales[productId] || 0;
-    const newQuantity = increment ? currentQuantity + 1 : Math.max(0, currentQuantity - 1);
-    
+    if (!increment && currentQuantity === 0) return; // Não permite devolução abaixo de zero
+    const newQuantity = increment ? currentQuantity + 1 : currentQuantity - 1;
     // Se não há mudança, não fazer nada
     if (newQuantity === currentQuantity) return;
 
@@ -181,11 +172,22 @@ const Sales: React.FC = () => {
       setTimeout(() => setSuccess(''), 2000);
       
     } catch (error) {
-      console.error('Erro ao processar operação:', error);
       setError(increment ? 'Erro ao registrar venda. Tente novamente.' : 'Erro ao registrar devolução. Tente novamente.');
       setTimeout(() => setError(''), 3000);
     } finally {
       setProcessingProduct(null);
+    }
+
+    // Validação extra: impedir quantidade ou total negativos
+    if (increment && product.price < 0) {
+      setError('Preço do produto não pode ser negativo.');
+      setTimeout(() => setError(''), 3000);
+      return;
+    }
+    if (!increment && (currentQuantity <= 0 || product.price < 0)) {
+      setError('Não é possível devolver mais do que foi vendido ou preço negativo.');
+      setTimeout(() => setError(''), 3000);
+      return;
     }
   };
 

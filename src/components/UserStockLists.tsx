@@ -103,7 +103,7 @@ const UserStockLists: React.FC = () => {
       }}>
         {uniqueProducts.map((product: Product) => (
           <Card key={product._id} sx={{
-            height: '400px',
+            height: '480px',
             display: 'flex',
             flexDirection: 'column',
             border: '1px solid #d9d9d9',
@@ -117,10 +117,10 @@ const UserStockLists: React.FC = () => {
             {product.image && (
               <CardMedia
                 component="img"
-                height="280"
+                height="340"
                 image={product.image}
                 alt={product.name}
-                sx={{ objectFit: 'cover', flex: '0 0 280px' }}
+                sx={{ objectFit: 'cover', flex: '0 0 340px' }}
               />
             )}
             <CardContent sx={{ 
@@ -154,11 +154,10 @@ const UserStockLists: React.FC = () => {
                 </Typography>
               </Box>
               
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                 <Typography variant="h6" sx={{ color: '#383A29', fontWeight: 'bold' }}>
                   R$ {product.price.toFixed(2)}
                 </Typography>
-                
                 {product.quantity !== undefined && (
                   <Chip
                     label={`Qtd: ${product.quantity}`}
@@ -169,6 +168,18 @@ const UserStockLists: React.FC = () => {
                     }}
                   />
                 )}
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', mb: 1 }}>
+                <Chip
+                  label={`Comissão: R$ ${product.commission.toFixed(2)}`}
+                  size="small"
+                  sx={{
+                    backgroundColor: '#e0e0e0',
+                    color: '#383A29',
+                    fontWeight: 'bold',
+                    mr: 1
+                  }}
+                />
               </Box>
             </CardContent>
           </Card>

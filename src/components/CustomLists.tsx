@@ -48,7 +48,6 @@ const CustomLists: React.FC = () => {
     try {
       setLoading(true);
       setError('');
-      console.log('Carregando listas personalizadas...');
       const token = localStorage.getItem('token');
       if (!token) {
         setError('Usuário não autenticado');
@@ -63,10 +62,8 @@ const CustomLists: React.FC = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      console.log('Listas carregadas:', response.data);
       setLists(response.data);
     } catch (err: any) {
-      console.error('Erro ao carregar listas:', err);
       setError(err.response?.data?.message || 'Erro ao carregar listas');
     } finally {
       setLoading(false);
@@ -83,11 +80,9 @@ const CustomLists: React.FC = () => {
     }
 
     try {
-      setError('');
       await api.delete(`/custom-lists/${listId}`);
       setLists(lists.filter(list => list._id !== listId));
     } catch (err: any) {
-      console.error('Erro ao excluir lista:', err);
       setError(err.response?.data?.message || 'Erro ao excluir lista');
     }
   };

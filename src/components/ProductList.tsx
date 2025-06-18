@@ -65,28 +65,18 @@ const ProductList: React.FC = () => {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      console.log('Loading products...');
       const data = await getProducts();
-      console.log('Raw products data:', data);
       
       const processedProducts = data.map(product => {
-        console.log('Processing product:', {
-          id: product._id,
-          name: product.name,
-          imageUrl: product.image
-        });
-        
         return {
           ...product,
           image: product.image || DEFAULT_IMAGE
         };
       });
       
-      console.log('Processed products:', processedProducts);
       setProducts(processedProducts);
       setError('');
     } catch (err) {
-      console.error('Error loading products:', err);
       setError('Failed to load products. Please try again.');
     } finally {
       setLoading(false);
@@ -111,14 +101,11 @@ const ProductList: React.FC = () => {
     if (!selectedProduct) return;
 
     try {
-      console.log('Confirming delete for product:', selectedProduct._id);
       await deleteProduct(selectedProduct._id);
-      console.log('Product deleted successfully');
       setDeleteModalOpen(false);
       setSelectedProduct(null);
       await loadProducts();
     } catch (err) {
-      console.error('Error deleting product:', err);
       if (axios.isAxiosError(err)) {
         setDeleteError(err.response?.data?.error || 'Failed to delete product. Please try again.');
       } else {
@@ -170,7 +157,6 @@ const ProductList: React.FC = () => {
       await loadProducts();
       setEditModalOpen(false);
     } catch (err) {
-      console.error('Error updating product:', err);
       if (axios.isAxiosError(err)) {
         setEditError(err.response?.data?.message || 'Failed to update product');
       } else {

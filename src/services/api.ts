@@ -82,12 +82,7 @@ export const createProduct = async (productData: FormData): Promise<Product> => 
 
 export const getProducts = async (): Promise<Product[]> => {
   try {
-    console.log('Fetching products...');
-    const token = localStorage.getItem('token');
-    console.log('Token:', token ? 'Present' : 'Missing');
-    
     const response = await api.get<Product[]>('/products');
-    console.log('Products response:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -107,10 +102,6 @@ export const createCustomList = async (
   description?: string
 ): Promise<CustomList> => {
   try {
-    console.log('Creating custom list with data:', { name, products, sharedWith, isPublic, description });
-    const token = localStorage.getItem('token');
-    console.log('Auth token:', token ? 'Present' : 'Missing');
-    
     const response = await api.post<CustomList>('/custom-lists', {
       name,
       products,
@@ -119,10 +110,9 @@ export const createCustomList = async (
       description
     }, {
       headers: {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
     });
-    console.log('Custom list created:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error creating custom list:', error);
@@ -171,13 +161,7 @@ export const deleteProduct = async (productId: string): Promise<void> => {
       throw new Error('No authentication token found');
     }
 
-    console.log('Deleting product:', {
-      productId,
-      token: token.substring(0, 10) + '...' // Log only part of the token for security
-    });
-
     const response = await api.delete(`/products/${productId}`);
-    console.log('Delete response:', response.data);
     
     if (response.status !== 200) {
       throw new Error(response.data?.error || 'Failed to delete product');
@@ -250,6 +234,18 @@ export const updateCustomList = async (id: string, listData: any) => {
     }
   });
   return response.data;
+};
+
+export const deleteUserSales = async (userId: string): Promise<void> => {
+  try {
+    const response = await api.delete(`/sales/user/${userId}`);
+    if (response.status !== 200) {
+      throw new Error(response.data?.error || 'Falha ao zerar vendas do usuário');
+    }
+  } catch (error) {
+    console.error('Erro ao zerar vendas do usuário:', error);
+    throw error;
+  }
 };
 
 export { api };

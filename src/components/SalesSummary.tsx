@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Accordion, AccordionSummary, AccordionDetails, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useAuth } from '../contexts/AuthContext';
-import { api } from '../services/api';
+import { api, deleteUserSales } from '../services/api';
 
 interface SaleProduct {
   productId: string;
@@ -35,20 +35,17 @@ const SalesSummary: React.FC = () => {
   const [sales, setSales] = useState<Sale[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSales = async () => {
       try {
         setLoading(true);
         setError('');
-        console.log('Carregando resumo de vendas...');
         const response = await api.get('/sales/summary');
-        console.log('Dados brutos recebidos da API:', response.data);
         
         // Garantir que os dados estejam no formato correto
         const formattedSales = response.data.map((sale: any) => {
-          console.log('Processando venda:', sale);
-          
           // Agrupar produtos iguais
           const groupedProducts = sale.products.reduce((acc: any, product: any) => {
             const key = product.productId;
@@ -79,14 +76,11 @@ const SalesSummary: React.FC = () => {
             commission,
             createdAt: sale.createdAt
           };
-          console.log('Venda formatada:', formattedSale);
           return formattedSale;
         });
         
-        console.log('Todas as vendas formatadas:', formattedSales);
         setSales(formattedSales);
       } catch (err) {
-        console.error('Erro ao carregar vendas:', err);
         setError('Erro ao carregar vendas');
       } finally {
         setLoading(false);
@@ -146,6 +140,19 @@ const SalesSummary: React.FC = () => {
     });
     return acc;
   }, {});
+
+  const handleDeleteUserSales = async (userId: string) => {
+    if (!window.confirm('Tem certeza que deseja zerar todas as vendas deste usuário?')) return;
+    setDeletingUserId(userId);
+    try {
+      await deleteUserSales(userId);
+      setSales((prev) => prev.filter((sale) => sale.userId !== userId));
+    } catch (err) {
+      alert('Erro ao zerar vendas do usuário.');
+    } finally {
+      setDeletingUserId(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -286,18 +293,38 @@ const SalesSummary: React.FC = () => {
                 ))}
                 
                 {/* Resumo total do usuário */}
-                <Box sx={{ mt: 3, p: 2, backgroundColor: '#383A29', color: 'white', borderRadius: 1 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                    Resumo de {userGroup.userName}
-                  </Typography>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography sx={{ fontWeight: 'bold' }}>
-                      Total de Vendas: {formatCurrency(userGroup.totalValue)}
+                <Box sx={{ mt: 3, p: 2, backgroundColor: '#383A29', color: 'white', borderRadius: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Box>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                      Resumo de {userGroup.userName}
                     </Typography>
-                    <Typography sx={{ fontWeight: 'bold' }}>
-                      Total de Comissões: {formatCurrency(userGroup.totalCommission)}
-                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 3 }}>
+                      <Typography sx={{ fontWeight: 'bold' }}>
+                        Total de Vendas: {formatCurrency(userGroup.totalValue)}
+                      </Typography>
+                      <Typography sx={{ fontWeight: 'bold' }}>
+                        Total de Comissões: {formatCurrency(userGroup.totalCommission)}
+                      </Typography>
+                    </Box>
                   </Box>
+                  {user?.isAdmin && (
+                    <button
+                      style={{
+                        background: '#d32f2f',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: 4,
+                        padding: '8px 16px',
+                        fontWeight: 'bold',
+                        cursor: deletingUserId === userGroup.userId ? 'not-allowed' : 'pointer',
+                        marginLeft: 16
+                      }}
+                      disabled={deletingUserId === userGroup.userId}
+                      onClick={() => handleDeleteUserSales(userGroup.userId)}
+                    >
+                      {deletingUserId === userGroup.userId ? 'Zerando...' : 'Zerar vendas deste usuário'}
+                    </button>
+                  )}
                 </Box>
               </AccordionDetails>
             </Accordion>
