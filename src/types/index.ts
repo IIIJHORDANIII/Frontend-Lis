@@ -12,6 +12,7 @@ export interface Product {
   description: string;
   price: number;
   commission: number;
+  category: string;
   image: string;
   quantity?: number;
 }

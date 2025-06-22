@@ -10,7 +10,12 @@ import {
   InputAdornment,
   Alert,
   Avatar,
-  Fade
+  Fade,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio
 } from '@mui/material';
 import {
   ShoppingCart,
@@ -28,7 +33,8 @@ const ProductForm: React.FC = () => {
     description: '',
     price: '',
     commission: '',
-    quantity: ''
+    quantity: '',
+    category: ''
   });
   const [image, setImage] = useState<File | null>(null);
   const [error, setError] = useState('');
@@ -68,6 +74,7 @@ const ProductForm: React.FC = () => {
       productData.append('price', formData.price);
       productData.append('commission', formData.commission);
       productData.append('quantity', formData.quantity);
+      productData.append('category', formData.category);
       if (image) {
         productData.append('image', image);
       }
@@ -347,6 +354,40 @@ const ProductForm: React.FC = () => {
                     }}
                   />
                 </Box>
+                
+                <FormControl component="fieldset" required>
+                  <FormLabel component="legend" sx={{ color: '#383A29', fontWeight: 600, mb: 1 }}>
+                    Classificação
+                  </FormLabel>
+                  <RadioGroup
+                    row
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    sx={{
+                      '& .MuiFormControlLabel-root': {
+                        marginRight: 3,
+                        '&:last-child': {
+                          marginRight: 0
+                        }
+                      },
+                      '& .MuiRadio-root': {
+                        color: '#383A29',
+                        '&.Mui-checked': {
+                          color: '#383A29'
+                        }
+                      },
+                      '& .MuiFormControlLabel-label': {
+                        color: '#383A29',
+                        fontWeight: 500
+                      }
+                    }}
+                  >
+                    <FormControlLabel value="masculino" control={<Radio />} label="Masculino" />
+                    <FormControlLabel value="feminino" control={<Radio />} label="Feminino" />
+                    <FormControlLabel value="infantil" control={<Radio />} label="Infantil" />
+                  </RadioGroup>
+                </FormControl>
                 
                 <Box sx={{ textAlign: 'center' }}>
                   <Button

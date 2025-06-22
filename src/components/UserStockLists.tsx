@@ -8,7 +8,9 @@ import {
   Chip,
   Container,
   Alert,
-  CircularProgress
+  CircularProgress,
+  Button,
+  ButtonGroup
 } from '@mui/material';
 import { getCustomLists } from '../services/api';
 import { Product, CustomList } from '../types';
@@ -17,6 +19,7 @@ const UserStockLists: React.FC = () => {
   const [lists, setLists] = useState<CustomList[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   useEffect(() => {
     const fetchLists = async () => {
@@ -61,6 +64,15 @@ const UserStockLists: React.FC = () => {
     index === self.findIndex(p => p._id === product._id)
   );
 
+  // Filtrar produtos por categoria
+  const filteredProducts = selectedCategory === 'all' 
+    ? uniqueProducts 
+    : uniqueProducts.filter(product => product.category === selectedCategory);
+
+  const handleCategoryFilter = (category: string) => {
+    setSelectedCategory(category);
+  };
+
   if (loading) {
     return (
       <Container maxWidth="lg" sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
@@ -91,6 +103,157 @@ const UserStockLists: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      {/* Botões de filtro por categoria */}
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        mb: 4,
+        p: 3,
+        backgroundColor: 'rgba(217, 217, 217, 0.8)',
+        borderRadius: 3,
+        border: '1px solid rgba(56, 58, 41, 0.1)',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+        backdropFilter: 'blur(10px)'
+      }}>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: { xs: 1, sm: 0 },
+          width: '100%',
+          maxWidth: 600,
+          justifyContent: 'center'
+        }}>
+          <Button
+            onClick={() => handleCategoryFilter('all')}
+            variant={selectedCategory === 'all' ? 'contained' : 'outlined'}
+            sx={{
+              backgroundColor: selectedCategory === 'all' ? '#383A29' : 'transparent',
+              color: selectedCategory === 'all' ? 'white' : '#383A29',
+              borderColor: '#383A29',
+              borderWidth: 2,
+              borderRadius: 2,
+              px: 3,
+              py: 1.5,
+              fontSize: '0.95rem',
+              fontWeight: 600,
+              textTransform: 'none',
+              minWidth: { xs: '100%', sm: 120 },
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                backgroundColor: selectedCategory === 'all' ? '#2d2f20' : 'rgba(56, 58, 41, 0.1)',
+                borderColor: '#383A29',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 6px 20px rgba(56, 58, 41, 0.2)'
+              },
+              '&:active': {
+                transform: 'translateY(0)',
+                boxShadow: '0 2px 10px rgba(56, 58, 41, 0.15)'
+              }
+            }}
+          >
+            Todos
+          </Button>
+          <Button
+            onClick={() => handleCategoryFilter('masculino')}
+            variant={selectedCategory === 'masculino' ? 'contained' : 'outlined'}
+            sx={{
+              backgroundColor: selectedCategory === 'masculino' ? '#383A29' : 'transparent',
+              color: selectedCategory === 'masculino' ? 'white' : '#383A29',
+              borderColor: '#383A29',
+              borderWidth: 2,
+              borderRadius: 2,
+              px: 3,
+              py: 1.5,
+              fontSize: '0.95rem',
+              fontWeight: 600,
+              textTransform: 'none',
+              minWidth: { xs: '100%', sm: 120 },
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                backgroundColor: selectedCategory === 'masculino' ? '#2d2f20' : 'rgba(56, 58, 41, 0.1)',
+                borderColor: '#383A29',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 6px 20px rgba(56, 58, 41, 0.2)'
+              },
+              '&:active': {
+                transform: 'translateY(0)',
+                boxShadow: '0 2px 10px rgba(56, 58, 41, 0.15)'
+              }
+            }}
+          >
+            Masculino
+          </Button>
+          <Button
+            onClick={() => handleCategoryFilter('feminino')}
+            variant={selectedCategory === 'feminino' ? 'contained' : 'outlined'}
+            sx={{
+              backgroundColor: selectedCategory === 'feminino' ? '#383A29' : 'transparent',
+              color: selectedCategory === 'feminino' ? 'white' : '#383A29',
+              borderColor: '#383A29',
+              borderWidth: 2,
+              borderRadius: 2,
+              px: 3,
+              py: 1.5,
+              fontSize: '0.95rem',
+              fontWeight: 600,
+              textTransform: 'none',
+              minWidth: { xs: '100%', sm: 120 },
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                backgroundColor: selectedCategory === 'feminino' ? '#2d2f20' : 'rgba(56, 58, 41, 0.1)',
+                borderColor: '#383A29',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 6px 20px rgba(56, 58, 41, 0.2)'
+              },
+              '&:active': {
+                transform: 'translateY(0)',
+                boxShadow: '0 2px 10px rgba(56, 58, 41, 0.15)'
+              }
+            }}
+          >
+            Feminino
+          </Button>
+          <Button
+            onClick={() => handleCategoryFilter('infantil')}
+            variant={selectedCategory === 'infantil' ? 'contained' : 'outlined'}
+            sx={{
+              backgroundColor: selectedCategory === 'infantil' ? '#383A29' : 'transparent',
+              color: selectedCategory === 'infantil' ? 'white' : '#383A29',
+              borderColor: '#383A29',
+              borderWidth: 2,
+              borderRadius: 2,
+              px: 3,
+              py: 1.5,
+              fontSize: '0.95rem',
+              fontWeight: 600,
+              textTransform: 'none',
+              minWidth: { xs: '100%', sm: 120 },
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                backgroundColor: selectedCategory === 'infantil' ? '#2d2f20' : 'rgba(56, 58, 41, 0.1)',
+                borderColor: '#383A29',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 6px 20px rgba(56, 58, 41, 0.2)'
+              },
+              '&:active': {
+                transform: 'translateY(0)',
+                boxShadow: '0 2px 10px rgba(56, 58, 41, 0.15)'
+              }
+            }}
+          >
+            Infantil
+          </Button>
+        </Box>
+      </Box>
+
+      {/* Contador de produtos filtrados */}
+      <Box sx={{ mb: 3, textAlign: 'center' }}>
+        <Typography variant="body2" color="text.secondary">
+          {filteredProducts.length} produto{filteredProducts.length !== 1 ? 's' : ''} encontrado{filteredProducts.length !== 1 ? 's' : ''}
+          {selectedCategory !== 'all' && ` na categoria ${selectedCategory}`}
+        </Typography>
+      </Box>
+
       <Box sx={{
         display: 'grid',
         gridTemplateColumns: {
@@ -101,7 +264,7 @@ const UserStockLists: React.FC = () => {
         },
         gap: 2
       }}>
-        {uniqueProducts.map((product: Product) => (
+        {filteredProducts.map((product: Product) => (
           <Card key={product._id} sx={{
             height: '480px',
             display: 'flex',
@@ -180,6 +343,17 @@ const UserStockLists: React.FC = () => {
                     mr: 1
                   }}
                 />
+                {product.category && (
+                  <Chip
+                    label={product.category.charAt(0).toUpperCase() + product.category.slice(1)}
+                    size="small"
+                    sx={{
+                      backgroundColor: '#383A29',
+                      color: 'white',
+                      fontWeight: 'bold'
+                    }}
+                  />
+                )}
               </Box>
             </CardContent>
           </Card>
