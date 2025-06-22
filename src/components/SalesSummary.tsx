@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Accordion, AccordionSummary, AccordionDetails, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress } from '@mui/material';
+import { Box, Typography, Paper, Accordion, AccordionSummary, AccordionDetails, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress, Button } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useAuth } from '../contexts/AuthContext';
 import { api, deleteUserSales } from '../services/api';
@@ -36,6 +36,7 @@ const SalesSummary: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
+  const [deletedCount, setDeletedCount] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchSales = async () => {
@@ -142,13 +143,35 @@ const SalesSummary: React.FC = () => {
   }, {});
 
   const handleDeleteUserSales = async (userId: string) => {
-    if (!window.confirm('Tem certeza que deseja zerar todas as vendas deste usuário?')) return;
+    const userGroup = groupedSalesArray.find(group => group.userId === userId);
+    if (!userGroup) return;
+
+    const confirmMessage = `Tem certeza que deseja zerar todas as vendas de ${userGroup.userName}?\n\n` +
+                          `Isso irá remover:\n` +
+                          `• ${userGroup.sales.length} venda${userGroup.sales.length > 1 ? 's' : ''}\n` +
+                          `• Total de R$ ${formatCurrency(userGroup.totalValue)}\n` +
+                          `• Comissões de R$ ${formatCurrency(userGroup.totalCommission)}\n\n` +
+                          `Esta ação não pode ser desfeita!`;
+
+    if (!window.confirm(confirmMessage)) return;
+    
     setDeletingUserId(userId);
     try {
-      await deleteUserSales(userId);
+      const response = await deleteUserSales(userId);
       setSales((prev) => prev.filter((sale) => sale.userId !== userId));
-    } catch (err) {
-      alert('Erro ao zerar vendas do usuário.');
+      
+      // Mostrar feedback sobre quantas vendas foram deletadas
+      const deletedMessage = response?.deletedCount 
+        ? `Vendas de ${userGroup.userName} foram zeradas com sucesso!\n${response.deletedCount} venda${response.deletedCount > 1 ? 's' : ''} removida${response.deletedCount > 1 ? 's' : ''}.`
+        : `Vendas de ${userGroup.userName} foram zeradas com sucesso!`;
+      
+      alert(deletedMessage);
+    } catch (err: any) {
+      console.error('Erro ao zerar vendas:', err);
+      const errorMessage = err.response?.data?.message || 
+                          err.message || 
+                          'Erro ao zerar vendas do usuário. Por favor, tente novamente.';
+      alert(errorMessage);
     } finally {
       setDeletingUserId(null);
     }
@@ -308,22 +331,36 @@ const SalesSummary: React.FC = () => {
                     </Box>
                   </Box>
                   {user?.isAdmin && (
-                    <button
-                      style={{
-                        background: '#d32f2f',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: 4,
-                        padding: '8px 16px',
-                        fontWeight: 'bold',
-                        cursor: deletingUserId === userGroup.userId ? 'not-allowed' : 'pointer',
-                        marginLeft: 16
-                      }}
+                    <Button
+                      variant="contained"
+                      color="error"
                       disabled={deletingUserId === userGroup.userId}
                       onClick={() => handleDeleteUserSales(userGroup.userId)}
+                      sx={{
+                        backgroundColor: '#d32f2f',
+                        color: 'white',
+                        fontWeight: 'bold',
+                        '&:hover': {
+                          backgroundColor: '#b71c1c',
+                        },
+                        '&:disabled': {
+                          backgroundColor: '#ccc',
+                          color: '#666',
+                        },
+                        ml: 2,
+                        px: 3,
+                        py: 1,
+                      }}
                     >
-                      {deletingUserId === userGroup.userId ? 'Zerando...' : 'Zerar vendas deste usuário'}
-                    </button>
+                      {deletingUserId === userGroup.userId ? (
+                        <>
+                          <CircularProgress size={16} sx={{ color: 'white', mr: 1 }} />
+                          Zerando...
+                        </>
+                      ) : (
+                        'Zerar vendas deste usuário'
+                      )}
+                    </Button>
                   )}
                 </Box>
               </AccordionDetails>

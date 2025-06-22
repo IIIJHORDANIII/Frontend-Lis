@@ -236,14 +236,25 @@ export const updateCustomList = async (id: string, listData: any) => {
   return response.data;
 };
 
-export const deleteUserSales = async (userId: string): Promise<void> => {
+export const deleteUserSales = async (userId: string): Promise<{ deletedCount: number; message: string }> => {
   try {
     const response = await api.delete(`/sales/user/${userId}`);
     if (response.status !== 200) {
-      throw new Error(response.data?.error || 'Falha ao zerar vendas do usuário');
+      throw new Error(response.data?.message || 'Falha ao zerar vendas do usuário');
     }
+    return response.data;
   } catch (error) {
     console.error('Erro ao zerar vendas do usuário:', error);
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', error.response.data);
+        throw new Error(error.response.data?.message || 'Falha ao zerar vendas do usuário');
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+        throw new Error('Sem resposta do servidor. Verifique se o servidor está rodando.');
+      }
+    }
     throw error;
   }
 };
