@@ -16,6 +16,7 @@ import SalesSummary from './components/SalesSummary';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import AdminStockLists from './components/AdminStockLists';
 import UserStockLists from './components/UserStockLists';
+import PrivacyPolicy from './components/PrivacyPolicy';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -65,6 +66,9 @@ const AppContent: React.FC = () => {
       
       {/* Login Page - Sem Header */}
       <Route path="/login" element={<Login />} />
+      
+      {/* Privacy Policy - Sem Header */}
+      <Route path="/privacy" element={<PrivacyPolicy />} />
       
       {/* Protected Routes - Com Header */}
       <Route path="/dashboard" element={

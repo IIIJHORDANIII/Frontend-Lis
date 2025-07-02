@@ -97,24 +97,24 @@ const LandingPage: React.FC = () => {
       minHeight: '100vh',
       width: '100vw',
       overflowX: 'hidden',
-      bgcolor: 'background.default',
       position: 'relative',
       fontFamily: 'Poppins, Inter, Montserrat, Arial',
+      display: 'flex',
+      justifyContent: 'center',
+      background: 'linear-gradient(135deg, #f7fafc 0%, #edf2f7 50%, #e2e8f0 100%)',
+      backgroundSize: '200% 200%',
+      animation: 'gradientMove 12s ease-in-out infinite',
+      '@keyframes gradientMove': {
+        '0%': { backgroundPosition: '0% 50%' },
+        '50%': { backgroundPosition: '100% 50%' },
+        '100%': { backgroundPosition: '0% 50%' },
+      },
     }}>
-      {/* Subtle Gradient Background */}
       <Box sx={{
-        position: 'absolute',
-        inset: 0,
-        zIndex: 0,
-        background: 'linear-gradient(135deg, #f7fafc 0%, #edf2f7 50%, #e2e8f0 100%)',
-        backgroundSize: '200% 200%',
-        animation: 'gradientMove 12s ease-in-out infinite',
-        '@keyframes gradientMove': {
-          '0%': { backgroundPosition: '0% 50%' },
-          '50%': { backgroundPosition: '100% 50%' },
-          '100%': { backgroundPosition: '0% 50%' },
-        },
-      }} />
+        width: '90vw',
+        maxWidth: '1400px',
+        position: 'relative',
+      }}>
 
       {/* WhatsApp Floating Button */}
       <Fab
@@ -130,12 +130,12 @@ const LandingPage: React.FC = () => {
           color: '#fff',
           width: 60,
           height: 60,
-          boxShadow: '0 4px 20px rgba(37, 211, 102, 0.3)',
+          boxShadow: '0 8px 32px rgba(37, 211, 102, 0.4), 0 4px 16px rgba(0, 0, 0, 0.1)',
           transition: 'all 0.3s ease',
           '&:hover': {
             background: '#128C7E',
             transform: 'scale(1.1)',
-            boxShadow: '0 6px 25px rgba(37, 211, 102, 0.4)',
+            boxShadow: '0 12px 40px rgba(37, 211, 102, 0.5), 0 6px 20px rgba(0, 0, 0, 0.15)',
           },
           '@media (max-width: 600px)': {
             bottom: 16,
@@ -235,6 +235,8 @@ const LandingPage: React.FC = () => {
             justifyContent: 'center',
             transition: 'transform 0.18s',
             '&:hover': { transform: 'translateY(-6px) scale(1.04)', boxShadow: '0 8px 32px 0 rgba(0,0,0,0.1)' },
+            px: { xs: 2, md: 2 },
+            py: { xs: 2, md: 2 },
           }}>
             <Box sx={{ mb: 2 }}>{f.icon}</Box>
             <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>{f.title}</Typography>
@@ -350,7 +352,26 @@ const LandingPage: React.FC = () => {
         fontSize: 16,
         letterSpacing: 0.2,
       }}>
+        <Box sx={{ mb: 2 }}>
+          <Button
+            component="a"
+            href="/privacy"
+            sx={{
+              color: '#718096',
+              textDecoration: 'none',
+              fontSize: 14,
+              fontWeight: 500,
+              '&:hover': {
+                color: '#2d3748',
+                textDecoration: 'underline',
+              },
+            }}
+          >
+            Política de Privacidade
+          </Button>
+        </Box>
         &copy; {new Date().getFullYear()} Plataforma de Gestão. Todos os direitos reservados.
+      </Box>
       </Box>
     </Box>
   );
