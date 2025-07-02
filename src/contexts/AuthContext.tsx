@@ -44,9 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsAdmin(userData.isAdmin);
         setUser(userData);
       } catch (error) {
-        console.error('Error parsing user data:', error);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        // Handle error silently
       }
     }
     setIsLoading(false);

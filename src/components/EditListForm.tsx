@@ -89,8 +89,7 @@ const EditListForm: React.FC = () => {
         const currentProductIds = listData.products.map((p: Product) => p._id);
         setAvailableProducts(productsData.filter(p => !currentProductIds.includes(p._id)));
       } catch (err) {
-        console.error('Error loading data:', err);
-        setError('Falha ao carregar dados. Por favor, tente novamente.');
+        setError('Erro ao carregar dados. Tente novamente.');
       } finally {
         setDataLoading(false);
       }
@@ -136,17 +135,8 @@ const EditListForm: React.FC = () => {
       setTimeout(() => {
         navigate('/admin/stock-lists');
       }, 2000);
-    } catch (err: any) {
-      console.error('Error updating list:', err);
-      console.error('Error response:', err.response?.data);
-      console.error('List ID:', id);
-      // Remove this line since listData is not accessible here
-      // console.error('List data being sent:', listData);
-      setError(
-        err.response?.data?.error || 
-        err.response?.data?.message || 
-        'Falha ao atualizar lista. Por favor, tente novamente.'
-      );
+    } catch (err) {
+      setError('Erro ao atualizar lista. Tente novamente.');
     } finally {
       setLoading(false);
     }

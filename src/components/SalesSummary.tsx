@@ -166,12 +166,8 @@ const SalesSummary: React.FC = () => {
         : `Vendas de ${userGroup.userName} foram zeradas com sucesso!`;
       
       alert(deletedMessage);
-    } catch (err: any) {
-      console.error('Erro ao zerar vendas:', err);
-      const errorMessage = err.response?.data?.message || 
-                          err.message || 
-                          'Erro ao zerar vendas do usuário. Por favor, tente novamente.';
-      alert(errorMessage);
+    } catch (err) {
+      setError('Erro ao zerar vendas. Tente novamente.');
     } finally {
       setDeletingUserId(null);
     }

@@ -58,7 +58,7 @@ const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 const AppContent: React.FC = () => {
   const { isAuthenticated, isAdmin, isLoading } = useAuth();
-
+  
   return (
     <Routes>
       {/* Landing Page - Sem Header */}
@@ -132,12 +132,12 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       
       {/* Content */}
       <Box sx={{ position: 'relative', zIndex: 2, flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Header />
+      <Header />
         <Container 
           maxWidth="xl"
-          component="main" 
-          sx={{ 
-            flexGrow: 1,
+        component="main" 
+        sx={{ 
+          flexGrow: 1,
             py: { xs: 3, sm: 4, md: 5 },
             px: { xs: 3, sm: 4 },
             position: 'relative',

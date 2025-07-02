@@ -77,12 +77,15 @@ const Register: React.FC = () => {
     try {
       await register(formData.name, formData.email, formData.cpf, formData.password);
       navigate('/login');
-    } catch (err) {
-      console.error('Registration error:', err);
-      if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || 'Falha ao registrar');
+    } catch (err: any) {
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else if (err.response?.data?.error) {
+        setError(err.response.data.error);
+      } else if (err.message) {
+        setError(err.message);
       } else {
-        setError('Falha ao registrar');
+        setError('Falha ao registrar. Tente novamente.');
       }
     } finally {
       setLoading(false);

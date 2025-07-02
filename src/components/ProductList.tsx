@@ -198,7 +198,7 @@ const ProductList: React.FC = () => {
         elevation={0}
         sx={{
           p: 4,
-          mb: 4,
+        mb: 4,
           color: 'white',
           borderRadius: 3,
           position: 'relative',
@@ -214,7 +214,7 @@ const ProductList: React.FC = () => {
           </Typography>
           <Typography variant="body1" sx={{ opacity: 0.9, mb: 3 }}>
             Visualize, edite e gerencie todos os produtos do sistema
-          </Typography>
+        </Typography>
           <Button
             variant="contained"
             startIcon={<AddIcon />}
@@ -331,29 +331,29 @@ const ProductList: React.FC = () => {
                 <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
                   <Tooltip title="Editar">
                     <IconButton
-                      size="small"
-                      onClick={() => handleEditClick(product)}
-                      sx={{
+                    size="small"
+                    onClick={() => handleEditClick(product)}
+                    sx={{
                         color: theme.palette.primary.main,
-                        '&:hover': {
+                      '&:hover': {
                           backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                        }
-                      }}
-                    >
+                      }
+                    }}
+                  >
                       <EditIcon />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Excluir">
                     <IconButton
-                      size="small"
-                      onClick={() => handleDeleteClick(product)}
-                      sx={{
+                    size="small"
+                    onClick={() => handleDeleteClick(product)}
+                    sx={{
                         color: theme.palette.error.main,
-                        '&:hover': {
+                      '&:hover': {
                           backgroundColor: alpha(theme.palette.error.main, 0.1),
-                        }
-                      }}
-                    >
+                      }
+                    }}
+                  >
                       <DeleteIcon />
                     </IconButton>
                   </Tooltip>
@@ -378,7 +378,7 @@ const ProductList: React.FC = () => {
       >
         <DialogTitle sx={{ pb: 1 }}>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Confirmar Exclusão
+          Confirmar Exclusão
           </Typography>
         </DialogTitle>
         <DialogContent>
@@ -397,7 +397,7 @@ const ProductList: React.FC = () => {
           </Button>
           <Button 
             onClick={handleDeleteConfirm} 
-            variant="contained" 
+            variant="contained"
             color="error"
             sx={{ fontWeight: 600 }}
           >
@@ -420,7 +420,7 @@ const ProductList: React.FC = () => {
       >
         <DialogTitle sx={{ pb: 1 }}>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Editar Produto
+          Editar Produto
           </Typography>
         </DialogTitle>
         <DialogContent>
@@ -468,11 +468,11 @@ const ProductList: React.FC = () => {
               value={editFormData.image}
               onChange={handleEditChange}
             />
-            {editError && (
-              <Alert severity="error" sx={{ mt: 2 }}>
-                {editError}
-              </Alert>
-            )}
+          {editError && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {editError}
+            </Alert>
+          )}
           </Box>
         </DialogContent>
         <DialogActions sx={{ p: 3, pt: 1 }}>

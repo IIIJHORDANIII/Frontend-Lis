@@ -71,12 +71,39 @@ const ProductForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    
+    // Validação dos campos obrigatórios
+    if (!formData.name.trim()) {
+      setError('Nome do produto é obrigatório');
+      return;
+    }
+    if (!formData.description.trim()) {
+      setError('Descrição é obrigatória');
+      return;
+    }
+    if (!formData.price || parseFloat(formData.price) <= 0) {
+      setError('Preço deve ser maior que zero');
+      return;
+    }
+    if (!formData.commission || parseFloat(formData.commission) < 0) {
+      setError('Comissão deve ser maior ou igual a zero');
+      return;
+    }
+    if (!formData.quantity || parseInt(formData.quantity) < 0) {
+      setError('Quantidade deve ser maior ou igual a zero');
+      return;
+    }
+    if (!formData.category) {
+      setError('Categoria é obrigatória');
+      return;
+    }
+    
     setLoading(true);
     
     try {
       const productData = new FormData();
-      productData.append('name', formData.name);
-      productData.append('description', formData.description);
+      productData.append('name', formData.name.trim());
+      productData.append('description', formData.description.trim());
       productData.append('price', formData.price);
       productData.append('commission', formData.commission);
       productData.append('quantity', formData.quantity);
@@ -87,8 +114,16 @@ const ProductForm: React.FC = () => {
   
       await createProduct(productData);
       navigate('/admin/products');
-    } catch (err) {
-      setError('Falha ao criar produto. Tente novamente.');
+    } catch (err: any) {
+      if (err.response?.data?.message) {
+        setError(`Erro: ${err.response.data.message}`);
+      } else if (err.response?.data?.error) {
+        setError(`Erro: ${err.response.data.error}`);
+      } else if (err.message) {
+        setError(`Erro: ${err.message}`);
+      } else {
+        setError('Falha ao criar produto. Tente novamente.');
+      }
     } finally {
       setLoading(false);
     }
@@ -270,17 +305,17 @@ const ProductForm: React.FC = () => {
                   />
                   <FormControl component="fieldset" sx={{ flex: 1 }} required>
                     <FormLabel component="legend">Categoria</FormLabel>
-                    <RadioGroup
-                      row
-                      name="category"
-                      value={formData.category}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel value="masculino" control={<Radio />} label="Masculino" />
-                      <FormControlLabel value="feminino" control={<Radio />} label="Feminino" />
-                      <FormControlLabel value="infantil" control={<Radio />} label="Infantil" />
-                    </RadioGroup>
-                  </FormControl>
+                  <RadioGroup
+                    row
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                  >
+                    <FormControlLabel value="masculino" control={<Radio />} label="Masculino" />
+                    <FormControlLabel value="feminino" control={<Radio />} label="Feminino" />
+                    <FormControlLabel value="infantil" control={<Radio />} label="Infantil" />
+                  </RadioGroup>
+                </FormControl>
                 </Box>
                 
                 <Box>
@@ -292,24 +327,24 @@ const ProductForm: React.FC = () => {
                     onChange={handleImageChange}
                   />
                   <label htmlFor="image-upload">
-                    <Button
-                      variant="outlined"
+                  <Button
+                    variant="outlined"
                       component="span"
-                      startIcon={<CloudUpload />}
-                      sx={{
+                    startIcon={<CloudUpload />}
+                    sx={{
                         width: '100%',
                         py: 2,
                         border: '2px dashed',
                         borderColor: theme.palette.primary.main,
                         color: theme.palette.primary.main,
-                        '&:hover': {
+                      '&:hover': {
                           borderColor: theme.palette.primary.dark,
                           backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                        }
-                      }}
-                    >
+                      }
+                    }}
+                  >
                       {image ? 'Imagem Selecionada' : 'Selecionar Imagem'}
-                    </Button>
+                  </Button>
                   </label>
                   
                   {imagePreview && (
@@ -327,33 +362,33 @@ const ProductForm: React.FC = () => {
                       />
                     </Box>
                   )}
-                </Box>
-                
-                <Button
-                  type="submit"
-                  variant="contained"
+              </Box>
+              
+              <Button
+                type="submit"
+                variant="contained"
                   size="large"
-                  disabled={loading}
-                  sx={{
+                disabled={loading}
+                sx={{
                     py: 2,
-                    fontSize: '1.1rem',
-                    fontWeight: 600,
+                  fontSize: '1.1rem',
+                  fontWeight: 600,
                     background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
-                    '&:hover': {
+                  '&:hover': {
                       background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
-                    },
-                    '&:disabled': {
+                  },
+                  '&:disabled': {
                       background: theme.palette.grey[300],
                       color: theme.palette.grey[500]
-                    }
-                  }}
-                >
+                  }
+                }}
+              >
                   {loading ? (
                     <CircularProgress size={24} color="inherit" />
                   ) : (
                     'Criar Produto'
                   )}
-                </Button>
+              </Button>
               </Stack>
             </Box>
           </Paper>

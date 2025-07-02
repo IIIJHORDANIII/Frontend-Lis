@@ -46,15 +46,8 @@ const AdminStockLists: React.FC = () => {
         
         const data = await getCustomLists();
         setLists(data);
-      } catch (err: any) {
-        console.error('Erro ao buscar listas:', err);
-        if (err.response) {
-          setError(err.response.data?.message || `Erro ${err.response.status}: ${err.response.statusText}`);
-        } else if (err.request) {
-          setError('Erro de conexão. Verifique se o backend está rodando na porta 3000.');
-        } else {
-          setError(err.message || 'Erro desconhecido');
-        }
+      } catch (err) {
+        setError('Erro ao carregar listas. Tente novamente.');
       } finally {
         setLoading(false);
       }

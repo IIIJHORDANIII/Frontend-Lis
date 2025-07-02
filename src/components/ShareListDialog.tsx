@@ -44,9 +44,8 @@ const ShareListDialog: React.FC<ShareListDialogProps> = ({
       await api.post(`/custom-lists/${listId}/share`, { email });
       setSharedUsers([...sharedUsers, email]);
       setEmail('');
-    } catch (err: any) {
-      console.error('Erro ao compartilhar lista:', err);
-      setError(err.response?.data?.message || 'Erro ao compartilhar lista');
+    } catch (err) {
+      setError('Erro ao compartilhar lista. Tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -62,9 +61,8 @@ const ShareListDialog: React.FC<ShareListDialogProps> = ({
         data: { email: userEmail }
       });
       setSharedUsers(sharedUsers.filter(email => email !== userEmail));
-    } catch (err: any) {
-      console.error('Erro ao remover compartilhamento:', err);
-      setError(err.response?.data?.message || 'Erro ao remover compartilhamento');
+    } catch (err) {
+      setError('Erro ao remover compartilhamento. Tente novamente.');
     } finally {
       setLoading(false);
     }
