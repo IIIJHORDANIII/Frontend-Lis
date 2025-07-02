@@ -11,7 +11,6 @@ import {
   Chip,
   Avatar,
   Divider,
-  Container,
   Alert,
   CircularProgress,
   IconButton,
@@ -73,34 +72,34 @@ const AdminStockLists: React.FC = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="lg" sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+      <Box sx={{ maxWidth: '1200px', mx: 'auto', display: 'flex', justifyContent: 'center', mt: 4, background: 'transparent' }}>
         <CircularProgress sx={{ color: '#2d3748' }} />
-      </Container>
+      </Box>
     );
   }
 
   if (error) {
     return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
+      <Box sx={{ maxWidth: '1200px', mx: 'auto', mt: 4, background: 'transparent' }}>
         <Alert severity="error" sx={{ backgroundColor: '#ffebee', borderLeft: '4px solid #2d3748' }}>
           {error}
         </Alert>
-      </Container>
+      </Box>
     );
   }
 
   if (!lists.length) {
     return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
+      <Box sx={{ maxWidth: '1200px', mx: 'auto', mt: 4, background: 'transparent' }}>
         <Alert severity="info" sx={{ backgroundColor: '#e3f2fd', borderLeft: '4px solid #2d3748' }}>
           Nenhuma lista encontrada.
         </Alert>
-      </Container>
+      </Box>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    <Box sx={{ maxWidth: '1200px', mx: 'auto', mt: 4, mb: 4, background: 'transparent' }}>
       <Box sx={{ 
         mb: 4,
         p: 3,
@@ -295,7 +294,7 @@ const AdminStockLists: React.FC = () => {
           </AccordionDetails>
         </Accordion>
       ))}
-    </Container>
+    </Box>
   );
 };
 

@@ -268,22 +268,19 @@ const ProductForm: React.FC = () => {
                       ),
                     }}
                   />
-                  
-                  <TextField
-                    label="Categoria"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    required
-                    sx={{ flex: 1 }}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <ShoppingCart sx={{ color: theme.palette.primary.main }} />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
+                  <FormControl component="fieldset" sx={{ flex: 1 }} required>
+                    <FormLabel component="legend">Categoria</FormLabel>
+                    <RadioGroup
+                      row
+                      name="category"
+                      value={formData.category}
+                      onChange={handleChange}
+                    >
+                      <FormControlLabel value="masculino" control={<Radio />} label="Masculino" />
+                      <FormControlLabel value="feminino" control={<Radio />} label="Feminino" />
+                      <FormControlLabel value="infantil" control={<Radio />} label="Infantil" />
+                    </RadioGroup>
+                  </FormControl>
                 </Box>
                 
                 <Box>
