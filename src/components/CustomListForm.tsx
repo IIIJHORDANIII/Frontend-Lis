@@ -163,7 +163,7 @@ const CustomListForm: React.FC = () => {
         <Paper
           elevation={0}
           sx={{
-            background: 'linear-gradient(135deg, #383A29 0%, #4a4d35 50%, #383A29 100%)',
+            background: '#2d3748',
             borderRadius: 4,
             p: 4,
             mb: 4,

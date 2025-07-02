@@ -74,7 +74,7 @@ const AdminStockLists: React.FC = () => {
   if (loading) {
     return (
       <Container maxWidth="lg" sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-        <CircularProgress sx={{ color: '#383A29' }} />
+        <CircularProgress sx={{ color: '#2d3748' }} />
       </Container>
     );
   }
@@ -82,7 +82,7 @@ const AdminStockLists: React.FC = () => {
   if (error) {
     return (
       <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Alert severity="error" sx={{ backgroundColor: '#ffebee', borderLeft: '4px solid #383A29' }}>
+        <Alert severity="error" sx={{ backgroundColor: '#ffebee', borderLeft: '4px solid #2d3748' }}>
           {error}
         </Alert>
       </Container>
@@ -92,7 +92,7 @@ const AdminStockLists: React.FC = () => {
   if (!lists.length) {
     return (
       <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Alert severity="info" sx={{ backgroundColor: '#e3f2fd', borderLeft: '4px solid #383A29' }}>
+        <Alert severity="info" sx={{ backgroundColor: '#e3f2fd', borderLeft: '4px solid #2d3748' }}>
           Nenhuma lista encontrada.
         </Alert>
       </Container>
@@ -104,7 +104,7 @@ const AdminStockLists: React.FC = () => {
       <Box sx={{ 
         mb: 4,
         p: 3,
-        backgroundColor: '#383A29',
+        backgroundColor: '#2d3748',
         borderRadius: 2,
         color: 'white'
       }}>
@@ -126,12 +126,12 @@ const AdminStockLists: React.FC = () => {
               display: 'none'
             },
             '&.Mui-expanded': {
-              border: '2px solid #383A29'
+              border: '2px solid #2d3748'
             }
           }}
         >
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon sx={{ color: '#383A29' }} />}
+            expandIcon={<ExpandMoreIcon sx={{ color: '#2d3748' }} />}
             sx={{
               backgroundColor: '#f5f5f5',
               '&.Mui-expanded': {
@@ -140,7 +140,7 @@ const AdminStockLists: React.FC = () => {
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
-              <Typography variant="h6" sx={{ color: '#383A29', fontWeight: 'bold', flexGrow: 1 }}>
+              <Typography variant="h6" sx={{ color: '#2d3748', fontWeight: 'bold', flexGrow: 1 }}>
                 {list.name}
               </Typography>
               
@@ -152,9 +152,9 @@ const AdminStockLists: React.FC = () => {
                       handleEditList(list._id);
                     }}
                     sx={{
-                      color: '#383A29',
+                      color: '#2d3748',
                       '&:hover': {
-                        backgroundColor: 'rgba(56, 58, 41, 0.1)'
+                        backgroundColor: 'rgba(45, 55, 72, 0.1)'
                       }
                     }}
                   >
@@ -167,7 +167,7 @@ const AdminStockLists: React.FC = () => {
                   label={list.createdBy?.name || 'Usuário'}
                   size="small"
                   sx={{
-                    backgroundColor: '#383A29',
+                    backgroundColor: '#2d3748',
                     color: 'white'
                   }}
                 />
@@ -176,8 +176,8 @@ const AdminStockLists: React.FC = () => {
                   label={list.isPublic ? 'Pública' : 'Privada'}
                   size="small"
                   sx={{
-                    backgroundColor: list.isPublic ? '#4caf50' : '#d9d9d9',
-                    color: list.isPublic ? 'white' : '#383A29'
+                    backgroundColor: list.isPublic ? '#2d3748' : '#d9d9d9',
+                    color: list.isPublic ? 'white' : '#2d3748'
                   }}
                 />
                 <Chip
@@ -185,7 +185,7 @@ const AdminStockLists: React.FC = () => {
                   size="small"
                   sx={{
                     backgroundColor: '#d9d9d9',
-                    color: '#383A29'
+                    color: '#2d3748'
                   }}
                 />
               </Box>
@@ -194,7 +194,7 @@ const AdminStockLists: React.FC = () => {
           
           <AccordionDetails sx={{ p: 3 }}>
             {list.description && (
-              <Typography variant="body1" sx={{ mb: 3, color: '#383A29' }}>
+              <Typography variant="body1" sx={{ mb: 3, color: '#2d3748' }}>
                 {list.description}
               </Typography>
             )}
@@ -215,9 +215,9 @@ const AdminStockLists: React.FC = () => {
                     border: '1px solid #d9d9d9',
                     transition: 'all 0.3s ease',
                     '&:hover': {
-                      border: '1px solid #383A29',
+                      border: '1px solid #2d3748',
                       transform: 'translateY(-2px)',
-                      boxShadow: '0 4px 12px rgba(56, 58, 41, 0.15)'
+                      boxShadow: '0 4px 12px rgba(45, 55, 72, 0.15)'
                     }
                   }}>
                     {product.image && (
@@ -231,7 +231,7 @@ const AdminStockLists: React.FC = () => {
                     )}
                     <CardContent sx={{ p: 2 }}>
                       <Typography variant="subtitle1" sx={{ 
-                        color: '#383A29', 
+                        color: '#2d3748', 
                         fontWeight: 'bold',
                         mb: 1,
                         overflow: 'hidden',
@@ -246,7 +246,7 @@ const AdminStockLists: React.FC = () => {
                       </Typography>
                       
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography variant="h6" sx={{ color: '#383A29', fontWeight: 'bold' }}>
+                        <Typography variant="h6" sx={{ color: '#2d3748', fontWeight: 'bold' }}>
                           R$ {product.price.toFixed(2)}
                         </Typography>
                         
@@ -255,8 +255,8 @@ const AdminStockLists: React.FC = () => {
                             label={`Qtd: ${product.quantity}`}
                             size="small"
                             sx={{
-                              backgroundColor: product.quantity > 0 ? '#383A29' : '#d9d9d9',
-                              color: product.quantity > 0 ? 'white' : '#383A29'
+                              backgroundColor: product.quantity > 0 ? '#2d3748' : '#d9d9d9',
+                              color: product.quantity > 0 ? 'white' : '#2d3748'
                             }}
                           />
                         )}
@@ -274,18 +274,18 @@ const AdminStockLists: React.FC = () => {
             {list.sharedWith && list.sharedWith.length > 0 && (
               <>
                 <Divider sx={{ my: 3, backgroundColor: '#d9d9d9' }} />
-                <Typography variant="h6" sx={{ color: '#383A29', fontWeight: 'bold', mb: 2 }}>
+                <Typography variant="h6" sx={{ color: '#2d3748', fontWeight: 'bold', mb: 2 }}>
                   Compartilhada com:
                 </Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                   {list.sharedWith.map((user, index) => (
                     <Chip
                       key={index}
-                      avatar={<Avatar sx={{ backgroundColor: '#383A29' }}><PersonIcon /></Avatar>}
+                      avatar={<Avatar sx={{ backgroundColor: '#2d3748' }}><PersonIcon /></Avatar>}
                       label={typeof user === 'string' ? user : (user.name || user.email)}
                       sx={{
                         backgroundColor: '#d9d9d9',
-                        color: '#383A29'
+                        color: '#2d3748'
                       }}
                     />
                   ))}

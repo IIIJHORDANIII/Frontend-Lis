@@ -15,7 +15,12 @@ import {
   FormLabel,
   RadioGroup,
   FormControlLabel,
-  Radio
+  Radio,
+  useTheme,
+  alpha,
+  Stack,
+  Grid,
+  CircularProgress
 } from '@mui/material';
 import {
   ShoppingCart,
@@ -28,6 +33,7 @@ import { createProduct } from '../services/api';
 
 const ProductForm: React.FC = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -95,20 +101,30 @@ const ProductForm: React.FC = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        py: 4
+        py: 4,
+        position: 'relative',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          pointerEvents: 'none'
+        }
       }}
     >
       <Container maxWidth="md">
         <Fade in timeout={800}>
           <Paper 
-            elevation={24}
+            elevation={0}
             sx={{ 
-              p: { xs: 3, sm: 5 },
+              p: { xs: 4, sm: 6 },
               borderRadius: 4,
-              background: 'rgba(217, 217, 217, 0.95)',
+              background: 'rgba(255, 255, 255, 0.95)',
               backdropFilter: 'blur(20px)',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-              border: '1px solid rgba(217, 217, 217, 0.3)',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
               position: 'relative',
               overflow: 'hidden',
               '&::before': {
@@ -118,36 +134,35 @@ const ProductForm: React.FC = () => {
                 left: 0,
                 right: 0,
                 height: '4px',
-               
+                background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`
               }
             }}
           >
-            <Box sx={{ textAlign: 'center', mb: 4 }}>
+            <Box sx={{ textAlign: 'center', mb: 5 }}>
               <Avatar
                 sx={{
                   width: 80,
                   height: 80,
-                  margin: '0 auto 16px',
-                  background: 'linear-gradient(135deg, #383A29 0%, #4a4d35 100%)'
+                  margin: '0 auto 20px',
+                  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
+                  color: theme.palette.primary.contrastText,
+                  boxShadow: '0 8px 32px rgba(56, 58, 41, 0.3)'
                 }}
               >
-                <ShoppingCart sx={{ fontSize: 40, color: '#d9d9d9' }} />
+                <ShoppingCart sx={{ fontSize: 40 }} />
               </Avatar>
               <Typography 
-                variant="h4" 
+                variant="h3" 
                 component="h1" 
                 sx={{
                   fontWeight: 700,
-                  background: 'linear-gradient(135deg, #383A29 0%, #4a4d35 100%)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
+                  color: theme.palette.primary.main,
                   mb: 1
                 }}
               >
                 Novo Produto
               </Typography>
-              <Typography variant="body1" sx={{ color: '#383A29' }}>
+              <Typography variant="body1" sx={{ color: theme.palette.text.secondary }}>
                 Adicione um novo produto ao estoque
               </Typography>
             </Box>
@@ -156,7 +171,7 @@ const ProductForm: React.FC = () => {
               <Alert 
                 severity="error" 
                 sx={{ 
-                  mb: 3,
+                  mb: 4,
                   borderRadius: 2,
                   '& .MuiAlert-icon': {
                     fontSize: '1.5rem'
@@ -168,9 +183,8 @@ const ProductForm: React.FC = () => {
             )}
 
             <Box component="form" onSubmit={handleSubmit}>
-              <Box sx={{ display: 'grid', gap: 3 }}>
+              <Stack spacing={3}>
                 <TextField
-                  fullWidth
                   label="Nome do Produto"
                   name="name"
                   value={formData.name}
@@ -179,246 +193,130 @@ const ProductForm: React.FC = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <ShoppingCart sx={{ color: '#383A29' }} />
+                        <ShoppingCart sx={{ color: theme.palette.primary.main }} />
                       </InputAdornment>
                     ),
-                  }}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      borderRadius: 2,
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 4px 12px rgba(56, 58, 41, 0.2)'
-                      },
-                      '&.Mui-focused': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 4px 12px rgba(56, 58, 41, 0.3)'
-                      }
-                    },
-                    '& .MuiInputLabel-root.Mui-focused': {
-                      color: '#383A29'
-                    },
-                    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#383A29'
-                    }
                   }}
                 />
                 
                 <TextField
-                  fullWidth
                   label="Descrição"
                   name="description"
-                  multiline
-                  rows={4}
                   value={formData.description}
                   onChange={handleChange}
-                  required
+                  multiline
+                  rows={3}
                   InputProps={{
                     startAdornment: (
-                      <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 2 }}>
-                        <Description sx={{ color: '#383A29' }} />
+                      <InputAdornment position="start">
+                        <Description sx={{ color: theme.palette.primary.main }} />
                       </InputAdornment>
                     ),
                   }}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      borderRadius: 2,
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 4px 12px rgba(56, 58, 41, 0.2)'
-                      },
-                      '&.Mui-focused': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 4px 12px rgba(56, 58, 41, 0.3)'
-                      }
-                    },
-                    '& .MuiInputLabel-root.Mui-focused': {
-                      color: '#383A29'
-                    },
-                    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#383A29'
-                    }
-                  }}
                 />
                 
-                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: 3 }}>
+                <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', sm: 'row' } }}>
                   <TextField
-                    fullWidth
                     label="Preço"
                     name="price"
                     type="number"
                     value={formData.price}
                     onChange={handleChange}
                     required
+                    sx={{ flex: 1 }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <AttachMoney sx={{ color: '#383A29' }} />
+                          <AttachMoney sx={{ color: theme.palette.primary.main }} />
                         </InputAdornment>
                       ),
-                    }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 4px 12px rgba(56, 58, 41, 0.2)'
-                        },
-                        '&.Mui-focused': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 4px 12px rgba(56, 58, 41, 0.3)'
-                        }
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': {
-                        color: '#383A29'
-                      },
-                      '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#383A29'
-                      }
                     }}
                   />
                   
                   <TextField
-                    fullWidth
                     label="Comissão (%)"
                     name="commission"
                     type="number"
                     value={formData.commission}
                     onChange={handleChange}
+                    required
+                    sx={{ flex: 1 }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <AttachMoney sx={{ color: '#383A29' }} />
+                          <AttachMoney sx={{ color: theme.palette.primary.main }} />
                         </InputAdornment>
                       ),
                     }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 4px 12px rgba(56, 58, 41, 0.2)'
-                        },
-                        '&.Mui-focused': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 4px 12px rgba(56, 58, 41, 0.3)'
-                        }
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': {
-                        color: '#383A29'
-                      },
-                      '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#383A29'
-                      }
-                    }}
                   />
-                  
+                </Box>
+                
+                <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', sm: 'row' } }}>
                   <TextField
-                    fullWidth
                     label="Quantidade"
                     name="quantity"
                     type="number"
                     value={formData.quantity}
                     onChange={handleChange}
                     required
+                    sx={{ flex: 1 }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <ShoppingCart sx={{ color: '#383A29' }} />
+                          <ShoppingCart sx={{ color: theme.palette.primary.main }} />
                         </InputAdornment>
                       ),
                     }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 4px 12px rgba(56, 58, 41, 0.2)'
-                        },
-                        '&.Mui-focused': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 4px 12px rgba(56, 58, 41, 0.3)'
-                        }
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': {
-                        color: '#383A29'
-                      },
-                      '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#383A29'
-                      }
+                  />
+                  
+                  <TextField
+                    label="Categoria"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    required
+                    sx={{ flex: 1 }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <ShoppingCart sx={{ color: theme.palette.primary.main }} />
+                        </InputAdornment>
+                      ),
                     }}
                   />
                 </Box>
                 
-                <FormControl component="fieldset" required>
-                  <FormLabel component="legend" sx={{ color: '#383A29', fontWeight: 600, mb: 1 }}>
-                    Classificação
-                  </FormLabel>
-                  <RadioGroup
-                    row
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    sx={{
-                      '& .MuiFormControlLabel-root': {
-                        marginRight: 3,
-                        '&:last-child': {
-                          marginRight: 0
+                <Box>
+                  <input
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    id="image-upload"
+                    type="file"
+                    onChange={handleImageChange}
+                  />
+                  <label htmlFor="image-upload">
+                    <Button
+                      variant="outlined"
+                      component="span"
+                      startIcon={<CloudUpload />}
+                      sx={{
+                        width: '100%',
+                        py: 2,
+                        border: '2px dashed',
+                        borderColor: theme.palette.primary.main,
+                        color: theme.palette.primary.main,
+                        '&:hover': {
+                          borderColor: theme.palette.primary.dark,
+                          backgroundColor: alpha(theme.palette.primary.main, 0.05),
                         }
-                      },
-                      '& .MuiRadio-root': {
-                        color: '#383A29',
-                        '&.Mui-checked': {
-                          color: '#383A29'
-                        }
-                      },
-                      '& .MuiFormControlLabel-label': {
-                        color: '#383A29',
-                        fontWeight: 500
-                      }
-                    }}
-                  >
-                    <FormControlLabel value="masculino" control={<Radio />} label="Masculino" />
-                    <FormControlLabel value="feminino" control={<Radio />} label="Feminino" />
-                    <FormControlLabel value="infantil" control={<Radio />} label="Infantil" />
-                  </RadioGroup>
-                </FormControl>
-                
-                <Box sx={{ textAlign: 'center' }}>
-                  <Button
-                    variant="outlined"
-                    component="label"
-                    startIcon={<CloudUpload />}
-                    sx={{
-                      borderRadius: 2,
-                      py: 1.5,
-                      px: 3,
-                      borderColor: '#383A29',
-                      color: '#383A29',
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 4px 12px rgba(56, 58, 41, 0.3)',
-                        backgroundColor: '#383A29',
-                        color: '#d9d9d9'
-                      }
-                    }}
-                  >
-                    Upload da Imagem
-                    <input
-                      type="file"
-                      hidden
-                      accept="image/*"
-                      onChange={handleImageChange}
-                    />
-                  </Button>
+                      }}
+                    >
+                      {image ? 'Imagem Selecionada' : 'Selecionar Imagem'}
+                    </Button>
+                  </label>
+                  
                   {imagePreview && (
-                    <Box sx={{ mt: 2 }}>
+                    <Box sx={{ mt: 2, textAlign: 'center' }}>
                       <img
                         src={imagePreview}
                         alt="Preview"
@@ -426,40 +324,40 @@ const ProductForm: React.FC = () => {
                           maxWidth: '200px',
                           maxHeight: '200px',
                           borderRadius: '8px',
-                          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                          border: '2px solid',
+                          borderColor: theme.palette.primary.main
                         }}
                       />
                     </Box>
                   )}
                 </Box>
-              </Box>
-              
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                disabled={loading}
-                sx={{
-                  mt: 4,
-                  py: 1.5,
-                  borderRadius: 2,
-                  fontSize: '1.1rem',
-                  fontWeight: 600,
-                  background: 'linear-gradient(135deg, #383A29 0%, #4a4d35 100%)',
-                  boxShadow: '0 4px 15px rgba(56, 58, 41, 0.4)',
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 8px 25px rgba(56, 58, 41, 0.6)',
-                    background: 'linear-gradient(135deg, #2d2f20 0%, #383A29 100%)'
-                  },
-                  '&:disabled': {
-                    background: 'linear-gradient(135deg, #a0aec0 0%, #718096 100%)'
-                  }
-                }}
-              >
-                {loading ? 'Criando Produto...' : 'Criar Produto'}
-              </Button>
+                
+                <Button
+                  type="submit"
+                  variant="contained"
+                  size="large"
+                  disabled={loading}
+                  sx={{
+                    py: 2,
+                    fontSize: '1.1rem',
+                    fontWeight: 600,
+                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
+                    '&:hover': {
+                      background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+                    },
+                    '&:disabled': {
+                      background: theme.palette.grey[300],
+                      color: theme.palette.grey[500]
+                    }
+                  }}
+                >
+                  {loading ? (
+                    <CircularProgress size={24} color="inherit" />
+                  ) : (
+                    'Criar Produto'
+                  )}
+                </Button>
+              </Stack>
             </Box>
           </Paper>
         </Fade>

@@ -23,15 +23,18 @@ import {
   useTheme,
   alpha,
   Stack,
-  Divider
+  Divider,
+  Paper
 } from '@mui/material';
+
 import {
   Delete as DeleteIcon,
   Edit as EditIcon,
   AttachMoney as MoneyIcon,
   TrendingUp as CommissionIcon,
   Inventory as StockIcon,
-  Visibility as ViewIcon
+  Visibility as ViewIcon,
+  Add as AddIcon
 } from '@mui/icons-material';
 import { getProducts, deleteProduct, updateProduct } from '../services/api';
 import { Product } from '../types';
@@ -189,35 +192,71 @@ const ProductList: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        mb: 4,
-        p: 3,
-        backgroundColor: '#383A29',
-        borderRadius: 2,
-        color: 'white'
-      }}>
-        <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
-          Lista de Produtos
-        </Typography>
-        {/* Botão "Adicionar Produto" removido */}
-      </Box>
-
-      {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress sx={{ color: '#383A29' }} />
+    <Box sx={{ py: 3 }}>
+      {/* Header Section */}
+      <Paper
+        elevation={0}
+        sx={{
+          p: 4,
+          mb: 4,
+          color: 'white',
+          borderRadius: 3,
+          position: 'relative',
+          overflow: 'hidden',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            pointerEvents: 'none'
+          }
+        }}
+      >
+        <Box sx={{ position: 'relative', zIndex: 1 }}>
+          <Typography variant="h3" component="h1" sx={{ fontWeight: 700, mb: 1 }}>
+            Gerenciar Produtos
+          </Typography>
+          <Typography variant="body1" sx={{ opacity: 0.9, mb: 3 }}>
+            Visualize, edite e gerencie todos os produtos do sistema
+          </Typography>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => navigate('/admin/products/new')}
+            sx={{
+              background: 'rgba(255, 255, 255, 0.2)',
+              color: 'white',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              backdropFilter: 'blur(10px)',
+              '&:hover': {
+                background: 'rgba(255, 255, 255, 0.3)',
+                transform: 'translateY(-2px)',
+              }
+            }}
+          >
+            Adicionar Produto
+          </Button>
         </Box>
-      )}
+      </Paper>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 3, backgroundColor: '#ffebee', borderLeft: '4px solid #383A29' }}>
+        <Alert 
+          severity="error" 
+          sx={{ 
+            mb: 4,
+            borderRadius: 2,
+            '& .MuiAlert-icon': {
+              fontSize: '1.5rem'
+            }
+          }}
+        >
           {error}
         </Alert>
       )}
 
+      {/* Products Grid */}
       <Box sx={{
         display: 'grid',
         gridTemplateColumns: {
@@ -226,278 +265,236 @@ const ProductList: React.FC = () => {
           md: 'repeat(3, 1fr)',
           lg: 'repeat(4, 1fr)'
         },
-        gap: 3
+        gap: 4
       }}>
         {products.map((product) => (
-          <Fade in key={product._id}>
+          <Fade in timeout={300} key={product._id}>
             <Card
+              elevation={0}
+              onMouseEnter={() => setHoveredCard(product._id)}
+              onMouseLeave={() => setHoveredCard(null)}
               sx={{
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                transition: 'all 0.3s ease',
-                border: '2px solid transparent',
+                borderRadius: 3,
+                border: '1px solid',
+                borderColor: 'divider',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                transform: hoveredCard === product._id ? 'translateY(-8px)' : 'translateY(0)',
                 '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: `0 8px 25px ${alpha('#383A29', 0.15)}`,
-                  border: '2px solid #383A29'
+                  boxShadow: '0 20px 40px rgba(0,0,0,0.12)',
                 }
               }}
             >
               <CardMedia
                 component="img"
                 height="200"
-                image={product.image || DEFAULT_IMAGE}
+                image={product.image}
                 alt={product.name}
                 sx={{
                   objectFit: 'cover',
-                  backgroundColor: '#d9d9d9'
+                  borderTopLeftRadius: 12,
+                  borderTopRightRadius: 12,
                 }}
               />
-              <CardContent sx={{ flexGrow: 1, p: 2 }}>
+                              <CardContent sx={{ flexGrow: 1, p: 3, display: 'flex', flexDirection: 'column' }}>
                 <Typography variant="h6" component="h2" sx={{ 
-                  fontWeight: 'bold',
-                  color: '#383A29',
+                  fontWeight: 600, 
                   mb: 1,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap'
+                  color: theme.palette.text.primary,
+                  lineHeight: 1.3
                 }}>
                   {product.name}
                 </Typography>
                 
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2, minHeight: 40 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ 
+                  mb: 2,
+                  lineHeight: 1.5,
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden'
+                }}>
                   {product.description}
                 </Typography>
 
-                <Stack spacing={1}>
+                                  <Stack spacing={2} sx={{ mb: 3, flexGrow: 1 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <MoneyIcon sx={{ color: '#383A29', fontSize: 18 }} />
-                    <Typography variant="h6" sx={{ color: '#383A29', fontWeight: 'bold' }}>
+                    <MoneyIcon sx={{ fontSize: 18, color: theme.palette.primary.main }} />
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
                       R$ {product.price.toFixed(2)}
                     </Typography>
                   </Box>
-                  
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <CommissionIcon sx={{ color: '#383A29', fontSize: 18 }} />
-                    <Typography variant="body2" color="text.secondary">
-                      Comissão: R$ {(product.commission || 0).toFixed(2)}
+                    <CommissionIcon sx={{ fontSize: 18, color: theme.palette.secondary.main }} />
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      {product.commission}% comissão
                     </Typography>
                   </Box>
-
-                  {product.quantity !== undefined && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <StockIcon sx={{ color: '#383A29', fontSize: 18 }} />
-                      <Chip
-                        label={`Estoque: ${product.quantity}`}
-                        size="small"
-                        sx={{
-                          backgroundColor: product.quantity > 0 ? '#383A29' : '#d9d9d9',
-                          color: product.quantity > 0 ? 'white' : '#383A29',
-                          fontWeight: 'bold'
-                        }}
-                      />
-                    </Box>
-                  )}
                 </Stack>
-              </CardContent>
 
-              {isAdmin && (
-                <Box sx={{ p: 2, pt: 0, display: 'flex', gap: 1 }}>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    startIcon={<EditIcon />}
-                    onClick={() => handleEditClick(product)}
-                    sx={{
-                      flex: 1,
-                      borderColor: '#383A29',
-                      color: '#383A29',
-                      '&:hover': {
-                        backgroundColor: '#383A29',
-                        color: 'white'
-                      }
-                    }}
-                  >
-                    Editar
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    startIcon={<DeleteIcon />}
-                    onClick={() => handleDeleteClick(product)}
-                    sx={{
-                      flex: 1,
-                      borderColor: '#d32f2f',
-                      color: '#d32f2f',
-                      '&:hover': {
-                        backgroundColor: '#d32f2f',
-                        color: 'white'
-                      }
-                    }}
-                  >
-                    Excluir
-                  </Button>
+                <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+                  <Tooltip title="Editar">
+                    <IconButton
+                      size="small"
+                      onClick={() => handleEditClick(product)}
+                      sx={{
+                        color: theme.palette.primary.main,
+                        '&:hover': {
+                          backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                        }
+                      }}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Excluir">
+                    <IconButton
+                      size="small"
+                      onClick={() => handleDeleteClick(product)}
+                      sx={{
+                        color: theme.palette.error.main,
+                        '&:hover': {
+                          backgroundColor: alpha(theme.palette.error.main, 0.1),
+                        }
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Tooltip>
                 </Box>
-              )}
+              </CardContent>
             </Card>
           </Fade>
         ))}
       </Box>
 
-      {/* Delete Modal */}
-      <Dialog open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
-        <DialogTitle sx={{ backgroundColor: '#383A29', color: 'white' }}>
-          Confirmar Exclusão
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteModalOpen}
+        onClose={handleDeleteCancel}
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            maxWidth: 400,
+            width: '100%'
+          }
+        }}
+      >
+        <DialogTitle sx={{ pb: 1 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            Confirmar Exclusão
+          </Typography>
         </DialogTitle>
-        <DialogContent sx={{ mt: 2 }}>
-          <Typography>
+        <DialogContent>
+          <Typography variant="body1" sx={{ mb: 2 }}>
             Tem certeza que deseja excluir o produto "{selectedProduct?.name}"?
           </Typography>
           {deleteError && (
-            <Alert severity="error" sx={{ mt: 2 }}>
+            <Alert severity="error" sx={{ mb: 2 }}>
               {deleteError}
             </Alert>
           )}
         </DialogContent>
-        <DialogActions sx={{ p: 2 }}>
-          <Button 
-            onClick={() => setDeleteModalOpen(false)}
-            sx={{ color: '#383A29' }}
-          >
+        <DialogActions sx={{ p: 3, pt: 1 }}>
+          <Button onClick={handleDeleteCancel} sx={{ fontWeight: 600 }}>
             Cancelar
           </Button>
           <Button 
             onClick={handleDeleteConfirm} 
-            variant="contained"
-            sx={{
-              backgroundColor: '#d32f2f',
-              '&:hover': { backgroundColor: '#b71c1c' }
-            }}
+            variant="contained" 
+            color="error"
+            sx={{ fontWeight: 600 }}
           >
             Excluir
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Edit Modal */}
-      <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ backgroundColor: '#383A29', color: 'white' }}>
-          Editar Produto
+      {/* Edit Product Dialog */}
+      <Dialog
+        open={editModalOpen}
+        onClose={handleEditCancel}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3
+          }
+        }}
+      >
+        <DialogTitle sx={{ pb: 1 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            Editar Produto
+          </Typography>
         </DialogTitle>
-        <DialogContent sx={{ mt: 2 }}>
-          <Stack spacing={2}>
+        <DialogContent>
+          <Box sx={{ pt: 1 }}>
             <TextField
-              label="Nome"
-              value={editFormData.name}
-              onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
               fullWidth
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#383A29'
-                  }
-                },
-                '& .MuiInputLabel-root.Mui-focused': {
-                  color: '#383A29'
-                }
-              }}
+              label="Nome"
+              name="name"
+              value={editFormData.name}
+              onChange={handleEditChange}
+              sx={{ mb: 3 }}
             />
             <TextField
-              label="Descrição"
-              value={editFormData.description}
-              onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
               fullWidth
+              label="Descrição"
+              name="description"
+              value={editFormData.description}
+              onChange={handleEditChange}
               multiline
               rows={3}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#383A29'
-                  }
-                },
-                '& .MuiInputLabel-root.Mui-focused': {
-                  color: '#383A29'
-                }
-              }}
+              sx={{ mb: 3 }}
             />
             <TextField
+              fullWidth
               label="Preço"
+              name="price"
               type="number"
               value={editFormData.price}
-              onChange={(e) => setEditFormData({ ...editFormData, price: e.target.value })}
-              fullWidth
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#383A29'
-                  }
-                },
-                '& .MuiInputLabel-root.Mui-focused': {
-                  color: '#383A29'
-                }
-              }}
+              onChange={handleEditChange}
+              sx={{ mb: 3 }}
             />
             <TextField
-              label="Comissão"
+              fullWidth
+              label="Comissão (%)"
+              name="commission"
               type="number"
               value={editFormData.commission}
-              onChange={(e) => setEditFormData({ ...editFormData, commission: e.target.value })}
-              fullWidth
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#383A29'
-                  }
-                },
-                '& .MuiInputLabel-root.Mui-focused': {
-                  color: '#383A29'
-                }
-              }}
+              onChange={handleEditChange}
+              sx={{ mb: 3 }}
             />
             <TextField
-              label="URL da Imagem"
-              value={editFormData.image}
-              onChange={(e) => setEditFormData({ ...editFormData, image: e.target.value })}
               fullWidth
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#383A29'
-                  }
-                },
-                '& .MuiInputLabel-root.Mui-focused': {
-                  color: '#383A29'
-                }
-              }}
+              label="URL da Imagem"
+              name="image"
+              value={editFormData.image}
+              onChange={handleEditChange}
             />
-          </Stack>
-          {editError && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              {editError}
-            </Alert>
-          )}
+            {editError && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {editError}
+              </Alert>
+            )}
+          </Box>
         </DialogContent>
-        <DialogActions sx={{ p: 2 }}>
-          <Button 
-            onClick={() => setEditModalOpen(false)}
-            sx={{ color: '#383A29' }}
-          >
+        <DialogActions sx={{ p: 3, pt: 1 }}>
+          <Button onClick={handleEditCancel} sx={{ fontWeight: 600 }}>
             Cancelar
           </Button>
           <Button 
             onClick={handleEditSubmit} 
             variant="contained"
-            sx={{
-              backgroundColor: '#383A29',
-              '&:hover': { backgroundColor: '#2c2e1f' }
-            }}
+            sx={{ fontWeight: 600 }}
           >
             Salvar
           </Button>
         </DialogActions>
       </Dialog>
-    </Container>
+    </Box>
   );
 };
 

@@ -11,6 +11,10 @@ import {
   InputAdornment,
   Fade,
   Avatar,
+  useTheme,
+  alpha,
+  CircularProgress,
+  Stack,
   Grid
 } from '@mui/material';
 import {
@@ -25,6 +29,7 @@ import axios from 'axios';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -91,20 +96,30 @@ const Register: React.FC = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 2
+        padding: 3,
+        position: 'relative',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          pointerEvents: 'none'
+        }
       }}
     >
       <Container maxWidth="md">
         <Fade in timeout={800}>
           <Paper 
-            elevation={24}
+            elevation={0}
             sx={{ 
-              p: { xs: 3, sm: 5 },
+              p: { xs: 4, sm: 6 },
               borderRadius: 4,
-              background: 'rgba(217, 217, 217, 0.95)',
+              background: 'rgba(255, 255, 255, 0.95)',
               backdropFilter: 'blur(20px)',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-              border: '1px solid rgba(217, 217, 217, 0.3)',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
               position: 'relative',
               overflow: 'hidden',
               '&::before': {
@@ -114,36 +129,35 @@ const Register: React.FC = () => {
                 left: 0,
                 right: 0,
                 height: '4px',
-                background: 'linear-gradient(90deg, #d9d9d9 0%, #d9d9d9 100%)'
+                background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`
               }
             }}
           >
-            <Box sx={{ textAlign: 'center', mb: 4 }}>
+            <Box sx={{ textAlign: 'center', mb: 5 }}>
               <Avatar
                 sx={{
                   width: 80,
                   height: 80,
-                  margin: '0 auto 16px',
-                  background: 'linear-gradient(135deg, #383A29 0%, #4a4d35 100%)'
+                  margin: '0 auto 20px',
+                  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
+                  color: theme.palette.primary.contrastText,
+                  boxShadow: '0 8px 32px rgba(56, 58, 41, 0.3)'
                 }}
               >
-                <PersonAdd sx={{ fontSize: 40, color: '#d9d9d9' }} />
+                <PersonAdd sx={{ fontSize: 40 }} />
               </Avatar>
               <Typography 
-                variant="h4" 
+                variant="h3" 
                 component="h1" 
                 sx={{
                   fontWeight: 700,
-                  background: 'linear-gradient(135deg, #383A29 0%, #4a4d35 100%)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
+                  color: theme.palette.primary.main,
                   mb: 1
                 }}
               >
                 Nova Vendedora
               </Typography>
-              <Typography variant="body1" sx={{ color: '#383A29' }}>
+              <Typography variant="body1" sx={{ color: theme.palette.text.secondary }}>
                 Preencha os dados para criar uma nova conta
               </Typography>
             </Box>
@@ -152,7 +166,7 @@ const Register: React.FC = () => {
               <Alert 
                 severity="error" 
                 sx={{ 
-                  mb: 3,
+                  mb: 4,
                   borderRadius: 2,
                   '& .MuiAlert-icon': {
                     fontSize: '1.5rem'
@@ -164,134 +178,66 @@ const Register: React.FC = () => {
             )}
 
             <Box component="form" onSubmit={handleSubmit}>
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
-                  gap: 2
-                }}
-              >
-                <Box sx={{ gridColumn: { xs: '1', sm: '1 / -1' } }}>
+              <Stack spacing={3}>
+                <TextField
+                  required
+                  id="name"
+                  label="Nome Completo"
+                  name="name"
+                  autoComplete="name"
+                  autoFocus
+                  value={formData.name}
+                  onChange={handleChange}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Person sx={{ color: theme.palette.primary.main }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                
+                <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', sm: 'row' } }}>
                   <TextField
                     required
-                    fullWidth
-                    id="name"
-                    label="Nome Completo"
-                    name="name"
-                    autoComplete="name"
-                    autoFocus
-                    value={formData.name}
-                    onChange={handleChange}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Person sx={{ color: '#383A29' }} />
-                        </InputAdornment>
-                      ),
-                    }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 4px 12px rgba(56, 58, 41, 0.2)'
-                        },
-                        '&.Mui-focused': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 4px 12px rgba(56, 58, 41, 0.3)'
-                        }
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': {
-                        color: '#383A29'
-                      },
-                      '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#383A29'
-                      }
-                    }}
-                  />
-                </Box>
-                <Box>
-                  <TextField
-                    required
-                    fullWidth
                     id="email"
                     label="Email"
                     name="email"
                     autoComplete="email"
                     value={formData.email}
                     onChange={handleChange}
+                    sx={{ flex: 1 }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Email sx={{ color: '#383A29' }} />
+                          <Email sx={{ color: theme.palette.primary.main }} />
                         </InputAdornment>
                       ),
                     }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 4px 12px rgba(56, 58, 41, 0.2)'
-                        },
-                        '&.Mui-focused': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 4px 12px rgba(56, 58, 41, 0.3)'
-                        }
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': {
-                        color: '#383A29'
-                      },
-                      '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#383A29'
-                      }
-                    }}
                   />
-                </Box>
-                <Box>
+                  
                   <TextField
                     required
-                    fullWidth
                     id="cpf"
                     label="CPF"
                     name="cpf"
                     value={formData.cpf}
                     onChange={handleChange}
+                    placeholder="00000000000"
+                    sx={{ flex: 1 }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Badge sx={{ color: '#383A29' }} />
+                          <Badge sx={{ color: theme.palette.primary.main }} />
                         </InputAdornment>
                       ),
                     }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 4px 12px rgba(56, 58, 41, 0.2)'
-                        },
-                        '&.Mui-focused': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 4px 12px rgba(56, 58, 41, 0.3)'
-                        }
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': {
-                        color: '#383A29'
-                      },
-                      '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#383A29'
-                      }
-                    }}
                   />
                 </Box>
-                <Box>
+                
+                <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', sm: 'row' } }}>
                   <TextField
                     required
-                    fullWidth
                     name="password"
                     label="Senha"
                     type="password"
@@ -299,103 +245,62 @@ const Register: React.FC = () => {
                     autoComplete="new-password"
                     value={formData.password}
                     onChange={handleChange}
+                    sx={{ flex: 1 }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Lock sx={{ color: '#383A29' }} />
+                          <Lock sx={{ color: theme.palette.primary.main }} />
                         </InputAdornment>
                       ),
                     }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 4px 12px rgba(56, 58, 41, 0.2)'
-                        },
-                        '&.Mui-focused': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 4px 12px rgba(56, 58, 41, 0.3)'
-                        }
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': {
-                        color: '#383A29'
-                      },
-                      '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#383A29'
-                      }
-                    }}
                   />
-                </Box>
-                <Box>
+                  
                   <TextField
                     required
-                    fullWidth
                     name="confirmPassword"
                     label="Confirmar Senha"
                     type="password"
                     id="confirmPassword"
+                    autoComplete="new-password"
                     value={formData.confirmPassword}
                     onChange={handleChange}
+                    sx={{ flex: 1 }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Lock sx={{ color: '#383A29' }} />
+                          <Lock sx={{ color: theme.palette.primary.main }} />
                         </InputAdornment>
                       ),
                     }}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 2,
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 4px 12px rgba(56, 58, 41, 0.2)'
-                        },
-                        '&.Mui-focused': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 4px 12px rgba(56, 58, 41, 0.3)'
-                        }
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': {
-                        color: '#383A29'
-                      },
-                      '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#383A29'
-                      }
-                    }}
                   />
                 </Box>
-              </Box>
-              
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                disabled={loading}
-                sx={{
-                  mt: 3,
-                  mb: 2,
-                  py: 1.5,
-                  borderRadius: 2,
-                  fontSize: '1.1rem',
-                  fontWeight: 600,
-                  background: 'linear-gradient(135deg, #383A29 0%, #4a4d35 100%)',
-                  boxShadow: '0 4px 15px rgba(56, 58, 41, 0.4)',
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 8px 25px rgba(56, 58, 41, 0.6)',
-                    background: 'linear-gradient(135deg, #2d2f20 0%, #383A29 100%)'
-                  },
-                  '&:disabled': {
-                    background: 'linear-gradient(135deg, #a0aec0 0%, #718096 100%)'
-                  }
-                }}
-              >
-                {loading ? 'Cadastrando...' : 'Cadastrar'}
-              </Button>
+                
+                <Button
+                  type="submit"
+                  variant="contained"
+                  size="large"
+                  disabled={loading}
+                  sx={{
+                    py: 2,
+                    fontSize: '1.1rem',
+                    fontWeight: 600,
+                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
+                    '&:hover': {
+                      background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+                    },
+                    '&:disabled': {
+                      background: theme.palette.grey[300],
+                      color: theme.palette.grey[500]
+                    }
+                  }}
+                >
+                  {loading ? (
+                    <CircularProgress size={24} color="inherit" />
+                  ) : (
+                    'Criar Conta'
+                  )}
+                </Button>
+              </Stack>
             </Box>
           </Paper>
         </Fade>

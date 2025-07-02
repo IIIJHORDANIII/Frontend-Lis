@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Product, AuthResponse, CustomList } from '../types';
 
-const API_URL = 'https://backend-lis-production.up.railway.app/api';
+const API_URL = 'https://backend-lis-production-fc50.up.railway.app/api';
 
 // Create axios instance with default config
 const api = axios.create({
