@@ -42,7 +42,7 @@ const CustomList: React.FC<CustomListProps> = ({ list }) => {
                 {new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
-                }).format(product.price)}
+                }).format(product.finalPrice)}
               </Typography>
         </Box>
             <Typography variant="body2" color="text.secondary">

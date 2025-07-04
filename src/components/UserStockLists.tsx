@@ -259,7 +259,7 @@ const UserStockLists: React.FC = () => {
       }}>
         {filteredProducts.map((product: Product) => (
           <Card key={product._id} sx={{
-            height: '480px',
+            height: { xs: 340, sm: 400, md: 440, lg: 480 },
             display: 'flex',
             flexDirection: 'column',
             border: '1px solid #d9d9d9',
@@ -273,10 +273,16 @@ const UserStockLists: React.FC = () => {
             {product.image && (
               <CardMedia
                 component="img"
-                height="340"
+                sx={{
+                  objectFit: 'cover',
+                  width: '100%',
+                  height: { xs: 140, sm: 180, md: 220, lg: 260 },
+                  flex: '0 0 auto',
+                  borderTopLeftRadius: 8,
+                  borderTopRightRadius: 8,
+                }}
                 image={product.image}
                 alt={product.name}
-                sx={{ objectFit: 'cover', flex: '0 0 340px' }}
               />
             )}
             <CardContent sx={{ 
@@ -284,7 +290,9 @@ const UserStockLists: React.FC = () => {
               flex: '1 1 auto',
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'space-between'
+              justifyContent: 'space-between',
+              minWidth: 0,
+              overflow: 'hidden',
             }}>
               <Box>
                 <Typography variant="subtitle1" sx={{ 
@@ -293,7 +301,8 @@ const UserStockLists: React.FC = () => {
                   mb: 1,
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: { xs: 'normal', sm: 'nowrap' },
+                  fontSize: { xs: '1rem', sm: '1.1rem', md: '1.15rem' },
                 }}>
                   {product.name}
                 </Typography>
@@ -304,7 +313,8 @@ const UserStockLists: React.FC = () => {
                   textOverflow: 'ellipsis',
                   display: '-webkit-box',
                   WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical'
+                  WebkitBoxOrient: 'vertical',
+                  fontSize: { xs: '0.85rem', sm: '0.95rem' },
                 }}>
                   {product.description}
                 </Typography>
@@ -312,17 +322,27 @@ const UserStockLists: React.FC = () => {
               
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                 <Typography variant="h6" sx={{ color: '#383A29', fontWeight: 'bold' }}>
-                  R$ {product.price.toFixed(2)}
+                  R$ {product.finalPrice.toFixed(2)}
                 </Typography>
                 {product.quantity !== undefined && (
-                  <Chip
-                    label={`Qtd: ${product.quantity}`}
-                    size="small"
-                    sx={{
-                      backgroundColor: product.quantity > 0 ? '#383A29' : '#d9d9d9',
-                      color: product.quantity > 0 ? 'white' : '#383A29'
-                    }}
-                  />
+                  <>
+                    <Chip
+                      label={`Qtd: ${product.quantity}`}
+                      size="small"
+                      sx={{
+                        backgroundColor: product.quantity > 0 ? '#383A29' : '#d9d9d9',
+                        color: product.quantity > 0 ? 'white' : '#383A29',
+                        mr: product.quantity === 0 ? 1 : 0
+                      }}
+                    />
+                    {product.quantity === 0 && (
+                      <Chip
+                        label="Esgotado"
+                        size="small"
+                        sx={{ fontWeight: 'bold', backgroundColor: '#d32f2f', color: 'white' }}
+                      />
+                    )}
+                  </>
                 )}
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', mb: 1 }}>

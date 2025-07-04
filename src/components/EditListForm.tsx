@@ -351,7 +351,7 @@ const EditListForm: React.FC = () => {
                           {product.description}
                         </Typography>
                         <Typography variant="h6" sx={{ color: '#383A29', fontWeight: 'bold' }}>
-                          {formatPrice(product.price)}
+                          {formatPrice(product.finalPrice)}
                         </Typography>
                       </CardContent>
                     </Card>
@@ -515,7 +515,7 @@ const EditListForm: React.FC = () => {
                         {product.description}
                       </Typography>
                       <Typography variant="h6" sx={{ color: '#2d3748', fontWeight: 'bold', fontSize: { xs: '0.9rem', sm: '1.1rem' } }}>
-                        {formatPrice(product.price)}
+                        {formatPrice(product.finalPrice)}
                       </Typography>
                     </CardContent>
                   </Card>

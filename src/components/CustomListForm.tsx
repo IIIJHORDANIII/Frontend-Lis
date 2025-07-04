@@ -335,7 +335,7 @@ const CustomListForm: React.FC = () => {
                         return (
                           <Chip
                             key={value}
-                            label={product ? `${product.name} - ${formatPrice(product.price)}` : value}
+                            label={product ? `${product.name} - ${formatPrice(product.finalPrice)}` : value}
                             size="small"
                             sx={{
                               background: 'linear-gradient(45deg, #383A29, #4a4d35)',
@@ -405,7 +405,7 @@ const CustomListForm: React.FC = () => {
                             {product.name}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
-                            {formatPrice(product.price)}
+                            {formatPrice(product.finalPrice)}
                           </Typography>
                         </Box>
                       </Box>

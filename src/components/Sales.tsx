@@ -32,10 +32,12 @@ interface Product {
   _id: string;
   name: string;
   description: string;
-  price: number;
+  costPrice: number;
+  finalPrice: number;
+  commission: number;
+  profit: number;
   quantity?: number;
   image?: string;
-  commission?: number;
 }
 
 interface Sales {
@@ -122,6 +124,13 @@ const Sales: React.FC = () => {
     const product = products.find(p => p._id === productId);
     if (!product) return;
 
+    // Impedir venda se a quantidade for 0
+    if (increment && (typeof product.quantity === 'number') && product.quantity === 0) {
+      setError('Produto sem estoque. Não é possível vender.');
+      setTimeout(() => setError(''), 3000);
+      return;
+    }
+
     const currentQuantity = sales[productId] || 0;
     if (!increment && currentQuantity === 0) return; // Não permite devolução abaixo de zero
     const newQuantity = increment ? currentQuantity + 1 : currentQuantity - 1;
@@ -133,14 +142,14 @@ const Sales: React.FC = () => {
     try {
       if (increment) {
         // Registrar uma venda
-        const total = Number(product.price.toFixed(2));
+        const total = Number(product.finalPrice.toFixed(2));
         const commission = Number((total * 0.3).toFixed(2));
   
         const saleData = {
           products: [{
             productId: product._id,
             quantity: 1,
-            price: product.price
+            price: product.finalPrice
           }],
           total,
           commission
@@ -148,16 +157,29 @@ const Sales: React.FC = () => {
   
         await api.post('/sales', saleData);
         setSuccess(`Venda registrada: ${product.name}`);
+
+        // Atualizar quantidade do produto no estoque (descontar 1)
+        if (typeof product.quantity === 'number') {
+          const newStock = Math.max(product.quantity - 1, 0);
+          await api.put(`/products/${product._id}`, {
+            name: product.name,
+            description: product.description,
+            costPrice: product.costPrice,
+            quantity: newStock
+          });
+          // Atualizar localmente
+          setProducts(prev => prev.map(p => p._id === product._id ? { ...p, quantity: newStock } : p));
+        }
       } else {
         // Registrar uma devolução (venda negativa)
-        const total = Number((-product.price).toFixed(2));
+        const total = Number((-product.finalPrice).toFixed(2));
         const commission = Number((total * 0.3).toFixed(2)); // Comissão negativa
   
         const returnData = {
           products: [{
             productId: product._id,
             quantity: -1,
-            price: product.price
+            price: product.finalPrice
           }],
           total,
           commission
@@ -166,6 +188,19 @@ const Sales: React.FC = () => {
         const salesResponse = await api.get('/sales');
         await api.post('/sales', returnData);
         setSuccess(`Devolução registrada: ${product.name}`);
+
+        // Atualizar quantidade do produto no estoque (somar 1)
+        if (typeof product.quantity === 'number') {
+          const newStock = product.quantity + 1;
+          await api.put(`/products/${product._id}`, {
+            name: product.name,
+            description: product.description,
+            costPrice: product.costPrice,
+            quantity: newStock
+          });
+          // Atualizar localmente
+          setProducts(prev => prev.map(p => p._id === product._id ? { ...p, quantity: newStock } : p));
+        }
       }
 
       // Atualizar o estado local para exibição
@@ -188,12 +223,12 @@ const Sales: React.FC = () => {
     }
 
     // Validação extra: impedir quantidade ou total negativos
-    if (increment && product.price < 0) {
+    if (increment && product.finalPrice < 0) {
       setError('Preço do produto não pode ser negativo.');
       setTimeout(() => setError(''), 3000);
       return;
     }
-    if (!increment && (currentQuantity <= 0 || product.price < 0)) {
+    if (!increment && (currentQuantity <= 0 || product.finalPrice < 0)) {
       setError('Não é possível devolver mais do que foi vendido ou preço negativo.');
       setTimeout(() => setError(''), 3000);
       return;
@@ -205,6 +240,16 @@ const Sales: React.FC = () => {
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
           <CircularProgress />
+        </Box>
+      </Container>
+    );
+  }
+
+  if (!products || products.length === 0) {
+    return (
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+          <Typography color="text.secondary" variant="h6">Nenhum produto disponível para venda</Typography>
         </Box>
       </Container>
     );
@@ -228,8 +273,8 @@ const Sales: React.FC = () => {
           <Box display="flex" flexDirection="column" gap={2}>
             {products.map((product) => {
               const quantity = sales[product._id] || 0;
-              const subtotal = product.price * quantity;
-              const commission = product.commission || (product.price * 0.3);
+              const subtotal = product.finalPrice * quantity;
+              const commission = product.commission || (product.finalPrice * 0.3);
               const isProcessing = processingProduct === product._id;
               return (
                 <Card key={product._id} sx={{ p: 2, boxShadow: 2, borderRadius: 2, border: '1px solid #e0e0e0' }}>
@@ -243,7 +288,7 @@ const Sales: React.FC = () => {
                     
                     <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                       <Box display="flex" gap={1}>
-                        <Chip label={`R$ ${product.price.toFixed(2)}`} size="small" sx={{ background: '#383A29', color: 'white', fontWeight: 'bold' }} />
+                        <Chip label={`R$ ${product.finalPrice.toFixed(2)}`} size="small" sx={{ background: '#383A29', color: 'white', fontWeight: 'bold' }} />
                         <Chip label={`Comissão: R$ ${commission.toFixed(2)}`} size="small" sx={{ background: '#d9d9d9', color: '#383A29', fontWeight: 'bold' }} />
                       </Box>
                     </Box>
@@ -285,14 +330,14 @@ const Sales: React.FC = () => {
                         variant="contained"
                         color="success"
                         onClick={() => handleQuantityChange(product._id, true)}
-                        disabled={isProcessing}
+                        disabled={isProcessing || (typeof product.quantity === 'number' && product.quantity === 0)}
                         sx={{
                           minWidth: 50,
                           height: 50,
                           borderRadius: '50%',
-                          backgroundColor: isProcessing ? '#ccc' : '#2e7d32',
+                          backgroundColor: (isProcessing || (typeof product.quantity === 'number' && product.quantity === 0)) ? '#ccc' : '#2e7d32',
                           '&:hover': {
-                            backgroundColor: isProcessing ? '#ccc' : '#1b5e20'
+                            backgroundColor: (isProcessing || (typeof product.quantity === 'number' && product.quantity === 0)) ? '#ccc' : '#1b5e20'
                           }
                         }}
                       >
@@ -322,67 +367,82 @@ const Sales: React.FC = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Produto</TableCell>
-                  <TableCell align="right">Preço</TableCell>
-                  <TableCell align="right">Comissão</TableCell>
-                  <TableCell align="center">Ações</TableCell>
-                  <TableCell align="center">Todas as Vendas</TableCell>
-                  <TableCell align="right">Subtotal</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: '#383A29' }}>Produto</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: '#383A29' }}>Preço</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: '#383A29' }}>Comissão</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: '#383A29' }}>Quantidade Vendida</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: '#383A29' }}>Subtotal</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold', color: '#383A29' }}>Ações</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {products.map((product) => {
                   const quantity = sales[product._id] || 0;
-                  const subtotal = product.price * quantity;
-                  const commission = product.commission || (product.price * 0.3);
+                  const subtotal = product.finalPrice * quantity;
+                  const commission = product.commission || (product.finalPrice * 0.3);
                   const isProcessing = processingProduct === product._id;
+                  
                   return (
                     <TableRow key={product._id}>
-                      <TableCell component="th" scope="row">
-                        {product.name}
+                      <TableCell>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#383A29' }}>
+                          {product.name}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {product.description}
+                        </Typography>
                       </TableCell>
-                      <TableCell align="right">
-                        R$ {product.price.toFixed(2)}
+                      <TableCell>
+                        <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#383A29' }}>
+                          R$ {product.finalPrice.toFixed(2)}
+                        </Typography>
                       </TableCell>
-                      <TableCell align="right">
-                        R$ {commission.toFixed(2)}
+                      <TableCell>
+                        <Typography variant="body2" color="text.secondary">
+                          R$ {commission.toFixed(2)}
+                        </Typography>
                       </TableCell>
-                      <TableCell align="center">
-                        <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
+                      <TableCell>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: quantity > 0 ? 'success.main' : 'text.secondary' }}>
+                          {quantity}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: subtotal > 0 ? 'success.main' : subtotal < 0 ? 'error.main' : 'text.secondary' }}>
+                          R$ {subtotal.toFixed(2)}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Box display="flex" gap={1}>
                           <IconButton
-                            size="small"
+                            color="error"
                             onClick={() => handleQuantityChange(product._id, false)}
                             disabled={quantity === 0 || isProcessing}
-                            color="error"
+                            sx={{
+                              backgroundColor: quantity === 0 || isProcessing ? '#ccc' : '#d32f2f',
+                              color: 'white',
+                              '&:hover': {
+                                backgroundColor: quantity === 0 || isProcessing ? '#ccc' : '#b71c1c'
+                              }
+                            }}
                           >
                             <Remove />
                           </IconButton>
-                          {isProcessing ? (
-                            <CircularProgress size={20} />
-                          ) : (
-                            <Typography sx={{ minWidth: '60px', textAlign: 'center' }}>
-                              Vender/Devolver
-                            </Typography>
-                          )}
                           <IconButton
-                            size="small"
-                            onClick={() => handleQuantityChange(product._id, true)}
-                            disabled={isProcessing}
                             color="success"
+                            onClick={() => handleQuantityChange(product._id, true)}
+                            disabled={isProcessing || (typeof product.quantity === 'number' && product.quantity === 0)}
+                            sx={{
+                              backgroundColor: (isProcessing || (typeof product.quantity === 'number' && product.quantity === 0)) ? '#ccc' : '#2e7d32',
+                              color: 'white',
+                              '&:hover': {
+                                backgroundColor: (isProcessing || (typeof product.quantity === 'number' && product.quantity === 0)) ? '#ccc' : '#1b5e20'
+                              }
+                            }}
                           >
                             <Add />
                           </IconButton>
                         </Box>
-                      </TableCell>
-                      <TableCell align="center">
-                        <Typography variant="h6" color={quantity > 0 ? 'success.main' : 'text.secondary'}>
-                          {quantity}
-                        </Typography>
-                      </TableCell>
-                      <TableCell align="right">
-                        <Typography color={subtotal > 0 ? 'success.main' : subtotal < 0 ? 'error.main' : 'text.secondary'}>
-                          R$ {subtotal.toFixed(2)}
-                        </Typography>
                       </TableCell>
                     </TableRow>
                   );
@@ -393,28 +453,27 @@ const Sales: React.FC = () => {
         )}
       </Paper>
 
-      {isAdmin && <SalesSummary />}
-      
-      {/* Snackbar para feedback */}
-      <Snackbar
-        open={!!success}
-        autoHideDuration={2000}
-        onClose={() => setSuccess('')}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert severity="success" onClose={() => setSuccess('')}>
-          {success}
-        </Alert>
-      </Snackbar>
-      
+      <SalesSummary />
+
       <Snackbar
         open={!!error}
         autoHideDuration={3000}
         onClose={() => setError('')}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert severity="error" onClose={() => setError('')}>
+        <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
           {error}
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        open={!!success}
+        autoHideDuration={2000}
+        onClose={() => setSuccess('')}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setSuccess('')} severity="success" sx={{ width: '100%' }}>
+          {success}
         </Alert>
       </Snackbar>
     </Container>

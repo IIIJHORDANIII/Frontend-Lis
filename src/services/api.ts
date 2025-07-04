@@ -161,7 +161,10 @@ export const deleteProduct = async (productId: string): Promise<void> => {
   }
 };
 
-export const updateProduct = async (productId: string, productData: { name: string; description: string; price: number }): Promise<Product> => {
+export const updateProduct = async (
+  productId: string,
+  productData: { name: string; description: string; costPrice: number; quantity: number }
+): Promise<Product> => {
   try {
     const response = await api.put<Product>(`/products/${productId}`, productData);
     return response.data;

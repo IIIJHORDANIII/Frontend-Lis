@@ -55,12 +55,12 @@ const SalesSummary: React.FC = () => {
                 productId: product.productId,
                 name: product.name,
                 quantity: 0,
-                price: product.price,
+                price: product.finalPrice,
                 subtotal: 0
               };
             }
             acc[key].quantity += product.quantity;
-            acc[key].subtotal += product.quantity * product.price;
+            acc[key].subtotal += product.quantity * product.finalPrice;
             return acc;
           }, {});
 
@@ -198,14 +198,14 @@ const SalesSummary: React.FC = () => {
   }
 
   return (
-    <Paper sx={{ p: 3, mt: 4, border: '2px solid #383A29' }}>
-      <Typography variant="h5" sx={{ color: '#383A29', fontWeight: 'bold', mb: 3 }}>
+    <Paper sx={{ p: 3, mt: 4, border: '2px solid #white' }}>
+      <Typography variant="h5" sx={{ color: '#2d3748', fontWeight: 'bold', mb: 3 }}>
         Resumo de Vendas por Vendedora
       </Typography>
       
       {loading && (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress sx={{ color: '#383A29' }} />
+          <CircularProgress sx={{ color: '#2d3748' }} />
         </Box>
       )}
       
@@ -223,7 +223,7 @@ const SalesSummary: React.FC = () => {
             gap: 2, 
             mb: 3 
           }}>
-            <Paper sx={{ p: 2, backgroundColor: '#383A29', color: 'white' }}>
+            <Paper sx={{ p: 2, backgroundColor: '#2d3748', color: 'white' }}>
               <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                 Total de Vendas
               </Typography>
@@ -231,7 +231,7 @@ const SalesSummary: React.FC = () => {
                 {formatCurrency(totalVendas)}
               </Typography>
             </Paper>
-            <Paper sx={{ p: 2, backgroundColor: '#d9d9d9', color: '#383A29' }}>
+            <Paper sx={{ p: 2, backgroundColor: '#d9d9d9', color: '#2d3748' }}>
               <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                 Total de Comissões
               </Typography>
@@ -312,7 +312,7 @@ const SalesSummary: React.FC = () => {
                 ))}
                 
                 {/* Resumo total do usuário */}
-                <Box sx={{ mt: 3, p: 2, backgroundColor: '#383A29', color: 'white', borderRadius: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box sx={{ mt: 3, p: 2, backgroundColor: '#2d3748', color: 'white', borderRadius: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Box>
                     <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
                       Resumo de {userGroup.userName}

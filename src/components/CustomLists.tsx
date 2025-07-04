@@ -221,7 +221,7 @@ const CustomLists: React.FC = () => {
                               secondary={
                                 <Box>
                                   <Typography variant="body2" color="text.secondary">
-                                    {formatPrice(product.price)}
+                                    {formatPrice(product.finalPrice)}
                                   </Typography>
                                   {product.quantity && (
                                     <Typography variant="body2" sx={{ color: '#383A29' }}>

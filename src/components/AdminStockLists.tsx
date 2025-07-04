@@ -14,7 +14,12 @@ import {
   Alert,
   CircularProgress,
   IconButton,
-  Tooltip
+  Tooltip,
+  Container,
+  Paper,
+  Fade,
+  useTheme,
+  useMediaQuery
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PersonIcon from '@mui/icons-material/Person';
@@ -24,13 +29,18 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from 'react-router-dom';
 import { getCustomLists } from '../services/api';
 import { Product, CustomList } from '../types';
+import { useAuth } from '../contexts/AuthContext';
 
 const AdminStockLists: React.FC = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [lists, setLists] = useState<CustomList[]>([]);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     const fetchLists = async () => {
@@ -65,249 +75,346 @@ const AdminStockLists: React.FC = () => {
 
   if (loading) {
     return (
-      <Box sx={{ maxWidth: '1200px', mx: 'auto', display: 'flex', justifyContent: 'center', mt: 4, background: 'transparent' }}>
-        <CircularProgress sx={{ color: '#2d3748' }} />
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Box sx={{ maxWidth: '1200px', mx: 'auto', mt: 4, background: 'transparent' }}>
-        <Alert severity="error" sx={{ backgroundColor: '#ffebee', borderLeft: '4px solid #2d3748' }}>
-          {error}
-        </Alert>
-      </Box>
-    );
-  }
-
-  if (!lists.length) {
-    return (
-      <Box sx={{ maxWidth: '1200px', mx: 'auto', mt: 4, background: 'transparent' }}>
-        <Alert severity="info" sx={{ backgroundColor: '#e3f2fd', borderLeft: '4px solid #2d3748' }}>
-          Nenhuma lista encontrada.
-        </Alert>
+      <Box sx={{ 
+        minHeight: '100vh',
+        background: 'white',
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center'
+      }}>
+        <CircularProgress size={60} sx={{ color: 'white' }} />
       </Box>
     );
   }
 
   return (
-    <Box sx={{ maxWidth: '1200px', mx: 'auto', mt: { xs: 2, sm: 4 }, mb: 4, background: 'transparent' }}>
-      <Box sx={{ 
-        mb: { xs: 2, sm: 4 },
-        p: { xs: 1, sm: 3 },
-        backgroundColor: '#2d3748',
-        borderRadius: { xs: 2, sm: 3 },
-        color: 'white',
-        width: { xs: '100%', sm: 'auto' },
-        maxWidth: { xs: 360, sm: 600, md: '100%' },
-        mx: { xs: 'auto', sm: 0 },
+    <Box sx={{ 
+      minHeight: '100vh',
+      background: 'white',
+      py: { xs: 2, sm: 3, md: 4 },
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+    }}>
+      <Container maxWidth="xl" sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        minHeight: '100vh',
+        px: { xs: 1, sm: 2, md: 3 },
       }}>
-        <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', fontSize: { xs: '1.3rem', sm: '2rem' }, color: 'white' }}>
-          Listas de Estoque
-        </Typography>
-      </Box>
-      
-      {lists.map((list) => (
-        <Accordion
-          key={list._id}
-          expanded={expanded === list._id}
-          onChange={() => handleAccordionChange(list._id)}
-          sx={{
-            boxShadow: 'none',
-            border: '1.5px solid #2d3748',
-            borderRadius: { xs: 2, sm: 3 },
-            mb: { xs: 2, sm: 3 },
-            width: { xs: '100%', sm: 'auto' },
-            maxWidth: { xs: 360, sm: 600, md: '100%' },
-            mx: { xs: 'auto', sm: 0 },
-            background: '#fff',
-          }}
-        >
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon sx={{ color: '#2d3748', fontSize: { xs: 20, sm: 28 } }} />}
-            sx={{ backgroundColor: '#f7fafc', p: { xs: 1, sm: 2 }, borderRadius: { xs: 2, sm: 3 } }}
+        {/* Header */}
+        <Fade in>
+          <Paper
+            elevation={0}
+            sx={{
+              maxWidth: { xs: 340, sm: 400, md: 700, xl: 900 },
+              width: '100%',
+              mx: 'auto',
+              mt: { xs: 1, sm: 2, md: 4 },
+              mb: { xs: 1, sm: 2, md: 4 },
+              p: { xs: 1, sm: 2, md: 4 },
+              borderRadius: 3,
+              boxShadow: '0 8px 32px 0 rgba(45,55,72,0.10)',
+              background: 'rgba(255,255,255,0.13)',
+              backdropFilter: 'blur(12px)',
+              border: '1.5px solid rgba(255,255,255,0.22)',
+              '@media (min-width: 1600px)': {
+                maxWidth: 1100,
+                p: 6,
+              },
+              '@media (min-width: 1920px)': {
+                maxWidth: 1300,
+                p: 8,
+              },
+            }}
           >
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, alignItems: 'center', width: '100%' }}>
-              <Tooltip title="Editar lista">
-                <IconButton
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleEditList(list._id);
-                  }}
-                  sx={{
-                    color: '#2d3748',
-                    fontSize: { xs: 18, sm: 22 },
-                    p: 0.5,
-                    mr: 0.5,
-                    background: '#f7fafc',
-                    '&:hover': {
-                      backgroundColor: 'rgba(45, 55, 72, 0.1)'
-                    }
-                  }}
-                  size="small"
-                >
-                  <EditIcon sx={{ fontSize: { xs: 18, sm: 22 } }} />
-                </IconButton>
-              </Tooltip>
-              <Chip
-                icon={<PersonIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />}
-                label={list.createdBy?.name || 'Usuário'}
-                size="small"
+            <Box sx={{ textAlign: 'center', mb: 2 }}>
+              <Typography
+                variant="h3"
+                component="h1"
                 sx={{
-                  backgroundColor: '#2d3748',
-                  color: 'white',
-                  fontSize: { xs: '0.7rem', sm: '0.9rem' },
-                  height: { xs: 22, sm: 28 },
-                  mr: 0.5,
-                  boxShadow: 'none',
+                  fontWeight: 700,
+                  color: theme.palette.primary.main,
+                  mb: 1,
+                  fontSize: { xs: '1.7rem', sm: '2.2rem', md: '2.7rem' },
+                  '@media (min-width: 1600px)': {
+                    fontSize: '2.75rem',
+                  },
+                  '@media (min-width: 1920px)': {
+                    fontSize: '3rem',
+                  },
                 }}
-              />
-              <Chip
-                icon={list.isPublic ? <PublicIcon sx={{ fontSize: { xs: 16, sm: 20 } }} /> : <LockIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />}
-                label={list.isPublic ? 'Pública' : 'Privada'}
-                size="small"
-                sx={{
-                  backgroundColor: list.isPublic ? '#e3fcec' : '#f7fafc',
-                  color: list.isPublic ? '#22543d' : '#2d3748',
-                  fontSize: { xs: '0.7rem', sm: '0.9rem' },
-                  height: { xs: 22, sm: 28 },
-                  mr: 0.5,
-                  boxShadow: 'none',
-                  border: list.isPublic ? '1px solid #38a169' : '1px solid #2d3748',
-                }}
-              />
-              <Chip
-                label={`${list.products?.length || 0} produtos`}
-                size="small"
-                sx={{
-                  backgroundColor: '#edf2f7',
-                  color: '#2d3748',
-                  fontSize: { xs: '0.7rem', sm: '0.9rem' },
-                  height: { xs: 22, sm: 28 },
-                  boxShadow: 'none',
-                  border: '1px solid #cbd5e1',
-                }}
-              />
-            </Box>
-          </AccordionSummary>
-          
-          <AccordionDetails sx={{ p: { xs: 1, sm: 3 }, background: '#fff', borderRadius: { xs: 2, sm: 3 } }}>
-            {list.description && (
-              <Typography variant="body1" sx={{ mb: 2, color: '#2d3748', fontSize: { xs: '0.85rem', sm: '1rem' } }}>
-                {list.description}
+              >
+                Listas de Estoque
               </Typography>
-            )}
-            
-            {list.products && list.products.length > 0 ? (
-              <Box sx={{
-                display: 'grid',
-                gridTemplateColumns: {
-                  xs: '1fr',
-                  sm: 'repeat(2, 1fr)',
-                  md: 'repeat(3, 1fr)',
-                  lg: 'repeat(4, 1fr)'
-                },
-                gap: { xs: 1, sm: 2 },
-                width: '100%',
-                maxWidth: { xs: 360, sm: 600, md: '100%' },
-                mx: { xs: 'auto', sm: 0 },
-                background: '#f7fafc',
-                borderRadius: { xs: 2, sm: 3 },
-                p: { xs: 1, sm: 2 },
-              }}>
-                {list.products.map((product: Product) => (
-                  <Card key={product._id} sx={{
-                    border: '1px solid #d9d9d9',
-                    transition: 'all 0.3s ease',
-                    borderRadius: { xs: 1, sm: 2 },
-                    boxShadow: 'none',
-                    '&:hover': {
-                      border: '1px solid #2d3748',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 4px 12px rgba(45, 55, 72, 0.15)'
-                    },
-                    maxWidth: { xs: 340, sm: 400, md: 500 },
-                    mx: { xs: 'auto', sm: 0 },
-                  }}>
-                    {product.image && (
-                      <CardMedia
-                        component="img"
-                        height={54}
-                        image={product.image}
-                        alt={product.name}
-                        sx={{ objectFit: 'cover', borderTopLeftRadius: { xs: 1, sm: 2 }, borderTopRightRadius: { xs: 1, sm: 2 } }}
+              <Typography
+                variant="body1"
+                sx={{
+                  color: theme.palette.text.secondary,
+                  mb: 2,
+                  fontSize: { xs: '0.9rem', sm: '1.05rem', md: '1.15rem' },
+                  '@media (min-width: 1600px)': {
+                    fontSize: '1.25rem',
+                  },
+                  '@media (min-width: 1920px)': {
+                    fontSize: '1.35rem',
+                  },
+                }}
+              >
+                Gerencie todas as listas de produtos do sistema
+              </Typography>
+            </Box>
+          </Paper>
+        </Fade>
+        {error && (
+          <Alert 
+            severity="error" 
+            sx={{ 
+              mb: 4,
+              borderRadius: 2,
+              '& .MuiAlert-icon': {
+                fontSize: '1.5rem'
+              }
+            }}
+          >
+            {error}
+          </Alert>
+        )}
+        {!lists.length && !loading && (
+          <Alert 
+            severity="info" 
+            sx={{ 
+              mb: 4,
+              borderRadius: 2,
+              fontSize: '1.1rem',
+              maxWidth: 900,
+              mx: 'auto',
+              boxShadow: '0 2px 8px rgba(45,55,72,0.10)',
+              '& .MuiAlert-icon': {
+                fontSize: '1.5rem'
+              }
+            }}
+          >
+            Nenhuma lista encontrada.
+          </Alert>
+        )}
+        {/* Lists */}
+        <Box sx={{ mt: { xs: 2, sm: 3, md: 4 }, width: '100%', maxWidth: 1200, mx: 'auto' }}>
+          {lists.map((list, index) => (
+            <Fade in timeout={400 + index * 100} key={list._id}>
+              <Accordion
+                expanded={expanded === list._id}
+                onChange={() => handleAccordionChange(list._id)}
+                sx={{
+                  background: 'rgba(255,255,255,0.97)',
+                  border: '1.5px solid rgba(102,126,234,0.10)',
+                  borderRadius: 3,
+                  mb: { xs: 3, sm: 4 },
+                  overflow: 'hidden',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: '0 8px 32px rgba(102,126,234,0.10)',
+                  '&:hover': {
+                    boxShadow: '0 20px 40px rgba(102,126,234,0.18)',
+                    border: '2px solid #764ba2',
+                    transform: 'translateY(-8px) scale(1.04)',
+                  },
+                  p: 0,
+                }}
+              >
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls={`panel-content-${list._id}`}
+                  id={`panel-header-${list._id}`}
+                  sx={{
+                    px: { xs: 2, sm: 3 },
+                    py: { xs: 2, sm: 3 },
+                    background: 'rgba(255,255,255,0.13)',
+                    borderBottom: '1px solid rgba(102,126,234,0.10)',
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontWeight: 700,
+                        color: theme.palette.primary.main,
+                        fontSize: { xs: '1.1rem', sm: '1.25rem' },
+                        flex: 1
+                      }}
+                    >
+                      {list.name}
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                      <Chip
+                        label={`${list.products?.length || 0} produtos`}
+                        size="small"
+                        sx={{
+                          background: theme.palette.info.light,
+                          color: theme.palette.info.dark,
+                          fontSize: { xs: '0.7rem', sm: '0.9rem' },
+                          height: { xs: 24, sm: 32 },
+                          fontWeight: 600,
+                        }}
                       />
-                    )}
-                    <CardContent sx={{ p: { xs: 0.5, sm: 1.5 }, display: 'block' }}>
-                      <Typography variant="subtitle1" sx={{ 
-                        color: '#2d3748', 
-                        fontWeight: 'bold',
-                        mb: 0.25,
-                        fontSize: { xs: '0.75rem', sm: '1rem' },
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap'
-                      }}>
-                        {product.name}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 0.25, fontSize: { xs: '0.65rem', sm: '0.875rem' } }}>
-                        {product.description}
-                      </Typography>
-                      <Box sx={{ mt: 0.5 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.25 }}>
-                          <Typography variant="body2" sx={{ color: '#2d3748', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.9rem' } }}>
-                            R$ {product.price.toFixed(2)}
-                          </Typography>
-                          {product.quantity !== undefined && (
-                            <Chip
-                              label={`Qtd: ${product.quantity}`}
-                              size="small"
-                              sx={{
-                                backgroundColor: product.quantity > 0 ? '#2d3748' : '#d9d9d9',
-                                color: product.quantity > 0 ? 'white' : '#2d3748',
-                                fontSize: { xs: '0.65rem', sm: '0.8rem' },
-                                height: { xs: 18, sm: 22 },
-                                ml: 0.5
-                              }}
+                    </Box>
+                  </Box>
+                </AccordionSummary>
+                <AccordionDetails sx={{ px: { xs: 2, sm: 3 }, py: { xs: 2, sm: 3 } }}>
+                  {list.description && (
+                    <Typography 
+                      variant="body2" 
+                      sx={{ 
+                        mb: 2, 
+                        color: theme.palette.text.secondary, 
+                        fontStyle: 'italic',
+                        fontSize: { xs: '0.9rem', sm: '1rem' },
+                      }}
+                    >
+                      {list.description}
+                    </Typography>
+                  )}
+                  {list.products && list.products.length > 0 ? (
+                    <Box sx={{
+                      display: 'grid',
+                      gridTemplateColumns: {
+                        xs: '1fr',
+                        sm: 'repeat(2, 1fr)',
+                        md: 'repeat(3, 1fr)',
+                        lg: 'repeat(4, 1fr)'
+                      },
+                      gap: { xs: 3, sm: 4, md: 5 },
+                      maxWidth: 1200,
+                      mx: 'auto'
+                    }}>
+                      {list.products.map((product) => (
+                        <Card
+                          key={product._id}
+                          sx={{
+                            background: 'rgba(255,255,255,0.97)',
+                            border: '1.5px solid rgba(102,126,234,0.10)',
+                            borderRadius: 3,
+                            overflow: 'hidden',
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            boxShadow: '0 8px 32px rgba(102,126,234,0.10)',
+                            '&:hover': {
+                              boxShadow: '0 20px 40px rgba(102,126,234,0.18)',
+                              border: '2px solid #764ba2',
+                              transform: 'translateY(-8px) scale(1.04)',
+                            },
+                            p: { xs: 2, sm: 3 },
+                          }}
+                        >
+                          {product.image && (
+                            <CardMedia
+                              component="img"
+                              height={120}
+                              image={product.image}
+                              alt={product.name}
+                              sx={{ objectFit: 'cover' }}
                             />
                           )}
-                        </Box>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                ))}
-              </Box>
-            ) : (
-              <Typography variant="body1" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
-                Esta lista não possui produtos.
-              </Typography>
-            )}
-            
-            {list.sharedWith && list.sharedWith.length > 0 && (
-              <>
-                <Divider sx={{ my: 3, backgroundColor: '#d9d9d9' }} />
-                <Typography variant="h6" sx={{ color: '#2d3748', fontWeight: 'bold', mb: 2 }}>
-                  Compartilhada com:
-                </Typography>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                  {list.sharedWith.map((user, index) => (
-                    <Chip
-                      key={index}
-                      avatar={<Avatar sx={{ backgroundColor: '#2d3748' }}><PersonIcon /></Avatar>}
-                      label={typeof user === 'string' ? user : (user.name || user.email)}
-                      sx={{
-                        backgroundColor: '#d9d9d9',
-                        color: '#2d3748'
-                      }}
-                    />
-                  ))}
-                </Box>
-              </>
-            )}
-          </AccordionDetails>
-        </Accordion>
-      ))}
+                          <CardContent sx={{ p: 0 }}>
+                            <Typography
+                              variant="subtitle1"
+                              sx={{
+                                fontWeight: 700,
+                                color: theme.palette.text.primary,
+                                mb: 1,
+                                fontSize: { xs: '1.1rem', sm: '1.2rem' },
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                              }}
+                            >
+                              {product.name}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              sx={{
+                                mb: 2,
+                                fontSize: { xs: '0.95rem', sm: '1rem' },
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                                lineHeight: 1.4
+                              }}
+                            >
+                              {product.description}
+                            </Typography>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                              <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                                <strong>Custo:</strong> <span style={{ color: theme.palette.error.main }}>R$ {product.costPrice.toFixed(2)}</span>
+                              </Typography>
+                              <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                                <strong>Venda:</strong> <span style={{ color: theme.palette.success.main }}>R$ {product.finalPrice.toFixed(2)}</span>
+                              </Typography>
+                              <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                                <strong>Comissão:</strong> <span style={{ color: theme.palette.warning.main }}>R$ {product.commission.toFixed(2)}</span>
+                              </Typography>
+                              <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                                <strong>Lucro:</strong> <span style={{ color: theme.palette.info.main }}>R$ {product.profit.toFixed(2)}</span>
+                              </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+                              {product.quantity !== undefined && (
+                                <Chip
+                                  label={`Estoque: ${product.quantity}`}
+                                  size="small"
+                                  sx={{
+                                    backgroundColor: product.quantity > 0 ? theme.palette.success.light : theme.palette.error.light,
+                                    color: product.quantity > 0 ? theme.palette.success.dark : theme.palette.error.dark,
+                                    fontSize: '0.7rem',
+                                    fontWeight: 600
+                                  }}
+                                />
+                              )}
+                            </Box>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </Box>
+                  ) : (
+                    <Box sx={{ 
+                      textAlign: 'center', 
+                      py: 4,
+                      color: theme.palette.text.secondary 
+                    }}>
+                      <Typography variant="body1">
+                        Esta lista não possui produtos.
+                      </Typography>
+                    </Box>
+                  )}
+                  {/* Botão editar lista para admin na parte de baixo */}
+                  {isAdmin && (
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                      <IconButton
+                        onClick={() => handleEditList(list._id)}
+                        sx={{
+                          background: 'rgba(102,126,234,0.10)',
+                          color: theme.palette.primary.main,
+                          '&:hover': {
+                            background: theme.palette.primary.main,
+                            color: 'white',
+                            transform: 'scale(1.1)',
+                          },
+                          zIndex: 2
+                        }}
+                        size="small"
+                      >
+                        <EditIcon sx={{ fontSize: 22 }} />
+                      </IconButton>
+                    </Box>
+                  )}
+                </AccordionDetails>
+              </Accordion>
+            </Fade>
+          ))}
+        </Box>
+      </Container>
     </Box>
   );
 };

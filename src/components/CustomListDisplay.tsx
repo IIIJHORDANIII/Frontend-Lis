@@ -11,20 +11,7 @@ import {
   ListItemText
 } from '@mui/material';
 import { getCustomLists } from '../services/api';
-
-interface Product {
-  _id: string;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-}
-
-interface CustomList {
-  _id: string;
-  name: string;
-  products: Product[];
-}
+import { CustomList } from '../types';
 
 const CustomListDisplay: React.FC = () => {
   const [lists, setLists] = useState<CustomList[]>([]);
@@ -107,7 +94,7 @@ const CustomListDisplay: React.FC = () => {
                         }
                         secondary={
                           <Typography sx={{ color: '#383A29' }}>
-                            R$ {product.price.toFixed(2)}
+                            R$ {product.finalPrice.toFixed(2)}
                           </Typography>
                         }
                       />

@@ -20,14 +20,18 @@ import {
   alpha,
   Stack,
   Grid,
-  CircularProgress
+  CircularProgress,
+  Card,
+  CardContent,
+  Divider
 } from '@mui/material';
 import {
   ShoppingCart,
   Description,
   AttachMoney,
   CloudUpload,
-  Image as ImageIcon
+  Image as ImageIcon,
+  TrendingUp
 } from '@mui/icons-material';
 import { createProduct } from '../services/api';
 
@@ -37,8 +41,7 @@ const ProductForm: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    price: '',
-    commission: '',
+    costPrice: '',
     quantity: '',
     category: ''
   });
@@ -46,6 +49,24 @@ const ProductForm: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  // Função para calcular os valores automaticamente
+  const calculateValues = (costPrice: number) => {
+    if (!costPrice || costPrice <= 0) return null;
+    
+    // Fórmula: PreçoVenda = (PreçoCusto * 2) / 0.70
+    const finalPrice = (costPrice * 2) / 0.70;
+    const commissionAmount = finalPrice * 0.30; // 30% fixo
+    const profit = finalPrice - costPrice - commissionAmount;
+    
+    return {
+      finalPrice: finalPrice.toFixed(2),
+      commissionAmount: commissionAmount.toFixed(2),
+      profit: profit.toFixed(2)
+    };
+  };
+
+  const calculatedValues = calculateValues(parseFloat(formData.costPrice));
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -81,12 +102,9 @@ const ProductForm: React.FC = () => {
       setError('Descrição é obrigatória');
       return;
     }
-    if (!formData.price || parseFloat(formData.price) <= 0) {
-      setError('Preço deve ser maior que zero');
-      return;
-    }
-    if (!formData.commission || parseFloat(formData.commission) < 0) {
-      setError('Comissão deve ser maior ou igual a zero');
+    const costPriceValue = parseFloat(formData.costPrice);
+    if (!formData.costPrice || isNaN(costPriceValue) || costPriceValue <= 0) {
+      setError('Preço de custo deve ser um número maior que zero');
       return;
     }
     if (!formData.quantity || parseInt(formData.quantity) < 0) {
@@ -104,8 +122,7 @@ const ProductForm: React.FC = () => {
       const productData = new FormData();
       productData.append('name', formData.name.trim());
       productData.append('description', formData.description.trim());
-      productData.append('price', formData.price);
-      productData.append('commission', formData.commission);
+      productData.append('costPrice', costPriceValue.toString());
       productData.append('quantity', formData.quantity);
       productData.append('category', formData.category);
       if (image) {
@@ -222,6 +239,8 @@ const ProductForm: React.FC = () => {
               }}>
                 Adicione um novo produto ao estoque
               </Typography>
+              
+
             </Box>
 
             {error && (
@@ -272,41 +291,71 @@ const ProductForm: React.FC = () => {
                   }}
                 />
                 
-                <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', sm: 'row' } }}>
-                  <TextField
-                    label="Preço"
-                    name="price"
-                    type="number"
-                    value={formData.price}
-                    onChange={handleChange}
-                    required
-                    sx={{ flex: 1 }}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AttachMoney sx={{ color: theme.palette.primary.main }} />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                  
-                  <TextField
-                    label="Comissão (%)"
-                    name="commission"
-                    type="number"
-                    value={formData.commission}
-                    onChange={handleChange}
-                    required
-                    sx={{ flex: 1 }}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AttachMoney sx={{ color: theme.palette.primary.main }} />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Box>
+                <TextField
+                  label="Preço de Custo (R$)"
+                  name="costPrice"
+                  type="number"
+                  value={formData.costPrice}
+                  onChange={handleChange}
+                  required
+                  inputProps={{ step: "0.01" }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AttachMoney sx={{ color: theme.palette.primary.main }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+
+                {/* Card de exibição dos valores calculados */}
+                {calculatedValues && (
+                  <Card sx={{ 
+                    background: alpha(theme.palette.primary.main, 0.05),
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                    borderRadius: 2
+                  }}>
+                    <CardContent>
+                      <Typography variant="h6" sx={{ 
+                        color: theme.palette.primary.main, 
+                        fontWeight: 600, 
+                        mb: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1
+                      }}>
+                        <TrendingUp />
+                        Valores Calculados Automaticamente
+                      </Typography>
+                      <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+                        <Box sx={{ flex: 1, textAlign: 'center', p: 2, bgcolor: 'white', borderRadius: 1 }}>
+                          <Typography variant="body2" color="text.secondary">
+                            Preço de Venda
+                          </Typography>
+                          <Typography variant="h6" sx={{ color: theme.palette.success.main, fontWeight: 600 }}>
+                            R$ {calculatedValues.finalPrice}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ flex: 1, textAlign: 'center', p: 2, bgcolor: 'white', borderRadius: 1 }}>
+                          <Typography variant="body2" color="text.secondary">
+                            Comissão (30%)
+                          </Typography>
+                          <Typography variant="h6" sx={{ color: theme.palette.warning.main, fontWeight: 600 }}>
+                            R$ {calculatedValues.commissionAmount}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ flex: 1, textAlign: 'center', p: 2, bgcolor: 'white', borderRadius: 1 }}>
+                          <Typography variant="body2" color="text.secondary">
+                            Lucro Líquido
+                          </Typography>
+                          <Typography variant="h6" sx={{ color: theme.palette.info.main, fontWeight: 600 }}>
+                            R$ {calculatedValues.profit}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                )}
                 
                 <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', sm: 'row' } }}>
                   <TextField
