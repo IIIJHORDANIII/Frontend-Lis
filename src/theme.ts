@@ -212,19 +212,19 @@ const theme = createTheme({
               minHeight: '52px',
             },
             '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: '#2d3748',
-              boxShadow: '0 0 0 2px rgba(45,55,72,0.10)',
+              borderColor: '#bdbdbd',
+              boxShadow: 'none',
             },
             '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-              borderColor: '#2d3748',
-              boxShadow: '0 0 0 2px rgba(45,55,72,0.15)',
+              borderColor: '#bdbdbd',
+              boxShadow: 'none',
             },
             '&:hover': {
               transform: 'translateY(-2px)',
             },
             '&.Mui-focused': {
               transform: 'translateY(-2px)',
-              borderColor: '#2d3748',
+              borderColor: '#bdbdbd',
             },
           },
           '& .MuiOutlinedInput-notchedOutline': {

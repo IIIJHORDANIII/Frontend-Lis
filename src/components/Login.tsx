@@ -222,6 +222,9 @@ const Login: React.FC = () => {
                     '& .MuiInputLabel-root': {
                       fontSize: { xs: '0.8125rem', sm: '0.875rem' },
                     },
+                    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#bdbdbd',
+                    },
                   }}
                 />
 
@@ -267,6 +270,9 @@ const Login: React.FC = () => {
                     },
                     '& .MuiInputLabel-root': {
                       fontSize: { xs: '0.8125rem', sm: '0.875rem' },
+                    },
+                    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#bdbdbd',
                     },
                   }}
                 />
