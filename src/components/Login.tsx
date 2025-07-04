@@ -113,7 +113,7 @@ const Login: React.FC = () => {
         },
       }} />
 
-      <Container maxWidth="sm" sx={{ position: 'relative', zIndex: 2 }}>
+      <Container maxWidth="xs" sx={{ position: 'relative', zIndex: 2 }}>
         <Fade in timeout={800}>
           <Paper 
             elevation={0}
@@ -126,6 +126,8 @@ const Login: React.FC = () => {
               border: '1px solid rgba(255, 255, 255, 0.3)',
               position: 'relative',
               overflow: 'hidden',
+              maxWidth: 750,
+              margin: '0 auto',
               '&::before': {
                 content: '""',
                 position: 'absolute',
