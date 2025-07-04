@@ -798,3 +798,10 @@ body {
     transform: none !important;
   }
 }
+
+/* Remove qualquer border-radius do header */
+.MuiAppBar-root,
+.MuiToolbar-root,
+.MuiContainer-root {
+  border-radius: 0 !important;
+}
