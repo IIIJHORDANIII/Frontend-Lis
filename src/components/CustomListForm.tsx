@@ -158,8 +158,14 @@ const CustomListForm: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="md">
-      <Box sx={{ mt: 4, mb: 4 }}>
+    <Container maxWidth="xl" sx={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      minHeight: '100vh',
+      px: { xs: 1, sm: 2, md: 3 },
+    }}>
+      <Box sx={{ width: '100%', maxWidth: { xs: '100%', sm: 600, md: 900 }, mx: 'auto' }}>
         <Paper
           elevation={0}
           sx={{
@@ -170,16 +176,10 @@ const CustomListForm: React.FC = () => {
             color: 'white',
             position: 'relative',
             overflow: 'hidden',
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(217,217,217,0.1)',
-              backdropFilter: 'blur(10px)'
-            }
+            '@media (min-width: 1920px)': {
+              maxWidth: 1100,
+              p: 6,
+            },
           }}
         >
           <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -208,7 +208,7 @@ const CustomListForm: React.FC = () => {
           sx={{
             borderRadius: 4,
             p: 4,
-            background: 'rgba(217,217,217,0.9)',
+            background: 'white',
             backdropFilter: 'blur(20px)',
             border: '1px solid rgba(217,217,217,0.2)',
             boxShadow: '0 8px 32px rgba(56,58,41,0.1)'

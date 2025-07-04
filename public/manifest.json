@@ -1,0 +1,64 @@
+{
+  "short_name": "Lis System",
+  "name": "Lis System - Gestão de Estoque Profissional",
+  "description": "Plataforma de gestão de estoque profissional para empresas modernas",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#2d3748",
+  "background_color": "#f7fafc",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "pt-BR",
+  "categories": ["business", "productivity", "utilities"],
+  "screenshots": [
+    {
+      "src": "Logo Vector.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Produtos",
+      "short_name": "Produtos",
+      "description": "Gerenciar produtos",
+      "url": "/admin/products",
+      "icons": [
+        {
+          "src": "favicon.ico",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Vendas",
+      "short_name": "Vendas",
+      "description": "Visualizar vendas",
+      "url": "/sales",
+      "icons": [
+        {
+          "src": "favicon.ico",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+} 

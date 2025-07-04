@@ -105,6 +105,8 @@ const AppContent: React.FC = () => {
 
 // Componente para layout com Header
 const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const theme = useTheme();
+  
   return (
     <Box sx={{ 
       minHeight: '100vh',
@@ -132,17 +134,27 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       
       {/* Content */}
       <Box sx={{ position: 'relative', zIndex: 2, flex: 1, display: 'flex', flexDirection: 'column' }}>
-      <Header />
+        <Header />
         <Container 
           maxWidth="xl"
-        component="main" 
-        sx={{ 
-          flexGrow: 1,
-            py: { xs: 3, sm: 4, md: 5 },
-            px: { xs: 3, sm: 4 },
+          component="main" 
+          sx={{ 
+            flexGrow: 1,
+            py: { xs: 1, sm: 2, md: 3, lg: 4 },
+            px: { xs: 1, sm: 2, md: 3, lg: 4 },
             position: 'relative',
             zIndex: 1,
-            pt: { xs: 14, sm: 15, md: 16 },
+            pt: { 
+              xs: 10, // 48px header + 2px top + 2px bottom + 16px padding
+              sm: 12, // 56px header + 8px top + 8px bottom + 16px padding  
+              md: 14, // 64px header + 16px top + 16px bottom + 16px padding
+              lg: 16  // 64px header + 24px top + 24px bottom + 16px padding
+            },
+            '@media (max-width: 600px)': {
+              px: 0.5,
+              py: 0.5,
+              pt: 9, // Ajuste fino para mobile
+            },
           }}
         >
           {children}

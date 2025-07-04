@@ -1,6 +1,15 @@
 import { createTheme } from '@mui/material';
 
 const theme = createTheme({
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 960,
+      lg: 1280,
+      xl: 1920,
+    },
+  },
   palette: {
     mode: 'light',
     primary: {
@@ -40,47 +49,74 @@ const theme = createTheme({
     fontFamily: '"Poppins", "Inter", "Montserrat", "Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
       fontWeight: 800,
-      fontSize: '3.5rem',
+      fontSize: '2.5rem',
       lineHeight: 1.1,
       letterSpacing: '-0.02em',
       marginBottom: '1.5rem',
+      '@media (min-width:600px)': {
+        fontSize: '3rem',
+      },
+      '@media (min-width:960px)': {
+        fontSize: '3.5rem',
+      },
     },
     h2: {
       fontWeight: 800,
-      fontSize: '2.5rem',
+      fontSize: '2rem',
       lineHeight: 1.2,
       letterSpacing: '-0.01em',
       marginBottom: '1rem',
+      '@media (min-width:600px)': {
+        fontSize: '2.25rem',
+      },
+      '@media (min-width:960px)': {
+        fontSize: '2.5rem',
+      },
     },
     h3: {
       fontWeight: 700,
-      fontSize: '2rem',
+      fontSize: '1.75rem',
       lineHeight: 1.3,
       marginBottom: '0.875rem',
+      '@media (min-width:960px)': {
+        fontSize: '2rem',
+      },
     },
     h4: {
       fontWeight: 700,
-      fontSize: '1.75rem',
+      fontSize: '1.5rem',
       lineHeight: 1.3,
       marginBottom: '0.75rem',
+      '@media (min-width:960px)': {
+        fontSize: '1.75rem',
+      },
     },
     h5: {
       fontWeight: 700,
-      fontSize: '1.5rem',
+      fontSize: '1.25rem',
       lineHeight: 1.4,
       marginBottom: '0.625rem',
+      '@media (min-width:960px)': {
+        fontSize: '1.5rem',
+      },
     },
     h6: {
       fontWeight: 700,
-      fontSize: '1.25rem',
+      fontSize: '1.125rem',
       lineHeight: 1.4,
       marginBottom: '0.5rem',
+      '@media (min-width:960px)': {
+        fontSize: '1.25rem',
+      },
     },
     body1: {
-      fontSize: '1rem',
+      fontSize: '0.9375rem',
       lineHeight: 1.6,
       marginBottom: '0.5rem',
       fontWeight: 400,
+      '@media (min-width:960px)': {
+        fontSize: '1rem',
+      },
     },
     body2: {
       fontSize: '0.875rem',
@@ -92,6 +128,7 @@ const theme = createTheme({
       fontWeight: 700,
       textTransform: 'none',
       letterSpacing: '0.025em',
+      fontSize: '0.875rem',
     },
   },
   spacing: 8,
@@ -110,6 +147,11 @@ const theme = createTheme({
           minHeight: '48px',
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           boxShadow: '0 4px 16px rgba(45, 55, 72, 0.15)',
+          '@media (max-width:600px)': {
+            padding: '10px 20px',
+            fontSize: '0.8125rem',
+            minHeight: '44px',
+          },
           '&:hover': {
             transform: 'translateY(-2px) scale(1.02)',
             boxShadow: '0 8px 25px rgba(45, 55, 72, 0.25)',
@@ -134,11 +176,21 @@ const theme = createTheme({
           padding: '16px 32px',
           fontSize: '1rem',
           minHeight: '56px',
+          '@media (max-width:600px)': {
+            padding: '14px 28px',
+            fontSize: '0.9375rem',
+            minHeight: '52px',
+          },
         },
         sizeSmall: {
           padding: '8px 16px',
           fontSize: '0.75rem',
           minHeight: '40px',
+          '@media (max-width:600px)': {
+            padding: '6px 12px',
+            fontSize: '0.6875rem',
+            minHeight: '36px',
+          },
         },
       },
     },
@@ -146,6 +198,9 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           marginBottom: '24px',
+          '@media (max-width:600px)': {
+            marginBottom: '20px',
+          },
           '& .MuiOutlinedInput-root': {
             borderRadius: 12,
             minHeight: '56px',
@@ -153,25 +208,48 @@ const theme = createTheme({
             backdropFilter: 'blur(10px)',
             border: '1px solid rgba(255,255,255,0.3)',
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            '@media (max-width:600px)': {
+              minHeight: '52px',
+            },
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#2d3748',
+              boxShadow: '0 0 0 2px rgba(45,55,72,0.10)',
+            },
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#2d3748',
+              boxShadow: '0 0 0 2px rgba(45,55,72,0.15)',
+            },
             '&:hover': {
               transform: 'translateY(-2px)',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
             },
             '&.Mui-focused': {
               transform: 'translateY(-2px)',
-              boxShadow: '0 4px 16px rgba(45, 55, 72, 0.15)',
               borderColor: '#2d3748',
             },
+          },
+          '& .MuiOutlinedInput-notchedOutline': {
+            zIndex: 1,
           },
           '& .MuiInputLabel-root': {
             fontSize: '0.875rem',
             fontWeight: 600,
             color: '#4a5568',
+            background: 'transparent',
+            zIndex: 2,
+            padding: '0 4px',
+            position: 'relative',
+            '@media (max-width:600px)': {
+              fontSize: '0.8125rem',
+            },
           },
           '& .MuiInputBase-input': {
             fontSize: '0.875rem',
             padding: '16px 14px',
             color: '#2d3748',
+            '@media (max-width:600px)': {
+              fontSize: '0.8125rem',
+              padding: '14px 12px',
+            },
           },
           '& .MuiInputAdornment-root': {
             marginRight: '8px',
@@ -233,6 +311,10 @@ const theme = createTheme({
           background: 'rgba(255,255,255,0.95)',
           backdropFilter: 'blur(10px)',
           borderRight: '1px solid rgba(255,255,255,0.3)',
+          width: '280px',
+          '@media (min-width:600px)': {
+            width: '320px',
+          },
         },
       },
     },
@@ -243,6 +325,14 @@ const theme = createTheme({
           backdropFilter: 'blur(10px)',
           border: '1px solid rgba(255,255,255,0.3)',
           borderRadius: 16,
+          margin: '16px',
+          maxWidth: 'calc(100vw - 32px)',
+          width: 'calc(100vw - 32px)',
+          '@media (min-width:600px)': {
+            margin: '24px',
+            maxWidth: '600px',
+            width: 'auto',
+          },
         },
       },
     },
@@ -263,6 +353,7 @@ const theme = createTheme({
           backdropFilter: 'blur(10px)',
           borderRadius: 16,
           border: '1px solid rgba(255,255,255,0.3)',
+          overflowX: 'auto',
         },
       },
     },
@@ -271,11 +362,20 @@ const theme = createTheme({
         root: {
           borderBottom: '1px solid rgba(45, 55, 72, 0.1)',
           padding: '16px',
+          fontSize: '0.875rem',
+          '@media (max-width:600px)': {
+            padding: '12px 8px',
+            fontSize: '0.8125rem',
+          },
         },
         head: {
           fontWeight: 700,
           color: '#2d3748',
           background: 'rgba(45, 55, 72, 0.02)',
+          fontSize: '0.875rem',
+          '@media (max-width:600px)': {
+            fontSize: '0.75rem',
+          },
         },
       },
     },
@@ -286,6 +386,10 @@ const theme = createTheme({
           fontWeight: 600,
           background: 'rgba(45, 55, 72, 0.08)',
           color: '#2d3748',
+          fontSize: '0.75rem',
+          '@media (max-width:600px)': {
+            fontSize: '0.6875rem',
+          },
         },
       },
     },
@@ -296,6 +400,36 @@ const theme = createTheme({
           background: 'rgba(255,255,255,0.9)',
           backdropFilter: 'blur(10px)',
           border: '1px solid rgba(255,255,255,0.3)',
+        },
+      },
+    },
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          paddingLeft: '16px',
+          paddingRight: '16px',
+          '@media (min-width:600px)': {
+            paddingLeft: '24px',
+            paddingRight: '24px',
+          },
+        },
+      },
+    },
+    MuiGrid: {
+      styleOverrides: {
+        root: {
+          '&.MuiGrid-container': {
+            margin: '-8px',
+            '@media (min-width:600px)': {
+              margin: '-12px',
+            },
+          },
+          '&.MuiGrid-item': {
+            padding: '8px',
+            '@media (min-width:600px)': {
+              padding: '12px',
+            },
+          },
         },
       },
     },

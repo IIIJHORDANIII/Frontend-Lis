@@ -1,18 +1,119 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <title>Lis App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no" />
+    <meta name="theme-color" content="#2d3748" />
+    <meta name="description" content="Plataforma de gestão de estoque profissional para empresas modernas" />
+    <meta name="keywords" content="gestão, estoque, empresa, controle, produtos" />
+    <meta name="author" content="Lis System" />
+    
+    <!-- Mobile specific meta tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Lis System" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://lis-system.com/" />
+    <meta property="og:title" content="Lis System - Gestão de Estoque" />
+    <meta property="og:description" content="Plataforma de gestão de estoque profissional para empresas modernas" />
+    <meta property="og:image" content="%PUBLIC_URL%/Logo Vector.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://lis-system.com/" />
+    <meta property="twitter:title" content="Lis System - Gestão de Estoque" />
+    <meta property="twitter:description" content="Plataforma de gestão de estoque profissional para empresas modernas" />
+    <meta property="twitter:image" content="%PUBLIC_URL%/Logo Vector.png" />
+    
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Fonts -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" as="style" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    
+    <!-- Apple touch icons -->
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="%PUBLIC_URL%/logo192.png" />
+    
+    <title>Lis System - Gestão de Estoque Profissional</title>
+    
+    <!-- Critical CSS for better performance -->
+    <style>
+      /* Critical CSS for initial render */
+      body {
+        margin: 0;
+        font-family: 'Poppins', 'Inter', 'Montserrat', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #f7fafc;
+        overflow-x: hidden;
+      }
+      
+      #root {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      /* Loading spinner */
+      .loading-spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 50%, #e2e8f0 100%);
+      }
+      
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid #e2e8f0;
+        border-top: 4px solid #2d3748;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      /* Prevent layout shift */
+      * {
+        box-sizing: border-box;
+      }
+      
+      /* Mobile optimizations */
+      @media (max-width: 600px) {
+        html {
+          font-size: 14px;
+        }
+        
+        body {
+          font-size: 14px;
+          line-height: 1.4;
+        }
+      }
+    </style>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <noscript>Você precisa habilitar o JavaScript para executar este aplicativo.</noscript>
+    <div id="root">
+      <!-- Loading state while React loads -->
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+      </div>
+    </div>
   </body>
 </html>

@@ -46,6 +46,7 @@ const Header: React.FC = () => {
   const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -97,13 +98,13 @@ const Header: React.FC = () => {
         color="inherit"
         component={RouterLink}
         to={item.path}
-        startIcon={item.icon}
+        startIcon={!isSmallMobile ? item.icon : undefined}
         sx={{
           borderRadius: 3,
-          px: 3,
-          py: 1.5,
+          px: { xs: 1.5, sm: 2, md: 3 },
+          py: { xs: 1, sm: 1.5 },
           fontWeight: 600,
-          fontSize: '0.875rem',
+          fontSize: { xs: '0.6875rem', sm: '0.75rem', md: '0.875rem' },
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           backgroundColor: isActiveRoute(item.path) 
             ? 'rgba(255, 255, 255, 0.2)'
@@ -118,9 +119,15 @@ const Header: React.FC = () => {
             backdropFilter: 'blur(10px)',
             border: '1px solid rgba(255, 255, 255, 0.3)',
           },
+          '@media (max-width: 600px)': {
+            px: 1,
+            fontSize: '0.625rem',
+            minWidth: 'auto',
+            minHeight: '36px',
+          },
         }}
       >
-        {item.label}
+        {isSmallMobile ? item.label.split(' ')[0] : item.label}
       </Button>
     ))
   );
@@ -137,6 +144,7 @@ const Header: React.FC = () => {
             borderRadius: 2,
             mx: 1,
             mb: 0.5,
+            py: { xs: 1.5, sm: 2 },
             transition: 'all 0.3s ease',
             '&.Mui-selected': {
               backgroundColor: 'rgba(45, 55, 72, 0.1)',
@@ -149,10 +157,16 @@ const Header: React.FC = () => {
             }
           }}
         >
-          <ListItemIcon sx={{ color: 'inherit' }}>
+          <ListItemIcon sx={{ color: 'inherit', minWidth: 40 }}>
             {item.icon}
           </ListItemIcon>
-          <ListItemText primary={item.label} />
+          <ListItemText 
+            primary={item.label} 
+            primaryTypographyProps={{
+              fontSize: { xs: '0.875rem', sm: '1rem' },
+              fontWeight: 500,
+            }}
+          />
         </ListItemButton>
       </ListItem>
     ))
@@ -168,26 +182,33 @@ const Header: React.FC = () => {
           backdropFilter: 'blur(10px)',
           borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
           boxShadow: '0 2px 20px rgba(0,0,0,0.1)',
-          top: 16,
-          left: 24,
-          right: 24,
-          width: 'auto',
-          borderRadius: 3,
-          zIndex: theme.zIndex.appBar
+          top: 0,
+          left: 0,
+          right: 0,
+          width: '100vw',
+          borderRadius: { xs: 0, sm: 2, md: 3 },
+          zIndex: theme.zIndex.appBar,
         }}
       >
-        <Container maxWidth="xl">
-          <Toolbar sx={{ justifyContent: 'space-between', py: 2, px: 0 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Container maxWidth={false} disableGutters sx={{ px: 0, mx: 0, width: '100vw' }}>
+          <Toolbar sx={{ 
+            justifyContent: 'space-between', 
+            py: 0, 
+            px: 0,
+            minHeight: { xs: '32px', sm: '40px', md: '64px' },
+            height: { xs: '32px', sm: '40px', md: '64px' },
+            width: '100vw',
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.1, sm: 1, md: 2 } }}>
               <Box
                 component="img"
                 src="/Logo Vector.png"
                 alt="Lis System Logo"
                 onClick={() => navigate('/')}
                 sx={{
-                  height: 40,
+                  height: { xs: 14, sm: 18, md: 40 },
                   width: 'auto',
-                  maxWidth: 150,
+                  maxWidth: { xs: 28, sm: 60, md: 150 },
                   objectFit: 'contain',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
@@ -201,12 +222,20 @@ const Header: React.FC = () => {
             </Box>
             
             {isAuthenticated && !isMobile && (
-              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+              <Box sx={{ 
+                display: 'flex', 
+                gap: { xs: 0.5, sm: 1, md: 2 }, 
+                alignItems: 'center', 
+                flexWrap: 'wrap',
+                flex: 1,
+                justifyContent: 'center',
+                mx: 2,
+              }}>
                 {isAdmin ? renderMenuItems(adminMenuItems) : renderMenuItems(userMenuItems)}
               </Box>
             )}
             
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', gap: { xs: 0.1, sm: 1, md: 2 }, alignItems: 'center' }}>
               {isAuthenticated ? (
                 <>
                   {isMobile && (
@@ -215,7 +244,9 @@ const Header: React.FC = () => {
                       onClick={handleMobileMenuToggle}
                       sx={{
                         borderRadius: 2,
-                        p: 1,
+                        p: 0.25,
+                        fontSize: 18,
+                        '& .MuiSvgIcon-root': { fontSize: 20 },
                         transition: 'all 0.3s ease',
                         '&:hover': {
                           backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -223,27 +254,32 @@ const Header: React.FC = () => {
                         }
                       }}
                     >
-                      <MenuIcon />
+                      <MenuIcon sx={{ fontSize: 18 }} />
                     </IconButton>
                   )}
-                  
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Chip
-                      label={isAdmin ? 'Admin' : 'Usuário'}
-                      size="small"
-                      sx={{
-                        backgroundColor: isAdmin ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.15)',
-                        color: '#fff',
-                        fontWeight: 600,
-                        fontSize: '0.75rem',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                      }}
-                    />
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.1 }}>
+                    {!isSmallMobile && (
+                      <Chip
+                        label={isAdmin ? 'Admin' : 'Usuário'}
+                        size="small"
+                        sx={{
+                          backgroundColor: isAdmin ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.15)',
+                          color: '#fff',
+                          fontWeight: 600,
+                          fontSize: { xs: '0.5rem', sm: '0.625rem', md: '0.75rem' },
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          height: { xs: 14, sm: 20, md: 24 },
+                          '& .MuiChip-label': {
+                            px: { xs: 0.5, sm: 1 },
+                          },
+                        }}
+                      />
+                    )}
                     <IconButton
                       onClick={handleMenu}
                       sx={{
                         borderRadius: 2,
-                        p: 1,
+                        p: 0.1,
                         transition: 'all 0.3s ease',
                         '&:hover': {
                           backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -253,12 +289,12 @@ const Header: React.FC = () => {
                     >
                       <Avatar
                         sx={{
-                          width: 32,
-                          height: 32,
+                          width: 20,
+                          height: 20,
                           backgroundColor: 'rgba(255, 255, 255, 0.2)',
                           color: '#fff',
                           fontWeight: 600,
-                          fontSize: '0.875rem',
+                          fontSize: '0.7rem',
                           border: '1px solid rgba(255, 255, 255, 0.3)',
                         }}
                       >
@@ -273,15 +309,16 @@ const Header: React.FC = () => {
                   onClick={() => navigate('/login')}
                   sx={{
                     borderRadius: 3,
-                    px: 3,
-                    py: 1.5,
+                    px: 1,
+                    py: 0.25,
                     fontWeight: 700,
-                    fontSize: '0.875rem',
+                    fontSize: '0.7rem',
                     background: 'rgba(255, 255, 255, 0.2)',
                     color: '#fff',
                     border: '1px solid rgba(255, 255, 255, 0.3)',
                     backdropFilter: 'blur(10px)',
                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    minHeight: '24px',
                     '&:hover': {
                       transform: 'translateY(-2px) scale(1.02)',
                       background: 'rgba(255, 255, 255, 0.3)',
@@ -289,7 +326,7 @@ const Header: React.FC = () => {
                     },
                   }}
                 >
-                  Entrar
+                  {isSmallMobile ? 'Entrar' : 'Entrar'}
                 </Button>
               )}
             </Box>
@@ -304,7 +341,7 @@ const Header: React.FC = () => {
         onClose={handleMobileMenuToggle}
         sx={{
           '& .MuiDrawer-paper': {
-            width: 280,
+            width: { xs: '260px', sm: '280px', md: '320px' },
             pt: 2,
             background: 'rgba(255, 255, 255, 0.95)',
             backdropFilter: 'blur(10px)',
@@ -312,8 +349,16 @@ const Header: React.FC = () => {
           },
         }}
       >
-        <Box sx={{ p: 2 }}>
-          <Typography variant="h6" sx={{ mb: 2, color: '#2d3748', fontWeight: 700 }}>
+        <Box sx={{ p: { xs: 1.5, sm: 2 } }}>
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              mb: 2, 
+              color: '#2d3748', 
+              fontWeight: 700,
+              fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
+            }}
+          >
             Menu
           </Typography>
           <List>
@@ -326,15 +371,22 @@ const Header: React.FC = () => {
                   borderRadius: 2,
                   mx: 1,
                   color: '#e53e3e',
+                  py: { xs: 1.5, sm: 2 },
                   '&:hover': {
                     backgroundColor: 'rgba(229, 62, 62, 0.1)',
                   }
                 }}
               >
-                <ListItemIcon sx={{ color: 'inherit' }}>
+                <ListItemIcon sx={{ color: 'inherit', minWidth: 40 }}>
                   <ExitToApp />
                 </ListItemIcon>
-                <ListItemText primary="Sair" />
+                <ListItemText 
+                  primary="Sair" 
+                  primaryTypographyProps={{
+                    fontSize: { xs: '0.875rem', sm: '1rem' },
+                    fontWeight: 500,
+                  }}
+                />
               </ListItemButton>
             </ListItem>
           </List>
@@ -350,7 +402,7 @@ const Header: React.FC = () => {
           '& .MuiPaper-root': {
             borderRadius: 3,
             mt: 1,
-            minWidth: 200,
+            minWidth: { xs: 160, sm: 180, md: 200 },
             background: 'rgba(255, 255, 255, 0.95)',
             backdropFilter: 'blur(10px)',
             border: '1px solid rgba(255, 255, 255, 0.3)',
@@ -363,6 +415,7 @@ const Header: React.FC = () => {
             borderRadius: 1,
             mx: 1,
             mb: 0.5,
+            py: { xs: 1, sm: 1.5 },
             transition: 'all 0.3s ease',
             '&:hover': {
               backgroundColor: 'rgba(45, 55, 72, 0.1)',
@@ -370,7 +423,14 @@ const Header: React.FC = () => {
           }}
         >
           <AccountCircle sx={{ mr: 2, color: '#4a5568' }} />
-          <Typography variant="body2" sx={{ color: '#2d3748', fontWeight: 600 }}>
+          <Typography 
+            variant="body2" 
+            sx={{ 
+              color: '#2d3748', 
+              fontWeight: 600,
+              fontSize: { xs: '0.75rem', sm: '0.8125rem', md: '0.875rem' },
+            }}
+          >
             {user?.email || 'Usuário'}
           </Typography>
         </MenuItem>
@@ -382,6 +442,7 @@ const Header: React.FC = () => {
             mx: 1,
             mt: 0.5,
             color: '#e53e3e',
+            py: { xs: 1, sm: 1.5 },
             transition: 'all 0.3s ease',
             '&:hover': {
               backgroundColor: 'rgba(229, 62, 62, 0.1)',
@@ -389,7 +450,13 @@ const Header: React.FC = () => {
           }}
         >
           <ExitToApp sx={{ mr: 2 }} />
-          <Typography variant="body2" sx={{ fontWeight: 600 }}>
+          <Typography 
+            variant="body2" 
+            sx={{ 
+              fontWeight: 600,
+              fontSize: { xs: '0.75rem', sm: '0.8125rem', md: '0.875rem' },
+            }}
+          >
             Sair
           </Typography>
         </MenuItem>

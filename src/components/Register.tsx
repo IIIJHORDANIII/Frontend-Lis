@@ -112,28 +112,34 @@ const Register: React.FC = () => {
         }
       }}
     >
-      <Container maxWidth="md">
-        <Fade in timeout={800}>
-          <Paper 
+      <Container maxWidth="xl" sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        minHeight: '100vh',
+        px: { xs: 1, sm: 2, md: 3 },
+      }}>
+        <Fade in>
+          <Paper
             elevation={0}
-            sx={{ 
-              p: { xs: 4, sm: 6 },
-              borderRadius: 4,
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(20px)',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              position: 'relative',
-              overflow: 'hidden',
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                height: '4px',
-                background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`
-              }
+            sx={{
+              maxWidth: { xs: 340, sm: 400, md: 700, xl: 900 },
+              width: '100%',
+              mx: 'auto',
+              mt: { xs: 1, sm: 2, md: 4 },
+              mb: { xs: 1, sm: 2, md: 4 },
+              p: { xs: 1, sm: 2, md: 4 },
+              borderRadius: 3,
+              boxShadow: '0 8px 32px 0 rgba(45,55,72,0.10)',
+              background: 'white',
+              '@media (min-width: 1600px)': {
+                maxWidth: 1100,
+                p: 6,
+              },
+              '@media (min-width: 1920px)': {
+                maxWidth: 1300,
+                p: 8,
+              },
             }}
           >
             <Box sx={{ textAlign: 'center', mb: 5 }}>
@@ -155,12 +161,28 @@ const Register: React.FC = () => {
                 sx={{
                   fontWeight: 700,
                   color: theme.palette.primary.main,
-                  mb: 1
+                  mb: 1,
+                  fontSize: { xs: '1.3rem', sm: '1.7rem', md: '2.5rem' },
+                  '@media (min-width: 1600px)': {
+                    fontSize: '2.75rem',
+                  },
+                  '@media (min-width: 1920px)': {
+                    fontSize: '3rem',
+                  },
                 }}
               >
                 Nova Vendedora
               </Typography>
-              <Typography variant="body1" sx={{ color: theme.palette.text.secondary }}>
+              <Typography variant="body1" sx={{ color: theme.palette.text.secondary,
+                mb: 2,
+                fontSize: { xs: '0.9rem', sm: '1.05rem', md: '1.15rem' },
+                '@media (min-width: 1600px)': {
+                  fontSize: '1.25rem',
+                },
+                '@media (min-width: 1920px)': {
+                  fontSize: '1.35rem',
+                },
+              }}>
                 Preencha os dados para criar uma nova conta
               </Typography>
             </Box>

@@ -69,7 +69,17 @@ const ShareListDialog: React.FC<ShareListDialogProps> = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth
+      PaperProps={{
+        sx: {
+          '@media (min-width: 1920px)': {
+            maxWidth: 700,
+            minWidth: 500,
+            margin: '32px auto',
+          },
+        }
+      }}
+    >
       <DialogTitle>Compartilhar Lista</DialogTitle>
       <DialogContent>
         {error && (

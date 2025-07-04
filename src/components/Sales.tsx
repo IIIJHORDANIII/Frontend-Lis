@@ -13,7 +13,14 @@ import {
   Alert,
   Box,
   CircularProgress,
-  Snackbar
+  Snackbar,
+  useTheme,
+  useMediaQuery,
+  Card,
+  CardContent,
+  CardActions,
+  Chip,
+  Button
 } from '@mui/material';
 import { Add, Remove } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -44,6 +51,8 @@ const Sales: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState('');
   const [processingProduct, setProcessingProduct] = useState<string | null>(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -215,82 +224,173 @@ const Sales: React.FC = () => {
         <Typography variant="h6" gutterBottom>
           Produtos Disponíveis
         </Typography>
-        
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Produto</TableCell>
-                <TableCell align="right">Preço</TableCell>
-                <TableCell align="right">Comissão</TableCell>
-                <TableCell align="center">Ações</TableCell>
-                <TableCell align="center">Todas as Vendas</TableCell>
-                <TableCell align="right">Subtotal</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {products.map((product) => {
-                const quantity = sales[product._id] || 0;
-                const subtotal = product.price * quantity;
-                const commission = product.commission || (product.price * 0.3);
-                const isProcessing = processingProduct === product._id;
-                
-                return (
-                  <TableRow key={product._id}>
-                    <TableCell component="th" scope="row">
+        {isMobile ? (
+          <Box display="flex" flexDirection="column" gap={2}>
+            {products.map((product) => {
+              const quantity = sales[product._id] || 0;
+              const subtotal = product.price * quantity;
+              const commission = product.commission || (product.price * 0.3);
+              const isProcessing = processingProduct === product._id;
+              return (
+                <Card key={product._id} sx={{ p: 2, boxShadow: 2, borderRadius: 2, border: '1px solid #e0e0e0' }}>
+                  <CardContent sx={{ p: 0, pb: 2 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#383A29', mb: 1, fontSize: '1.1rem' }}>
                       {product.name}
-                    </TableCell>
-                    <TableCell align="right">
-                      R$ {product.price.toFixed(2)}
-                    </TableCell>
-                    <TableCell align="right">
-                      R$ {commission.toFixed(2)}
-                    </TableCell>
-                    <TableCell align="center">
-                      <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleQuantityChange(product._id, false)}
-                          disabled={quantity === 0 || isProcessing}
-                          color="error"
-                        >
-                          <Remove />
-                        </IconButton>
-                        
-                        {isProcessing ? (
-                          <CircularProgress size={20} />
-                        ) : (
-                          <Typography sx={{ minWidth: '60px', textAlign: 'center' }}>
-                            Vender/Devolver
-                          </Typography>
-                        )}
-                        
-                        <IconButton
-                          size="small"
-                          onClick={() => handleQuantityChange(product._id, true)}
-                          disabled={isProcessing}
-                          color="success"
-                        >
-                          <Add />
-                        </IconButton>
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontSize: '0.9rem' }}>
+                      {product.description}
+                    </Typography>
+                    
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                      <Box display="flex" gap={1}>
+                        <Chip label={`R$ ${product.price.toFixed(2)}`} size="small" sx={{ background: '#383A29', color: 'white', fontWeight: 'bold' }} />
+                        <Chip label={`Comissão: R$ ${commission.toFixed(2)}`} size="small" sx={{ background: '#d9d9d9', color: '#383A29', fontWeight: 'bold' }} />
                       </Box>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Typography variant="h6" color={quantity > 0 ? 'success.main' : 'text.secondary'}>
-                        {quantity}
+                    </Box>
+                    
+                    {/* Botões de ação */}
+                    <Box display="flex" justifyContent="center" alignItems="center" gap={2} mb={2}>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleQuantityChange(product._id, false)}
+                        disabled={quantity === 0 || isProcessing}
+                        sx={{
+                          minWidth: 50,
+                          height: 50,
+                          borderRadius: '50%',
+                          backgroundColor: quantity === 0 || isProcessing ? '#ccc' : '#d32f2f',
+                          '&:hover': {
+                            backgroundColor: quantity === 0 || isProcessing ? '#ccc' : '#b71c1c'
+                          }
+                        }}
+                      >
+                        <Remove fontSize="large" />
+                      </Button>
+                      
+                      <Box sx={{ 
+                        minWidth: 60, 
+                        textAlign: 'center',
+                        p: 2,
+                        backgroundColor: quantity > 0 ? '#e8f5e8' : '#f5f5f5',
+                        borderRadius: 2,
+                        border: `2px solid ${quantity > 0 ? '#2e7d32' : '#ccc'}`
+                      }}>
+                        <Typography variant="h5" sx={{ fontWeight: 'bold', color: quantity > 0 ? 'success.main' : 'text.secondary' }}>
+                          {quantity}
+                        </Typography>
+                      </Box>
+                      
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => handleQuantityChange(product._id, true)}
+                        disabled={isProcessing}
+                        sx={{
+                          minWidth: 50,
+                          height: 50,
+                          borderRadius: '50%',
+                          backgroundColor: isProcessing ? '#ccc' : '#2e7d32',
+                          '&:hover': {
+                            backgroundColor: isProcessing ? '#ccc' : '#1b5e20'
+                          }
+                        }}
+                      >
+                        <Add fontSize="large" />
+                      </Button>
+                    </Box>
+                    
+                    {/* Subtotal */}
+                    <Box sx={{ 
+                      p: 2, 
+                      backgroundColor: subtotal > 0 ? '#e8f5e8' : subtotal < 0 ? '#ffebee' : '#f5f5f5',
+                      borderRadius: 2,
+                      border: `2px solid ${subtotal > 0 ? '#2e7d32' : subtotal < 0 ? '#d32f2f' : '#ccc'}`,
+                      textAlign: 'center'
+                    }}>
+                      <Typography variant="h6" color={subtotal > 0 ? 'success.main' : subtotal < 0 ? 'error.main' : 'text.secondary'} sx={{ fontWeight: 'bold' }}>
+                        Subtotal: R$ {subtotal.toFixed(2)}
                       </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography color={subtotal > 0 ? 'success.main' : subtotal < 0 ? 'error.main' : 'text.secondary'}>
-                        R$ {subtotal.toFixed(2)}
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                    </Box>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </Box>
+        ) : (
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Produto</TableCell>
+                  <TableCell align="right">Preço</TableCell>
+                  <TableCell align="right">Comissão</TableCell>
+                  <TableCell align="center">Ações</TableCell>
+                  <TableCell align="center">Todas as Vendas</TableCell>
+                  <TableCell align="right">Subtotal</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {products.map((product) => {
+                  const quantity = sales[product._id] || 0;
+                  const subtotal = product.price * quantity;
+                  const commission = product.commission || (product.price * 0.3);
+                  const isProcessing = processingProduct === product._id;
+                  return (
+                    <TableRow key={product._id}>
+                      <TableCell component="th" scope="row">
+                        {product.name}
+                      </TableCell>
+                      <TableCell align="right">
+                        R$ {product.price.toFixed(2)}
+                      </TableCell>
+                      <TableCell align="right">
+                        R$ {commission.toFixed(2)}
+                      </TableCell>
+                      <TableCell align="center">
+                        <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
+                          <IconButton
+                            size="small"
+                            onClick={() => handleQuantityChange(product._id, false)}
+                            disabled={quantity === 0 || isProcessing}
+                            color="error"
+                          >
+                            <Remove />
+                          </IconButton>
+                          {isProcessing ? (
+                            <CircularProgress size={20} />
+                          ) : (
+                            <Typography sx={{ minWidth: '60px', textAlign: 'center' }}>
+                              Vender/Devolver
+                            </Typography>
+                          )}
+                          <IconButton
+                            size="small"
+                            onClick={() => handleQuantityChange(product._id, true)}
+                            disabled={isProcessing}
+                            color="success"
+                          >
+                            <Add />
+                          </IconButton>
+                        </Box>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Typography variant="h6" color={quantity > 0 ? 'success.main' : 'text.secondary'}>
+                          {quantity}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography color={subtotal > 0 ? 'success.main' : subtotal < 0 ? 'error.main' : 'text.secondary'}>
+                          R$ {subtotal.toFixed(2)}
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </Paper>
 
       {isAdmin && <SalesSummary />}

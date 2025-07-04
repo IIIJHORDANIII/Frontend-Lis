@@ -92,15 +92,18 @@ const AdminStockLists: React.FC = () => {
   }
 
   return (
-    <Box sx={{ maxWidth: '1200px', mx: 'auto', mt: 4, mb: 4, background: 'transparent' }}>
+    <Box sx={{ maxWidth: '1200px', mx: 'auto', mt: { xs: 2, sm: 4 }, mb: 4, background: 'transparent' }}>
       <Box sx={{ 
-        mb: 4,
-        p: 3,
+        mb: { xs: 2, sm: 4 },
+        p: { xs: 1, sm: 3 },
         backgroundColor: '#2d3748',
-        borderRadius: 2,
-        color: 'white'
+        borderRadius: { xs: 2, sm: 3 },
+        color: 'white',
+        width: { xs: '100%', sm: 'auto' },
+        maxWidth: { xs: 360, sm: 600, md: '100%' },
+        mx: { xs: 'auto', sm: 0 },
       }}>
-        <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
+        <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', fontSize: { xs: '1.3rem', sm: '2rem' }, color: 'white' }}>
           Listas de Estoque
         </Typography>
       </Box>
@@ -111,82 +114,87 @@ const AdminStockLists: React.FC = () => {
           expanded={expanded === list._id}
           onChange={() => handleAccordionChange(list._id)}
           sx={{
-            mb: 2,
-            border: '2px solid #d9d9d9',
-            borderRadius: 2,
-            '&:before': {
-              display: 'none'
-            },
-            '&.Mui-expanded': {
-              border: '2px solid #2d3748'
-            }
+            boxShadow: 'none',
+            border: '1.5px solid #2d3748',
+            borderRadius: { xs: 2, sm: 3 },
+            mb: { xs: 2, sm: 3 },
+            width: { xs: '100%', sm: 'auto' },
+            maxWidth: { xs: 360, sm: 600, md: '100%' },
+            mx: { xs: 'auto', sm: 0 },
+            background: '#fff',
           }}
         >
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon sx={{ color: '#2d3748' }} />}
-            sx={{
-              backgroundColor: '#f5f5f5',
-              '&.Mui-expanded': {
-                backgroundColor: '#d9d9d9'
-              }
-            }}
+            expandIcon={<ExpandMoreIcon sx={{ color: '#2d3748', fontSize: { xs: 20, sm: 28 } }} />}
+            sx={{ backgroundColor: '#f7fafc', p: { xs: 1, sm: 2 }, borderRadius: { xs: 2, sm: 3 } }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
-              <Typography variant="h6" sx={{ color: '#2d3748', fontWeight: 'bold', flexGrow: 1 }}>
-                {list.name}
-              </Typography>
-              
-              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                <Tooltip title="Editar lista">
-                  <IconButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleEditList(list._id);
-                    }}
-                    sx={{
-                      color: '#2d3748',
-                      '&:hover': {
-                        backgroundColor: 'rgba(45, 55, 72, 0.1)'
-                      }
-                    }}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                </Tooltip>
-                
-                <Chip
-                  icon={<PersonIcon />}
-                  label={list.createdBy?.name || 'Usuário'}
-                  size="small"
-                  sx={{
-                    backgroundColor: '#2d3748',
-                    color: 'white'
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, alignItems: 'center', width: '100%' }}>
+              <Tooltip title="Editar lista">
+                <IconButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditList(list._id);
                   }}
-                />
-                <Chip
-                  icon={list.isPublic ? <PublicIcon /> : <LockIcon />}
-                  label={list.isPublic ? 'Pública' : 'Privada'}
-                  size="small"
                   sx={{
-                    backgroundColor: list.isPublic ? '#2d3748' : '#d9d9d9',
-                    color: list.isPublic ? 'white' : '#2d3748'
+                    color: '#2d3748',
+                    fontSize: { xs: 18, sm: 22 },
+                    p: 0.5,
+                    mr: 0.5,
+                    background: '#f7fafc',
+                    '&:hover': {
+                      backgroundColor: 'rgba(45, 55, 72, 0.1)'
+                    }
                   }}
-                />
-                <Chip
-                  label={`${list.products?.length || 0} produtos`}
                   size="small"
-                  sx={{
-                    backgroundColor: '#d9d9d9',
-                    color: '#2d3748'
-                  }}
-                />
-              </Box>
+                >
+                  <EditIcon sx={{ fontSize: { xs: 18, sm: 22 } }} />
+                </IconButton>
+              </Tooltip>
+              <Chip
+                icon={<PersonIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />}
+                label={list.createdBy?.name || 'Usuário'}
+                size="small"
+                sx={{
+                  backgroundColor: '#2d3748',
+                  color: 'white',
+                  fontSize: { xs: '0.7rem', sm: '0.9rem' },
+                  height: { xs: 22, sm: 28 },
+                  mr: 0.5,
+                  boxShadow: 'none',
+                }}
+              />
+              <Chip
+                icon={list.isPublic ? <PublicIcon sx={{ fontSize: { xs: 16, sm: 20 } }} /> : <LockIcon sx={{ fontSize: { xs: 16, sm: 20 } }} />}
+                label={list.isPublic ? 'Pública' : 'Privada'}
+                size="small"
+                sx={{
+                  backgroundColor: list.isPublic ? '#e3fcec' : '#f7fafc',
+                  color: list.isPublic ? '#22543d' : '#2d3748',
+                  fontSize: { xs: '0.7rem', sm: '0.9rem' },
+                  height: { xs: 22, sm: 28 },
+                  mr: 0.5,
+                  boxShadow: 'none',
+                  border: list.isPublic ? '1px solid #38a169' : '1px solid #2d3748',
+                }}
+              />
+              <Chip
+                label={`${list.products?.length || 0} produtos`}
+                size="small"
+                sx={{
+                  backgroundColor: '#edf2f7',
+                  color: '#2d3748',
+                  fontSize: { xs: '0.7rem', sm: '0.9rem' },
+                  height: { xs: 22, sm: 28 },
+                  boxShadow: 'none',
+                  border: '1px solid #cbd5e1',
+                }}
+              />
             </Box>
           </AccordionSummary>
           
-          <AccordionDetails sx={{ p: 3 }}>
+          <AccordionDetails sx={{ p: { xs: 1, sm: 3 }, background: '#fff', borderRadius: { xs: 2, sm: 3 } }}>
             {list.description && (
-              <Typography variant="body1" sx={{ mb: 3, color: '#2d3748' }}>
+              <Typography variant="body1" sx={{ mb: 2, color: '#2d3748', fontSize: { xs: '0.85rem', sm: '1rem' } }}>
                 {list.description}
               </Typography>
             )}
@@ -200,58 +208,71 @@ const AdminStockLists: React.FC = () => {
                   md: 'repeat(3, 1fr)',
                   lg: 'repeat(4, 1fr)'
                 },
-                gap: 2
+                gap: { xs: 1, sm: 2 },
+                width: '100%',
+                maxWidth: { xs: 360, sm: 600, md: '100%' },
+                mx: { xs: 'auto', sm: 0 },
+                background: '#f7fafc',
+                borderRadius: { xs: 2, sm: 3 },
+                p: { xs: 1, sm: 2 },
               }}>
                 {list.products.map((product: Product) => (
                   <Card key={product._id} sx={{
                     border: '1px solid #d9d9d9',
                     transition: 'all 0.3s ease',
+                    borderRadius: { xs: 1, sm: 2 },
+                    boxShadow: 'none',
                     '&:hover': {
                       border: '1px solid #2d3748',
                       transform: 'translateY(-2px)',
                       boxShadow: '0 4px 12px rgba(45, 55, 72, 0.15)'
-                    }
+                    },
+                    maxWidth: { xs: 340, sm: 400, md: 500 },
+                    mx: { xs: 'auto', sm: 0 },
                   }}>
                     {product.image && (
                       <CardMedia
                         component="img"
-                        height="120"
+                        height={54}
                         image={product.image}
                         alt={product.name}
-                        sx={{ objectFit: 'cover' }}
+                        sx={{ objectFit: 'cover', borderTopLeftRadius: { xs: 1, sm: 2 }, borderTopRightRadius: { xs: 1, sm: 2 } }}
                       />
                     )}
-                    <CardContent sx={{ p: 2 }}>
+                    <CardContent sx={{ p: { xs: 0.5, sm: 1.5 }, display: 'block' }}>
                       <Typography variant="subtitle1" sx={{ 
                         color: '#2d3748', 
                         fontWeight: 'bold',
-                        mb: 1,
+                        mb: 0.25,
+                        fontSize: { xs: '0.75rem', sm: '1rem' },
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap'
                       }}>
                         {product.name}
                       </Typography>
-                      
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 0.25, fontSize: { xs: '0.65rem', sm: '0.875rem' } }}>
                         {product.description}
                       </Typography>
-                      
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography variant="h6" sx={{ color: '#2d3748', fontWeight: 'bold' }}>
-                          R$ {product.price.toFixed(2)}
-                        </Typography>
-                        
-                        {product.quantity !== undefined && (
-                          <Chip
-                            label={`Qtd: ${product.quantity}`}
-                            size="small"
-                            sx={{
-                              backgroundColor: product.quantity > 0 ? '#2d3748' : '#d9d9d9',
-                              color: product.quantity > 0 ? 'white' : '#2d3748'
-                            }}
-                          />
-                        )}
+                      <Box sx={{ mt: 0.5 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.25 }}>
+                          <Typography variant="body2" sx={{ color: '#2d3748', fontWeight: 'bold', fontSize: { xs: '0.7rem', sm: '0.9rem' } }}>
+                            R$ {product.price.toFixed(2)}
+                          </Typography>
+                          {product.quantity !== undefined && (
+                            <Chip
+                              label={`Qtd: ${product.quantity}`}
+                              size="small"
+                              sx={{
+                                backgroundColor: product.quantity > 0 ? '#2d3748' : '#d9d9d9',
+                                color: product.quantity > 0 ? 'white' : '#2d3748',
+                                fontSize: { xs: '0.65rem', sm: '0.8rem' },
+                                height: { xs: 18, sm: 22 },
+                                ml: 0.5
+                              }}
+                            />
+                          )}
+                        </Box>
                       </Box>
                     </CardContent>
                   </Card>
