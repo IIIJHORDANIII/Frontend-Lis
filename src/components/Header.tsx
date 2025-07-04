@@ -102,10 +102,10 @@ const Header: React.FC = () => {
         startIcon={!isSmallMobile ? item.icon : undefined}
         sx={{
           borderRadius: 3,
-          px: { xs: 1.5, sm: 2, md: 3 },
-          py: { xs: 1, sm: 1.5 },
+          px: { xs: 2, sm: 3, md: 4 },
+          py: { xs: 1.2, sm: 1.7 },
           fontWeight: 600,
-          fontSize: { xs: '0.6875rem', sm: '0.75rem', md: '0.875rem' },
+          fontSize: { xs: '0.75rem', sm: '0.85rem', md: '1rem' },
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           backgroundColor: isActiveRoute(item.path) 
             ? 'rgba(255, 255, 255, 0.2)'
@@ -121,8 +121,8 @@ const Header: React.FC = () => {
             border: '1px solid rgba(255, 255, 255, 0.3)',
           },
           '@media (max-width: 600px)': {
-            px: 1,
-            fontSize: '0.625rem',
+            px: 1.2,
+            fontSize: '0.7rem',
             minWidth: 'auto',
             minHeight: '36px',
           },
@@ -193,25 +193,23 @@ const Header: React.FC = () => {
         }}
       >
         <Container maxWidth={false} disableGutters sx={{
-          px: { xs: 1, sm: 2, md: 3 },
+          px: { xs: 2, sm: 4, md: 8 },
           mx: 0,
           width: '100vw',
           borderRadius: '0 !important',
-          position: 'relative',
         }}>
           <Toolbar sx={{ 
             minHeight: { xs: 48, sm: 56, md: 64 },
             height: { xs: 48, sm: 56, md: 64 },
-            px: { xs: 0.5, sm: 1.5, md: 3 },
+            px: 0,
             width: '100%',
-            display: 'flex',
+            display: 'grid',
+            gridTemplateColumns: '1fr 80vw 1fr',
             alignItems: 'center',
-            justifyContent: 'space-between',
             gap: 0,
             borderRadius: '0 !important',
-            position: 'relative',
           }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mr: { xs: 1, sm: 2 }, flexShrink: 0, zIndex: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', minWidth: 0 }}>
               <Box
                 component="img"
                 src="/Logo Vector.png"
@@ -232,116 +230,116 @@ const Header: React.FC = () => {
                 }}
               />
             </Box>
-            {isAuthenticated && !isMobile && (
-              <Box sx={{ 
-                position: 'absolute',
-                left: '50%',
-                top: '50%',
-                transform: 'translate(-50%, -50%)',
-                display: 'flex', 
-                gap: { xs: 0.5, sm: 1, md: 2 }, 
-                alignItems: 'center', 
-                zIndex: 1,
-                background: 'none',
-              }}>
-                {isAdmin ? renderMenuItems(adminMenuItems) : renderMenuItems(userMenuItems)}
-              </Box>
-            )}
-            <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', ml: 'auto', flexShrink: 0, zIndex: 2 }}>
-              {isAuthenticated ? (
-                <>
-                  {isMobile && (
-                    <IconButton
-                      color="inherit"
-                      onClick={handleMobileMenuToggle}
-                      sx={{
-                        borderRadius: 2,
-                        p: 0.25,
-                        fontSize: 18,
-                        '& .MuiSvgIcon-root': { fontSize: 20 },
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                          transform: 'scale(1.05)',
-                        }
-                      }}
-                    >
-                      <MenuIcon />
-                    </IconButton>
-                  )}
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    {!isSmallMobile && (
-                      <Chip
-                        label={isAdmin ? 'Admin' : 'Usuário'}
-                        size="small"
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minWidth: 0, width: '80vw', margin: '0 auto', justifySelf: 'center' }}>
+              {isAuthenticated && !isMobile && (
+                <Box sx={{ 
+                  display: 'flex',
+                  gap: { xs: 1, sm: 2.5, md: 4 },
+                  alignItems: 'center',
+                  width: '100%',
+                  justifyContent: 'center',
+                }}>
+                  {isAdmin ? renderMenuItems(adminMenuItems) : renderMenuItems(userMenuItems)}
+                </Box>
+              )}
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', minWidth: 0 }}>
+              <Box sx={{ display: 'flex', gap: 0.7, alignItems: 'center' }}>
+                {isAuthenticated ? (
+                  <>
+                    {isMobile && (
+                      <IconButton
+                        color="inherit"
+                        onClick={handleMobileMenuToggle}
                         sx={{
-                          backgroundColor: isAdmin ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.15)',
-                          color: '#fff',
-                          fontWeight: 600,
-                          fontSize: { xs: '0.5rem', sm: '0.625rem', md: '0.75rem' },
-                          border: '1px solid rgba(255, 255, 255, 0.2)',
-                          height: { xs: 14, sm: 20, md: 24 },
-                          '& .MuiChip-label': {
-                            px: { xs: 0.5, sm: 1 },
-                          },
-                        }}
-                      />
-                    )}
-                    <IconButton
-                      onClick={handleMenu}
-                      sx={{
-                        borderRadius: 2,
-                        p: 0.1,
-                        transition: 'all 0.3s ease',
-                        ml: 0,
-                        '&:hover': {
-                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                          transform: 'scale(1.05)',
-                        }
-                      }}
-                    >
-                      <Avatar
-                        sx={{
-                          width: 20,
-                          height: 20,
-                          backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                          color: '#fff',
-                          fontWeight: 600,
-                          fontSize: '0.7rem',
-                          border: '1px solid rgba(255, 255, 255, 0.3)',
+                          borderRadius: 2,
+                          p: 0.25,
+                          fontSize: 18,
+                          '& .MuiSvgIcon-root': { fontSize: 20 },
+                          transition: 'all 0.3s ease',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                            transform: 'scale(1.05)',
+                          }
                         }}
                       >
-                        {user?.email?.charAt(0).toUpperCase() || 'U'}
-                      </Avatar>
-                    </IconButton>
-                  </Box>
-                </>
-              ) : (
-                <Button
-                  variant="contained"
-                  onClick={() => navigate('/login')}
-                  sx={{
-                    borderRadius: 3,
-                    px: 1,
-                    py: 0.25,
-                    fontWeight: 700,
-                    fontSize: '0.7rem',
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    color: '#fff',
-                    border: '1px solid rgba(255, 255, 255, 0.3)',
-                    backdropFilter: 'blur(10px)',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    minHeight: '24px',
-                    '&:hover': {
-                      transform: 'translateY(-2px) scale(1.02)',
-                      background: 'rgba(255, 255, 255, 0.3)',
-                      border: '1px solid rgba(255, 255, 255, 0.5)',
-                    },
-                  }}
-                >
-                  {isSmallMobile ? 'Entrar' : 'Entrar'}
-                </Button>
-              )}
+                        <MenuIcon />
+                      </IconButton>
+                    )}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                      {!isSmallMobile && (
+                        <Chip
+                          label={isAdmin ? 'Admin' : 'Usuário'}
+                          size="small"
+                          sx={{
+                            backgroundColor: isAdmin ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.15)',
+                            color: '#fff',
+                            fontWeight: 600,
+                            fontSize: { xs: '0.5rem', sm: '0.625rem', md: '0.75rem' },
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            height: { xs: 14, sm: 20, md: 24 },
+                            '& .MuiChip-label': {
+                              px: { xs: 0.5, sm: 1 },
+                            },
+                          }}
+                        />
+                      )}
+                      <IconButton
+                        onClick={handleMenu}
+                        sx={{
+                          borderRadius: 2,
+                          p: 0.1,
+                          transition: 'all 0.3s ease',
+                          ml: 0,
+                          '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                            transform: 'scale(1.05)',
+                          }
+                        }}
+                      >
+                        <Avatar
+                          sx={{
+                            width: 20,
+                            height: 20,
+                            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                            color: '#fff',
+                            fontWeight: 600,
+                            fontSize: '0.7rem',
+                            border: '1px solid rgba(255, 255, 255, 0.3)',
+                          }}
+                        >
+                          {user?.email?.charAt(0).toUpperCase() || 'U'}
+                        </Avatar>
+                      </IconButton>
+                    </Box>
+                  </>
+                ) : (
+                  <Button
+                    variant="contained"
+                    onClick={() => navigate('/login')}
+                    sx={{
+                      borderRadius: 3,
+                      px: 1,
+                      py: 0.25,
+                      fontWeight: 700,
+                      fontSize: '0.7rem',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      color: '#fff',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      backdropFilter: 'blur(10px)',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      minHeight: '24px',
+                      '&:hover': {
+                        transform: 'translateY(-2px) scale(1.02)',
+                        background: 'rgba(255, 255, 255, 0.3)',
+                        border: '1px solid rgba(255, 255, 255, 0.5)',
+                      },
+                    }}
+                  >
+                    {isSmallMobile ? 'Entrar' : 'Entrar'}
+                  </Button>
+                )}
+              </Box>
             </Box>
           </Toolbar>
         </Container>
