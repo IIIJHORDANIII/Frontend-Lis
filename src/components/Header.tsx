@@ -197,6 +197,7 @@ const Header: React.FC = () => {
           mx: 0,
           width: '100vw',
           borderRadius: '0 !important',
+          position: 'relative',
         }}>
           <Toolbar sx={{ 
             minHeight: { xs: 48, sm: 56, md: 64 },
@@ -208,8 +209,9 @@ const Header: React.FC = () => {
             justifyContent: 'space-between',
             gap: 0,
             borderRadius: '0 !important',
+            position: 'relative',
           }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mr: { xs: 1, sm: 2 }, flexShrink: 0 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mr: { xs: 1, sm: 2 }, flexShrink: 0, zIndex: 2 }}>
               <Box
                 component="img"
                 src="/Logo Vector.png"
@@ -232,17 +234,20 @@ const Header: React.FC = () => {
             </Box>
             {isAuthenticated && !isMobile && (
               <Box sx={{ 
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%)',
                 display: 'flex', 
                 gap: { xs: 0.5, sm: 1, md: 2 }, 
                 alignItems: 'center', 
-                mx: 'auto',
-                flexShrink: 1,
-                minWidth: 0,
+                zIndex: 1,
+                background: 'none',
               }}>
                 {isAdmin ? renderMenuItems(adminMenuItems) : renderMenuItems(userMenuItems)}
               </Box>
             )}
-            <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', ml: 0, flexShrink: 0 }}>
+            <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', ml: 'auto', flexShrink: 0, zIndex: 2 }}>
               {isAuthenticated ? (
                 <>
                   {isMobile && (
