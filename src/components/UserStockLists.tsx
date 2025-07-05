@@ -240,147 +240,140 @@ const UserStockLists: React.FC = () => {
           </Paper>
         </Fade>
 
-                {/* Botões de filtro por categoria */}
-        <Box sx={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          mb: 4,
-          p: 3,
-          backgroundColor: 'rgba(255,255,255,0.97)',
-          borderRadius: 3,
-          border: '1.5px solid rgba(102,126,234,0.10)',
-          boxShadow: '0 8px 32px rgba(102,126,234,0.10)',
-          backdropFilter: 'blur(12px)'
+        {/* Botões de filtro por categoria */}
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 0.5,
+          width: '100%',
+          maxWidth: '100%',
+          overflowX: 'auto',
         }}>
-          <Box sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
-            gap: { xs: 1, sm: 2 },
-            width: '100%',
-            maxWidth: 600,
-            justifyContent: 'center'
-          }}>
-            <Button
-              onClick={() => handleCategoryFilter('all')}
-              variant={selectedCategory === 'all' ? 'contained' : 'outlined'}
-              sx={{
-                backgroundColor: selectedCategory === 'all' ? theme.palette.primary.main : 'transparent',
-                color: selectedCategory === 'all' ? 'white' : theme.palette.primary.main,
+          <Button
+            onClick={() => handleCategoryFilter('all')}
+            variant={selectedCategory === 'all' ? 'contained' : 'outlined'}
+            sx={{
+              backgroundColor: selectedCategory === 'all' ? theme.palette.primary.main : 'transparent',
+              color: selectedCategory === 'all' ? 'white' : theme.palette.primary.main,
+              borderColor: theme.palette.primary.main,
+              borderWidth: 2,
+              borderRadius: 2,
+              minWidth: '56px !important',
+              height: 28,
+              px: '0.8 !important',
+              py: '0.8 !important',
+              fontSize: '0.78rem !important',
+              fontWeight: 600,
+              textTransform: 'none',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                backgroundColor: selectedCategory === 'all' ? theme.palette.primary.dark : 'rgba(102,126,234,0.1)',
                 borderColor: theme.palette.primary.main,
-                borderWidth: 2,
-                borderRadius: 2,
-                px: 3,
-                py: 1.5,
-                fontSize: '0.95rem',
-                fontWeight: 600,
-                textTransform: 'none',
-                minWidth: { xs: '100%', sm: 120 },
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                '&:hover': {
-                  backgroundColor: selectedCategory === 'all' ? theme.palette.primary.dark : 'rgba(102,126,234,0.1)',
-                  borderColor: theme.palette.primary.main,
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 6px 20px rgba(102,126,234,0.2)'
-                },
-                '&:active': {
-                  transform: 'translateY(0)',
-                  boxShadow: '0 2px 10px rgba(102,126,234,0.15)'
-                }
-              }}
-            >
-              Todos
-            </Button>
-            <Button
-              onClick={() => handleCategoryFilter('masculino')}
-              variant={selectedCategory === 'masculino' ? 'contained' : 'outlined'}
-              sx={{
-                backgroundColor: selectedCategory === 'masculino' ? theme.palette.primary.main : 'transparent',
-                color: selectedCategory === 'masculino' ? 'white' : theme.palette.primary.main,
+                transform: 'translateY(-2px)',
+                boxShadow: '0 6px 20px rgba(102,126,234,0.2)'
+              },
+              '&:active': {
+                transform: 'translateY(0)',
+                boxShadow: '0 2px 10px rgba(102,126,234,0.15)'
+              }
+            }}
+          >
+            Todos
+          </Button>
+          <Button
+            onClick={() => handleCategoryFilter('masculino')}
+            variant={selectedCategory === 'masculino' ? 'contained' : 'outlined'}
+            sx={{
+              backgroundColor: selectedCategory === 'masculino' ? theme.palette.primary.main : 'transparent',
+              color: selectedCategory === 'masculino' ? 'white' : theme.palette.primary.main,
+              borderColor: theme.palette.primary.main,
+              borderWidth: 2,
+              borderRadius: 2,
+              minWidth: '56px !important',
+              height: 28,
+              px: '0.8 !important',
+              py: '0.8 !important',
+              fontSize: '0.78rem !important',
+              fontWeight: 600,
+              textTransform: 'none',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                backgroundColor: selectedCategory === 'masculino' ? theme.palette.primary.dark : 'rgba(102,126,234,0.1)',
                 borderColor: theme.palette.primary.main,
-                borderWidth: 2,
-                borderRadius: 2,
-                px: 3,
-                py: 1.5,
-                fontSize: '0.95rem',
-                fontWeight: 600,
-                textTransform: 'none',
-                minWidth: { xs: '100%', sm: 120 },
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                '&:hover': {
-                  backgroundColor: selectedCategory === 'masculino' ? theme.palette.primary.dark : 'rgba(102,126,234,0.1)',
-                  borderColor: theme.palette.primary.main,
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 6px 20px rgba(102,126,234,0.2)'
-                },
-                '&:active': {
-                  transform: 'translateY(0)',
-                  boxShadow: '0 2px 10px rgba(102,126,234,0.15)'
-                }
-              }}
-            >
-              Masculino
-            </Button>
-            <Button
-              onClick={() => handleCategoryFilter('feminino')}
-              variant={selectedCategory === 'feminino' ? 'contained' : 'outlined'}
-              sx={{
-                backgroundColor: selectedCategory === 'feminino' ? theme.palette.primary.main : 'transparent',
-                color: selectedCategory === 'feminino' ? 'white' : theme.palette.primary.main,
+                transform: 'translateY(-2px)',
+                boxShadow: '0 6px 20px rgba(102,126,234,0.2)'
+              },
+              '&:active': {
+                transform: 'translateY(0)',
+                boxShadow: '0 2px 10px rgba(102,126,234,0.15)'
+              }
+            }}
+          >
+            Masculino
+          </Button>
+          <Button
+            onClick={() => handleCategoryFilter('feminino')}
+            variant={selectedCategory === 'feminino' ? 'contained' : 'outlined'}
+            sx={{
+              backgroundColor: selectedCategory === 'feminino' ? theme.palette.primary.main : 'transparent',
+              color: selectedCategory === 'feminino' ? 'white' : theme.palette.primary.main,
+              borderColor: theme.palette.primary.main,
+              borderWidth: 2,
+              borderRadius: 2,
+              minWidth: '56px !important',
+              height: 28,
+              px: '0.8 !important',
+              py: '0.8 !important',
+              fontSize: '0.78rem !important',
+              fontWeight: 600,
+              textTransform: 'none',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                backgroundColor: selectedCategory === 'feminino' ? theme.palette.primary.dark : 'rgba(102,126,234,0.1)',
                 borderColor: theme.palette.primary.main,
-                borderWidth: 2,
-                borderRadius: 2,
-                px: 3,
-                py: 1.5,
-                fontSize: '0.95rem',
-                fontWeight: 600,
-                textTransform: 'none',
-                minWidth: { xs: '100%', sm: 120 },
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                '&:hover': {
-                  backgroundColor: selectedCategory === 'feminino' ? theme.palette.primary.dark : 'rgba(102,126,234,0.1)',
-                  borderColor: theme.palette.primary.main,
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 6px 20px rgba(102,126,234,0.2)'
-                },
-                '&:active': {
-                  transform: 'translateY(0)',
-                  boxShadow: '0 2px 10px rgba(102,126,234,0.15)'
-                }
-              }}
-            >
-              Feminino
-            </Button>
-            <Button
-              onClick={() => handleCategoryFilter('infantil')}
-              variant={selectedCategory === 'infantil' ? 'contained' : 'outlined'}
-              sx={{
-                backgroundColor: selectedCategory === 'infantil' ? theme.palette.primary.main : 'transparent',
-                color: selectedCategory === 'infantil' ? 'white' : theme.palette.primary.main,
+                transform: 'translateY(-2px)',
+                boxShadow: '0 6px 20px rgba(102,126,234,0.2)'
+              },
+              '&:active': {
+                transform: 'translateY(0)',
+                boxShadow: '0 2px 10px rgba(102,126,234,0.15)'
+              }
+            }}
+          >
+            Feminino
+          </Button>
+          <Button
+            onClick={() => handleCategoryFilter('infantil')}
+            variant={selectedCategory === 'infantil' ? 'contained' : 'outlined'}
+            sx={{
+              backgroundColor: selectedCategory === 'infantil' ? theme.palette.primary.main : 'transparent',
+              color: selectedCategory === 'infantil' ? 'white' : theme.palette.primary.main,
+              borderColor: theme.palette.primary.main,
+              borderWidth: 2,
+              borderRadius: 2,
+              minWidth: '56px !important',
+              height: 28,
+              px: '0.8 !important',
+              py: '0.8 !important',
+              fontSize: '0.78rem !important',
+              fontWeight: 600,
+              textTransform: 'none',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                backgroundColor: selectedCategory === 'infantil' ? theme.palette.primary.dark : 'rgba(102,126,234,0.1)',
                 borderColor: theme.palette.primary.main,
-                borderWidth: 2,
-                borderRadius: 2,
-                px: 3,
-                py: 1.5,
-                fontSize: '0.95rem',
-                fontWeight: 600,
-                textTransform: 'none',
-                minWidth: { xs: '100%', sm: 120 },
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                '&:hover': {
-                  backgroundColor: selectedCategory === 'infantil' ? theme.palette.primary.dark : 'rgba(102,126,234,0.1)',
-                  borderColor: theme.palette.primary.main,
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 6px 20px rgba(102,126,234,0.2)'
-                },
-                '&:active': {
-                  transform: 'translateY(0)',
-                  boxShadow: '0 2px 10px rgba(102,126,234,0.15)'
-                }
-              }}
-            >
-              Infantil
-            </Button>
-          </Box>
+                transform: 'translateY(-2px)',
+                boxShadow: '0 6px 20px rgba(102,126,234,0.2)'
+              },
+              '&:active': {
+                transform: 'translateY(0)',
+                boxShadow: '0 2px 10px rgba(102,126,234,0.15)'
+              }
+            }}
+          >
+            Infantil
+          </Button>
         </Box>
 
         {/* Contador de produtos filtrados */}
