@@ -203,9 +203,11 @@ const Header: React.FC = () => {
             height: { xs: 48, sm: 56, md: 64 },
             px: 0,
             width: '100%',
-            display: 'grid',
-            gridTemplateColumns: '1fr 80vw 1fr',
+            display: { xs: 'flex', md: 'grid' },
+            flexDirection: { xs: 'row', md: 'unset' },
+            justifyContent: { xs: 'space-between', md: 'unset' },
             alignItems: 'center',
+            gridTemplateColumns: { md: '1fr 80vw 1fr' },
             gap: 0,
             borderRadius: '0 !important',
           }}>
@@ -216,13 +218,14 @@ const Header: React.FC = () => {
                 alt="Lis System Logo"
                 onClick={() => navigate('/')}
                 sx={{
-                  height: { xs: 22, sm: 28, md: 36 },
+                  height: { xs: 48, sm: 60, md: 72 },
                   width: 'auto',
-                  maxWidth: { xs: 40, sm: 60, md: 120 },
+                  maxWidth: { xs: 120, sm: 160, md: 200 },
                   objectFit: 'contain',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
                   filter: 'brightness(0) invert(1)',
+                  ml: { xs: 0.5, sm: 1, md: 0 },
                   '&:hover': {
                     transform: 'scale(1.05)',
                     opacity: 0.8
@@ -230,20 +233,22 @@ const Header: React.FC = () => {
                 }}
               />
             </Box>
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minWidth: 0, width: '80vw', margin: '0 auto', justifySelf: 'center' }}>
-              {isAuthenticated && !isMobile && (
-                <Box sx={{ 
-                  display: 'flex',
-                  gap: { xs: 1, sm: 2.5, md: 4 },
-                  alignItems: 'center',
-                  width: '100%',
-                  justifyContent: 'center',
-                }}>
-                  {isAdmin ? renderMenuItems(adminMenuItems) : renderMenuItems(userMenuItems)}
-                </Box>
-              )}
-            </Box>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', minWidth: 0 }}>
+            {!isMobile && (
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minWidth: 0, width: '80vw', margin: '0 auto', justifySelf: 'center' }}>
+                {isAuthenticated && (
+                  <Box sx={{ 
+                    display: 'flex',
+                    gap: { xs: 1, sm: 2.5, md: 4 },
+                    alignItems: 'center',
+                    width: '100%',
+                    justifyContent: 'center',
+                  }}>
+                    {isAdmin ? renderMenuItems(adminMenuItems) : renderMenuItems(userMenuItems)}
+                  </Box>
+                )}
+              </Box>
+            )}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', minWidth: 0, pr: { xs: 0.5, sm: 1, md: 0 } }}>
               <Box sx={{ display: 'flex', gap: 0.7, alignItems: 'center' }}>
                 {isAuthenticated ? (
                   <>
@@ -255,6 +260,7 @@ const Header: React.FC = () => {
                           borderRadius: 2,
                           p: 0.25,
                           fontSize: 18,
+                          mr: { xs: 0.5, sm: 1 },
                           '& .MuiSvgIcon-root': { fontSize: 20 },
                           transition: 'all 0.3s ease',
                           '&:hover': {
