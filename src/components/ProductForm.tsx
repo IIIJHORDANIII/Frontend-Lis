@@ -416,6 +416,18 @@ const ProductForm: React.FC = () => {
                   >
                       {image ? 'Imagem Selecionada' : 'Selecionar Imagem'}
                   </Button>
+                  <Typography 
+                    variant="caption" 
+                    sx={{ 
+                      display: 'block', 
+                      mt: 1, 
+                      textAlign: 'center',
+                      color: theme.palette.text.secondary,
+                      fontSize: '0.75rem'
+                    }}
+                  >
+                    Formatos aceitos: JPG, PNG, GIF • Máximo: 5MB • Será redimensionada para 9:16
+                  </Typography>
                   </label>
                   
                   {imagePreview && (
@@ -431,6 +443,17 @@ const ProductForm: React.FC = () => {
                           borderColor: theme.palette.primary.main
                         }}
                       />
+                      <Typography 
+                        variant="caption" 
+                        sx={{ 
+                          display: 'block', 
+                          mt: 1, 
+                          color: theme.palette.info.main,
+                          fontStyle: 'italic'
+                        }}
+                      >
+                        A imagem será automaticamente redimensionada para o formato 9:16
+                      </Typography>
                     </Box>
                   )}
               </Box>

@@ -10,12 +10,19 @@ import {
   Alert,
   CircularProgress,
   Button,
-  ButtonGroup
+  ButtonGroup,
+  useTheme,
+  useMediaQuery,
+  Fade,
+  Paper
 } from '@mui/material';
 import { getCustomLists } from '../services/api';
 import { Product, CustomList } from '../types';
 
 const UserStockLists: React.FC = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [lists, setLists] = useState<CustomList[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -68,311 +75,447 @@ const UserStockLists: React.FC = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="lg" sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-        <CircularProgress sx={{ color: '#383A29' }} />
-      </Container>
+      <Box sx={{ 
+        minHeight: '100vh',
+        background: 'white',
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center'
+      }}>
+        <CircularProgress size={60} sx={{ color: theme.palette.primary.main }} />
+      </Box>
     );
   }
 
   if (error) {
     return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Alert severity="error" sx={{ backgroundColor: '#ffebee', borderLeft: '4px solid #383A29' }}>
-          {error}
-        </Alert>
-      </Container>
+      <Box sx={{ 
+        minHeight: '100vh',
+        background: 'white',
+        py: { xs: 2, sm: 3, md: 4 },
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+      }}>
+        <Container maxWidth="xl" sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          minHeight: '100vh',
+          px: { xs: 1, sm: 2, md: 3 },
+        }}>
+          <Alert 
+            severity="error" 
+            sx={{ 
+              mb: 4,
+              borderRadius: 2,
+              '& .MuiAlert-icon': {
+                fontSize: '1.5rem'
+              }
+            }}
+          >
+            {error}
+          </Alert>
+        </Container>
+      </Box>
     );
   }
 
   if (!uniqueProducts.length) {
     return (
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Alert severity="info" sx={{ backgroundColor: '#e3f2fd', borderLeft: '4px solid #383A29' }}>
-          Nenhum produto foi atribuído a você.
-        </Alert>
-      </Container>
+      <Box sx={{ 
+        minHeight: '100vh',
+        background: 'white',
+        py: { xs: 2, sm: 3, md: 4 },
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+      }}>
+        <Container maxWidth="xl" sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          minHeight: '100vh',
+          px: { xs: 1, sm: 2, md: 3 },
+        }}>
+          <Alert 
+            severity="info" 
+            sx={{ 
+              mb: 4,
+              borderRadius: 2,
+              fontSize: '1.1rem',
+              maxWidth: 900,
+              mx: 'auto',
+              boxShadow: '0 2px 8px rgba(45,55,72,0.10)',
+              '& .MuiAlert-icon': {
+                fontSize: '1.5rem'
+              }
+            }}
+          >
+            Nenhum produto foi atribuído a você.
+          </Alert>
+        </Container>
+      </Box>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      {/* Botões de filtro por categoria */}
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        mb: 4,
-        p: 3,
-        backgroundColor: 'rgba(217, 217, 217, 0.8)',
-        borderRadius: 3,
-        border: '1px solid rgba(56, 58, 41, 0.1)',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-        backdropFilter: 'blur(10px)'
+    <Box sx={{ 
+      minHeight: '100vh',
+      background: 'white',
+      py: { xs: 2, sm: 3, md: 4 },
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+    }}>
+      <Container maxWidth="xl" sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        minHeight: '100vh',
+        px: { xs: 1, sm: 2, md: 3 },
       }}>
-        <Box sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', sm: 'row' },
-          gap: { xs: 1, sm: 0 },
-          width: '100%',
-          maxWidth: 600,
-          justifyContent: 'center'
-        }}>
-          <Button
-            onClick={() => handleCategoryFilter('all')}
-            variant={selectedCategory === 'all' ? 'contained' : 'outlined'}
+        {/* Header */}
+        <Fade in>
+          <Paper
+            elevation={0}
             sx={{
-              backgroundColor: selectedCategory === 'all' ? '#383A29' : 'transparent',
-              color: selectedCategory === 'all' ? 'white' : '#383A29',
-              borderColor: '#383A29',
-              borderWidth: 2,
-              borderRadius: 2,
-              px: 3,
-              py: 1.5,
-              fontSize: '0.95rem',
-              fontWeight: 600,
-              textTransform: 'none',
-              minWidth: { xs: '100%', sm: 120 },
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              '&:hover': {
-                backgroundColor: selectedCategory === 'all' ? '#2d2f20' : 'rgba(56, 58, 41, 0.1)',
-                borderColor: '#383A29',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 6px 20px rgba(56, 58, 41, 0.2)'
+              maxWidth: { xs: 340, sm: 400, md: 700, xl: 900 },
+              width: '100%',
+              mx: 'auto',
+              mt: { xs: 1, sm: 2, md: 4 },
+              mb: { xs: 1, sm: 2, md: 4 },
+              p: { xs: 1, sm: 2, md: 4 },
+              borderRadius: 3,
+              boxShadow: '0 8px 32px 0 rgba(45,55,72,0.10)',
+              background: 'rgba(255,255,255,0.13)',
+              backdropFilter: 'blur(12px)',
+              border: '1.5px solid rgba(255,255,255,0.22)',
+              '@media (min-width: 1600px)': {
+                maxWidth: 1100,
+                p: 6,
               },
-              '&:active': {
-                transform: 'translateY(0)',
-                boxShadow: '0 2px 10px rgba(56, 58, 41, 0.15)'
-              }
+              '@media (min-width: 1920px)': {
+                maxWidth: 1300,
+                p: 8,
+              },
             }}
           >
-            Todos
-          </Button>
-          <Button
-            onClick={() => handleCategoryFilter('masculino')}
-            variant={selectedCategory === 'masculino' ? 'contained' : 'outlined'}
-            sx={{
-              backgroundColor: selectedCategory === 'masculino' ? '#383A29' : 'transparent',
-              color: selectedCategory === 'masculino' ? 'white' : '#383A29',
-              borderColor: '#383A29',
-              borderWidth: 2,
-              borderRadius: 2,
-              px: 3,
-              py: 1.5,
-              fontSize: '0.95rem',
-              fontWeight: 600,
-              textTransform: 'none',
-              minWidth: { xs: '100%', sm: 120 },
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              '&:hover': {
-                backgroundColor: selectedCategory === 'masculino' ? '#2d2f20' : 'rgba(56, 58, 41, 0.1)',
-                borderColor: '#383A29',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 6px 20px rgba(56, 58, 41, 0.2)'
-              },
-              '&:active': {
-                transform: 'translateY(0)',
-                boxShadow: '0 2px 10px rgba(56, 58, 41, 0.15)'
-              }
-            }}
-          >
-            Masculino
-          </Button>
-          <Button
-            onClick={() => handleCategoryFilter('feminino')}
-            variant={selectedCategory === 'feminino' ? 'contained' : 'outlined'}
-            sx={{
-              backgroundColor: selectedCategory === 'feminino' ? '#383A29' : 'transparent',
-              color: selectedCategory === 'feminino' ? 'white' : '#383A29',
-              borderColor: '#383A29',
-              borderWidth: 2,
-              borderRadius: 2,
-              px: 3,
-              py: 1.5,
-              fontSize: '0.95rem',
-              fontWeight: 600,
-              textTransform: 'none',
-              minWidth: { xs: '100%', sm: 120 },
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              '&:hover': {
-                backgroundColor: selectedCategory === 'feminino' ? '#2d2f20' : 'rgba(56, 58, 41, 0.1)',
-                borderColor: '#383A29',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 6px 20px rgba(56, 58, 41, 0.2)'
-              },
-              '&:active': {
-                transform: 'translateY(0)',
-                boxShadow: '0 2px 10px rgba(56, 58, 41, 0.15)'
-              }
-            }}
-          >
-            Feminino
-          </Button>
-          <Button
-            onClick={() => handleCategoryFilter('infantil')}
-            variant={selectedCategory === 'infantil' ? 'contained' : 'outlined'}
-            sx={{
-              backgroundColor: selectedCategory === 'infantil' ? '#383A29' : 'transparent',
-              color: selectedCategory === 'infantil' ? 'white' : '#383A29',
-              borderColor: '#383A29',
-              borderWidth: 2,
-              borderRadius: 2,
-              px: 3,
-              py: 1.5,
-              fontSize: '0.95rem',
-              fontWeight: 600,
-              textTransform: 'none',
-              minWidth: { xs: '100%', sm: 120 },
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              '&:hover': {
-                backgroundColor: selectedCategory === 'infantil' ? '#2d2f20' : 'rgba(56, 58, 41, 0.1)',
-                borderColor: '#383A29',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 6px 20px rgba(56, 58, 41, 0.2)'
-              },
-              '&:active': {
-                transform: 'translateY(0)',
-                boxShadow: '0 2px 10px rgba(56, 58, 41, 0.15)'
-              }
-            }}
-          >
-            Infantil
-          </Button>
-        </Box>
-      </Box>
-
-      {/* Contador de produtos filtrados */}
-      <Box sx={{ mb: 3, textAlign: 'center' }}>
-        <Typography variant="body2" color="text.secondary">
-          {filteredProducts.length} produto{filteredProducts.length !== 1 ? 's' : ''} encontrado{filteredProducts.length !== 1 ? 's' : ''}
-          {selectedCategory !== 'all' && ` na categoria ${selectedCategory}`}
-        </Typography>
-      </Box>
-
-      <Box sx={{
-        display: 'grid',
-        gridTemplateColumns: {
-          xs: '1fr',
-          sm: 'repeat(2, 1fr)',
-          md: 'repeat(3, 1fr)',
-          lg: 'repeat(4, 1fr)'
-        },
-        gap: 2
-      }}>
-        {filteredProducts.map((product: Product) => (
-          <Card key={product._id} sx={{
-            height: { xs: 340, sm: 400, md: 440, lg: 480 },
-            display: 'flex',
-            flexDirection: 'column',
-            border: '1px solid #d9d9d9',
-            transition: 'all 0.3s ease',
-            '&:hover': {
-              border: '1px solid #383A29',
-              transform: 'translateY(-2px)',
-              boxShadow: '0 4px 12px rgba(56, 58, 41, 0.15)'
-            }
-          }}>
-            {product.image && (
-              <CardMedia
-                component="img"
+            <Box sx={{ textAlign: 'center', mb: 2 }}>
+              <Typography
+                variant="h3"
+                component="h1"
                 sx={{
-                  objectFit: 'cover',
-                  width: '100%',
-                  height: { xs: 140, sm: 180, md: 220, lg: 260 },
-                  flex: '0 0 auto',
-                  borderTopLeftRadius: 8,
-                  borderTopRightRadius: 8,
+                  fontWeight: 700,
+                  color: theme.palette.primary.main,
+                  mb: 1,
+                  fontSize: { xs: '1.7rem', sm: '2.2rem', md: '2.7rem' },
+                  '@media (min-width: 1600px)': {
+                    fontSize: '2.75rem',
+                  },
+                  '@media (min-width: 1920px)': {
+                    fontSize: '3rem',
+                  },
                 }}
-                image={product.image}
-                alt={product.name}
-              />
-            )}
-            <CardContent sx={{ 
-              p: 2, 
-              flex: '1 1 auto',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              minWidth: 0,
-              overflow: 'hidden',
-            }}>
-              <Box>
-                <Typography variant="subtitle1" sx={{ 
-                  color: '#383A29', 
-                  fontWeight: 'bold',
-                  mb: 1,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: { xs: 'normal', sm: 'nowrap' },
-                  fontSize: { xs: '1rem', sm: '1.1rem', md: '1.15rem' },
-                }}>
-                  {product.name}
-                </Typography>
-                
-                <Typography variant="body2" color="text.secondary" sx={{ 
-                  mb: 1,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  fontSize: { xs: '0.85rem', sm: '0.95rem' },
-                }}>
-                  {product.description}
-                </Typography>
-              </Box>
-              
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                <Typography variant="h6" sx={{ color: '#383A29', fontWeight: 'bold' }}>
-                  R$ {product.finalPrice.toFixed(2)}
-                </Typography>
-                {product.quantity !== undefined && (
-                  <>
-                    <Chip
-                      label={`Qtd: ${product.quantity}`}
-                      size="small"
-                      sx={{
-                        backgroundColor: product.quantity > 0 ? '#383A29' : '#d9d9d9',
-                        color: product.quantity > 0 ? 'white' : '#383A29',
-                        mr: product.quantity === 0 ? 1 : 0
-                      }}
-                    />
-                    {product.quantity === 0 && (
-                      <Chip
-                        label="Esgotado"
-                        size="small"
-                        sx={{ fontWeight: 'bold', backgroundColor: '#d32f2f', color: 'white' }}
-                      />
-                    )}
-                  </>
-                )}
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', mb: 1 }}>
-                <Chip
-                  label={`Comissão: R$ ${product.commission.toFixed(2)}`}
-                  size="small"
+              >
+                Meus Produtos
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: theme.palette.text.secondary,
+                  mb: 2,
+                  fontSize: { xs: '0.9rem', sm: '1.05rem', md: '1.15rem' },
+                  '@media (min-width: 1600px)': {
+                    fontSize: '1.25rem',
+                  },
+                  '@media (min-width: 1920px)': {
+                    fontSize: '1.35rem',
+                  },
+                }}
+              >
+                Visualize todos os produtos disponíveis para venda
+              </Typography>
+            </Box>
+          </Paper>
+        </Fade>
+
+                {/* Botões de filtro por categoria */}
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          mb: 4,
+          p: 3,
+          backgroundColor: 'rgba(255,255,255,0.97)',
+          borderRadius: 3,
+          border: '1.5px solid rgba(102,126,234,0.10)',
+          boxShadow: '0 8px 32px rgba(102,126,234,0.10)',
+          backdropFilter: 'blur(12px)'
+        }}>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            gap: { xs: 1, sm: 2 },
+            width: '100%',
+            maxWidth: 600,
+            justifyContent: 'center'
+          }}>
+            <Button
+              onClick={() => handleCategoryFilter('all')}
+              variant={selectedCategory === 'all' ? 'contained' : 'outlined'}
+              sx={{
+                backgroundColor: selectedCategory === 'all' ? theme.palette.primary.main : 'transparent',
+                color: selectedCategory === 'all' ? 'white' : theme.palette.primary.main,
+                borderColor: theme.palette.primary.main,
+                borderWidth: 2,
+                borderRadius: 2,
+                px: 3,
+                py: 1.5,
+                fontSize: '0.95rem',
+                fontWeight: 600,
+                textTransform: 'none',
+                minWidth: { xs: '100%', sm: 120 },
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  backgroundColor: selectedCategory === 'all' ? theme.palette.primary.dark : 'rgba(102,126,234,0.1)',
+                  borderColor: theme.palette.primary.main,
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 6px 20px rgba(102,126,234,0.2)'
+                },
+                '&:active': {
+                  transform: 'translateY(0)',
+                  boxShadow: '0 2px 10px rgba(102,126,234,0.15)'
+                }
+              }}
+            >
+              Todos
+            </Button>
+            <Button
+              onClick={() => handleCategoryFilter('masculino')}
+              variant={selectedCategory === 'masculino' ? 'contained' : 'outlined'}
+              sx={{
+                backgroundColor: selectedCategory === 'masculino' ? theme.palette.primary.main : 'transparent',
+                color: selectedCategory === 'masculino' ? 'white' : theme.palette.primary.main,
+                borderColor: theme.palette.primary.main,
+                borderWidth: 2,
+                borderRadius: 2,
+                px: 3,
+                py: 1.5,
+                fontSize: '0.95rem',
+                fontWeight: 600,
+                textTransform: 'none',
+                minWidth: { xs: '100%', sm: 120 },
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  backgroundColor: selectedCategory === 'masculino' ? theme.palette.primary.dark : 'rgba(102,126,234,0.1)',
+                  borderColor: theme.palette.primary.main,
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 6px 20px rgba(102,126,234,0.2)'
+                },
+                '&:active': {
+                  transform: 'translateY(0)',
+                  boxShadow: '0 2px 10px rgba(102,126,234,0.15)'
+                }
+              }}
+            >
+              Masculino
+            </Button>
+            <Button
+              onClick={() => handleCategoryFilter('feminino')}
+              variant={selectedCategory === 'feminino' ? 'contained' : 'outlined'}
+              sx={{
+                backgroundColor: selectedCategory === 'feminino' ? theme.palette.primary.main : 'transparent',
+                color: selectedCategory === 'feminino' ? 'white' : theme.palette.primary.main,
+                borderColor: theme.palette.primary.main,
+                borderWidth: 2,
+                borderRadius: 2,
+                px: 3,
+                py: 1.5,
+                fontSize: '0.95rem',
+                fontWeight: 600,
+                textTransform: 'none',
+                minWidth: { xs: '100%', sm: 120 },
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  backgroundColor: selectedCategory === 'feminino' ? theme.palette.primary.dark : 'rgba(102,126,234,0.1)',
+                  borderColor: theme.palette.primary.main,
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 6px 20px rgba(102,126,234,0.2)'
+                },
+                '&:active': {
+                  transform: 'translateY(0)',
+                  boxShadow: '0 2px 10px rgba(102,126,234,0.15)'
+                }
+              }}
+            >
+              Feminino
+            </Button>
+            <Button
+              onClick={() => handleCategoryFilter('infantil')}
+              variant={selectedCategory === 'infantil' ? 'contained' : 'outlined'}
+              sx={{
+                backgroundColor: selectedCategory === 'infantil' ? theme.palette.primary.main : 'transparent',
+                color: selectedCategory === 'infantil' ? 'white' : theme.palette.primary.main,
+                borderColor: theme.palette.primary.main,
+                borderWidth: 2,
+                borderRadius: 2,
+                px: 3,
+                py: 1.5,
+                fontSize: '0.95rem',
+                fontWeight: 600,
+                textTransform: 'none',
+                minWidth: { xs: '100%', sm: 120 },
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  backgroundColor: selectedCategory === 'infantil' ? theme.palette.primary.dark : 'rgba(102,126,234,0.1)',
+                  borderColor: theme.palette.primary.main,
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 6px 20px rgba(102,126,234,0.2)'
+                },
+                '&:active': {
+                  transform: 'translateY(0)',
+                  boxShadow: '0 2px 10px rgba(102,126,234,0.15)'
+                }
+              }}
+            >
+              Infantil
+            </Button>
+          </Box>
+        </Box>
+
+        {/* Contador de produtos filtrados */}
+        <Box sx={{ mb: 3, textAlign: 'center' }}>
+          <Typography 
+            variant="body2" 
+            sx={{ 
+              color: theme.palette.text.secondary,
+              fontSize: { xs: '0.9rem', sm: '1rem' },
+              fontWeight: 500
+            }}
+          >
+            {filteredProducts.length} produto{filteredProducts.length !== 1 ? 's' : ''} encontrado{filteredProducts.length !== 1 ? 's' : ''}
+            {selectedCategory !== 'all' && ` na categoria ${selectedCategory}`}
+          </Typography>
+        </Box>
+
+        {/* Lists */}
+        <Box sx={{ mt: { xs: 2, sm: 3, md: 4 }, width: '100%', maxWidth: 1200, mx: 'auto' }}>
+          <Box sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(3, 1fr)',
+              lg: 'repeat(4, 1fr)'
+            },
+            gap: { xs: 3, sm: 4, md: 5 },
+            maxWidth: 1200,
+            mx: 'auto'
+          }}>
+            {filteredProducts.map((product: Product, index) => (
+              <Fade in timeout={400 + index * 100} key={product._id}>
+                <Card
                   sx={{
-                    backgroundColor: '#e0e0e0',
-                    color: '#383A29',
-                    fontWeight: 'bold',
-                    mr: 1
+                    background: 'rgba(255,255,255,0.97)',
+                    border: '1.5px solid rgba(102,126,234,0.10)',
+                    borderRadius: 3,
+                    overflow: 'hidden',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    boxShadow: '0 8px 32px rgba(102,126,234,0.10)',
+                    '&:hover': {
+                      boxShadow: '0 20px 40px rgba(102,126,234,0.18)',
+                      border: '2px solid #764ba2',
+                      transform: 'translateY(-8px) scale(1.04)',
+                    },
+                    p: { xs: 2, sm: 3 },
                   }}
-                />
-                {product.category && (
-                  <Chip
-                    label={product.category.charAt(0).toUpperCase() + product.category.slice(1)}
-                    size="small"
-                    sx={{
-                      backgroundColor: '#383A29',
-                      color: 'white',
-                      fontWeight: 'bold'
-                    }}
-                  />
-                )}
-              </Box>
-            </CardContent>
-          </Card>
-        ))}
-      </Box>
-    </Container>
+                >
+                  {product.image && (
+                    <CardMedia
+                      component="img"
+                      height={120}
+                      image={product.image}
+                      alt={product.name}
+                      sx={{ objectFit: 'cover' }}
+                    />
+                  )}
+                  <CardContent sx={{ p: 0 }}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        fontWeight: 700,
+                        color: theme.palette.text.primary,
+                        mb: 1,
+                        fontSize: { xs: '1.1rem', sm: '1.2rem' },
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      {product.name}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{
+                        mb: 2,
+                        fontSize: { xs: '0.95rem', sm: '1rem' },
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        lineHeight: 1.4
+                      }}
+                    >
+                      {product.description}
+                    </Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                      <Typography 
+                        variant="h6" 
+                        sx={{ 
+                          color: theme.palette.success.main, 
+                          fontWeight: 700,
+                          fontSize: { xs: '1.1rem', sm: '1.2rem' }
+                        }}
+                      >
+                        R$ {product.finalPrice.toFixed(2)}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      {product.quantity !== undefined && (
+                        <Chip
+                          label={`Estoque: ${product.quantity}`}
+                          size="small"
+                          sx={{
+                            backgroundColor: product.quantity > 0 ? theme.palette.success.light : theme.palette.error.light,
+                            color: product.quantity > 0 ? theme.palette.success.dark : theme.palette.error.dark,
+                            fontSize: '0.7rem',
+                            fontWeight: 600
+                          }}
+                        />
+                      )}
+                      {product.category && (
+                        <Chip
+                          label={product.category.charAt(0).toUpperCase() + product.category.slice(1)}
+                          size="small"
+                          sx={{
+                            backgroundColor: theme.palette.primary.main,
+                            color: 'white',
+                            fontSize: '0.7rem',
+                            fontWeight: 600
+                          }}
+                        />
+                      )}
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Fade>
+            ))}
+          </Box>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 
