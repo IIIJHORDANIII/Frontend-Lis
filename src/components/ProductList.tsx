@@ -365,48 +365,6 @@ const ProductList: React.FC = () => {
                         transform: hoveredCard === product._id ? 'scale(1.05)' : 'scale(1)',
                       }}
                     />
-                    {isAdmin && (
-                      <Box sx={{
-                        position: 'absolute',
-                        top: 8,
-                        right: 8,
-                        display: 'flex',
-                        gap: 1
-                      }}>
-                        <Tooltip title="Editar">
-                          <IconButton
-                            size="small"
-                            onClick={() => handleEditClick(product)}
-                            sx={{
-                              background: 'rgba(255, 255, 255, 0.9)',
-                              color: theme.palette.primary.main,
-                              '&:hover': {
-                                background: 'rgba(255, 255, 255, 1)',
-                                transform: 'scale(1.1)',
-                              }
-                            }}
-                          >
-                            <EditIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Excluir">
-                          <IconButton
-                            size="small"
-                            onClick={() => handleDeleteClick(product)}
-                            sx={{
-                              background: 'rgba(255, 255, 255, 0.9)',
-                              color: theme.palette.error.main,
-                              '&:hover': {
-                                background: 'rgba(255, 255, 255, 1)',
-                                transform: 'scale(1.1)',
-                              }
-                            }}
-                          >
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                      </Box>
-                    )}
                   </Box>
                   <CardContent sx={{ p: 0 }}>
                     <Typography
@@ -418,6 +376,7 @@ const ProductList: React.FC = () => {
                         mb: 1,
                         fontSize: { xs: '1.1rem', sm: '1.2rem' },
                         lineHeight: 1.3,
+                        minHeight: '2.6em',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         display: '-webkit-box',
@@ -519,6 +478,51 @@ const ProductList: React.FC = () => {
                         </Typography>
                       </Box>
                     </Box>
+                    {isAdmin && (
+                      <Box sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'flex-end', 
+                        gap: 1, 
+                        mt: 2,
+                        pt: 2,
+                        borderTop: '1px solid rgba(0,0,0,0.1)'
+                      }}>
+                        <Tooltip title="Editar">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleEditClick(product)}
+                            sx={{
+                              background: 'rgba(102,126,234,0.1)',
+                              color: theme.palette.primary.main,
+                              '&:hover': {
+                                background: theme.palette.primary.main,
+                                color: 'white',
+                                transform: 'scale(1.1)',
+                              }
+                            }}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Excluir">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleDeleteClick(product)}
+                            sx={{
+                              background: 'rgba(244,67,54,0.1)',
+                              color: theme.palette.error.main,
+                              '&:hover': {
+                                background: theme.palette.error.main,
+                                color: 'white',
+                                transform: 'scale(1.1)',
+                              }
+                            }}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    )}
                   </CardContent>
                 </Card>
               </Fade>

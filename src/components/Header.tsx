@@ -218,9 +218,9 @@ const Header: React.FC = () => {
                 alt="Lis System Logo"
                 onClick={() => navigate('/')}
                 sx={{
-                  height: { xs: 48, sm: 60, md: 72 },
+                  height: { xs: 32, sm: 36, md: 40 },
                   width: 'auto',
-                  maxWidth: { xs: 120, sm: 160, md: 200 },
+                  maxWidth: { xs: 80, sm: 90, md: 100 },
                   objectFit: 'contain',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',

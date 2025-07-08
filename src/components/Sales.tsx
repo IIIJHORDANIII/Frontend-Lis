@@ -279,7 +279,19 @@ const Sales: React.FC = () => {
               return (
                 <Card key={product._id} sx={{ p: 2, boxShadow: 2, borderRadius: 2, border: '1px solid #e0e0e0' }}>
                   <CardContent sx={{ p: 0, pb: 2 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#383A29', mb: 1, fontSize: '1.1rem' }}>
+                    <Typography variant="h6" sx={{ 
+                      fontWeight: 'bold', 
+                      color: '#383A29', 
+                      mb: 1, 
+                      fontSize: '1.1rem',
+                      lineHeight: 1.3,
+                      minHeight: '2.6em',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                    }}>
                       {product.name}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontSize: '0.9rem' }}>

@@ -440,9 +440,13 @@ const UserStockLists: React.FC = () => {
                         color: theme.palette.text.primary,
                         mb: 1,
                         fontSize: { xs: '1.1rem', sm: '1.2rem' },
+                        lineHeight: 1.3,
+                        minHeight: '2.6em',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap'
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
                       }}
                     >
                       {product.name}

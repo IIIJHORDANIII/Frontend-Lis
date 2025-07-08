@@ -155,7 +155,14 @@ const CustomLists: React.FC = () => {
                 <Typography variant="h6" component="h2" sx={{
                   fontWeight: 'bold',
                   color: '#383A29',
-                  mb: 2
+                  mb: 2,
+                  lineHeight: 1.3,
+                  minHeight: '2.6em',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
                 }}>
                   {list.name}
                 </Typography>
