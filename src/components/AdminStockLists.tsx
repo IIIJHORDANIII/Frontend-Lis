@@ -90,7 +90,7 @@ const AdminStockLists: React.FC = () => {
   return (
     <Box sx={{ 
       minHeight: '100vh',
-      background: 'white',
+      background: 'transparent',
       py: { xs: 2, sm: 3, md: 4 },
       display: 'flex',
       justifyContent: 'center',
@@ -108,23 +108,23 @@ const AdminStockLists: React.FC = () => {
           <Paper
             elevation={0}
             sx={{
-              maxWidth: { xs: 340, sm: 400, md: 700, xl: 900 },
-              width: '100%',
+              maxWidth: { xs: 340, sm: 400, md: 700, xl: 800 },
+              width: '900%',
               mx: 'auto',
               mt: { xs: 1, sm: 2, md: 4 },
               mb: { xs: 1, sm: 2, md: 4 },
               p: { xs: 1, sm: 2, md: 4 },
               borderRadius: 3,
               boxShadow: '0 8px 32px 0 rgba(45,55,72,0.10)',
-              background: 'rgba(255,255,255,0.13)',
+              background: 'white',
               backdropFilter: 'blur(12px)',
               border: '1.5px solid rgba(255,255,255,0.22)',
               '@media (min-width: 1600px)': {
-                maxWidth: 1100,
+                maxWidth: 1000,
                 p: 6,
               },
               '@media (min-width: 1920px)': {
-                maxWidth: 1300,
+                maxWidth: 1200,
                 p: 8,
               },
             }}

@@ -20,7 +20,8 @@ import {
   CardContent,
   CardActions,
   Chip,
-  Button
+  Button,
+  alpha
 } from '@mui/material';
 import { Add, Remove } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -38,6 +39,7 @@ interface Product {
   profit: number;
   quantity?: number;
   image?: string;
+  category?: string; // Added for new layout
 }
 
 interface Sales {
@@ -255,240 +257,389 @@ const Sales: React.FC = () => {
     );
   }
 
+  // Calculate totals for the summary section
+  const totalVendas = Object.entries(sales).reduce((sum, [productId, quantity]) => {
+    const product = products.find(p => p._id === productId);
+    return sum + (quantity * (product?.finalPrice || 0));
+  }, 0);
+  
+  const totalComissoes = Object.entries(sales).reduce((sum, [productId, quantity]) => {
+    const product = products.find(p => p._id === productId);
+    return sum + (quantity * (product?.finalPrice || 0) * 0.3);
+  }, 0);
+  
+  const totalProdutos = Object.values(sales).reduce((sum, quantity) => sum + quantity, 0);
+
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
-        Vendas Instantâneas
-      </Typography>
-
-      <Alert severity="info" sx={{ mb: 2 }}>
-        Cada clique em + registra uma venda imediata. Cada clique em - registra uma devolução.
-      </Alert>
-
-      <Paper sx={{ p: 2, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Produtos Disponíveis
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: 'column',
+      gap: { xs: 2, md: 4 },
+      width: '100%',
+    }}>
+      {/* Products Section */}
+      <Box sx={{ width: '100%' }}>
+        <Typography variant="h4" component="h1" sx={{ 
+          mb: 3, 
+          color: '#2d3748', 
+          fontWeight: 'bold',
+          fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem', lg: '2rem' }, // Reduced font sizes
+          lineHeight: 1.2, // Added line height control
+          mt: { xs: 0, sm: 1, md: 2 }, // Added top margin for better spacing
+        }}>
+          Vendas
         </Typography>
-        {isMobile ? (
-          <Box display="flex" flexDirection="column" gap={2}>
-            {products.map((product) => {
-              const quantity = sales[product._id] || 0;
-              const subtotal = product.finalPrice * quantity;
-              const commission = product.commission || (product.finalPrice * 0.3);
-              const isProcessing = processingProduct === product._id;
-              return (
-                <Card key={product._id} sx={{ p: 2, boxShadow: 2, borderRadius: 2, border: '1px solid #e0e0e0' }}>
-                  <CardContent sx={{ p: 0, pb: 2 }}>
-                    <Typography variant="h6" sx={{ 
-                      fontWeight: 'bold', 
-                      color: '#383A29', 
-                      mb: 1, 
-                      fontSize: '1.1rem',
-                      lineHeight: 1.3,
-                      minHeight: '2.6em',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                    }}>
-                      {product.name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontSize: '0.9rem' }}>
-                      {product.description}
-                    </Typography>
-                    
-                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                      <Box display="flex" gap={1}>
-                        <Chip label={`R$ ${product.finalPrice.toFixed(2)}`} size="small" sx={{ background: '#383A29', color: 'white', fontWeight: 'bold' }} />
-                        <Chip label={`Comissão: R$ ${commission.toFixed(2)}`} size="small" sx={{ background: '#d9d9d9', color: '#383A29', fontWeight: 'bold' }} />
-                      </Box>
-                    </Box>
-                    
-                    {/* Botões de ação */}
-                    <Box display="flex" justifyContent="center" alignItems="center" gap={2} mb={2}>
-                      <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => handleQuantityChange(product._id, false)}
-                        disabled={quantity === 0 || isProcessing}
-                        sx={{
-                          minWidth: 50,
-                          height: 50,
-                          borderRadius: '50%',
-                          backgroundColor: quantity === 0 || isProcessing ? '#ccc' : '#d32f2f',
-                          '&:hover': {
-                            backgroundColor: quantity === 0 || isProcessing ? '#ccc' : '#b71c1c'
-                          }
-                        }}
-                      >
-                        <Remove fontSize="large" />
-                      </Button>
-                      
-                      <Box sx={{ 
-                        minWidth: 60, 
-                        textAlign: 'center',
-                        p: 2,
-                        backgroundColor: quantity > 0 ? '#e8f5e8' : '#f5f5f5',
-                        borderRadius: 2,
-                        border: `2px solid ${quantity > 0 ? '#2e7d32' : '#ccc'}`
-                      }}>
-                        <Typography variant="h5" sx={{ fontWeight: 'bold', color: quantity > 0 ? 'success.main' : 'text.secondary' }}>
-                          {quantity}
-                        </Typography>
-                      </Box>
-                      
-                      <Button
-                        variant="contained"
-                        color="success"
-                        onClick={() => handleQuantityChange(product._id, true)}
-                        disabled={isProcessing || (typeof product.quantity === 'number' && product.quantity === 0)}
-                        sx={{
-                          minWidth: 50,
-                          height: 50,
-                          borderRadius: '50%',
-                          backgroundColor: (isProcessing || (typeof product.quantity === 'number' && product.quantity === 0)) ? '#ccc' : '#2e7d32',
-                          '&:hover': {
-                            backgroundColor: (isProcessing || (typeof product.quantity === 'number' && product.quantity === 0)) ? '#ccc' : '#1b5e20'
-                          }
-                        }}
-                      >
-                        <Add fontSize="large" />
-                      </Button>
-                    </Box>
-                    
-                    {/* Subtotal */}
-                    <Box sx={{ 
-                      p: 2, 
-                      backgroundColor: subtotal > 0 ? '#e8f5e8' : subtotal < 0 ? '#ffebee' : '#f5f5f5',
-                      borderRadius: 2,
-                      border: `2px solid ${subtotal > 0 ? '#2e7d32' : subtotal < 0 ? '#d32f2f' : '#ccc'}`,
-                      textAlign: 'center'
-                    }}>
-                      <Typography variant="h6" color={subtotal > 0 ? 'success.main' : subtotal < 0 ? 'error.main' : 'text.secondary'} sx={{ fontWeight: 'bold' }}>
-                        Subtotal: R$ {subtotal.toFixed(2)}
-                      </Typography>
-                    </Box>
-                  </CardContent>
-                </Card>
-              );
-            })}
+        
+        {error && (
+          <Alert severity="error" sx={{ 
+            mb: 3, 
+            borderRadius: 2,
+            fontSize: { xs: '0.875rem', sm: '1rem' },
+          }}>
+            {error}
+          </Alert>
+        )}
+        
+        {success && (
+          <Snackbar
+            open={!!success}
+            autoHideDuration={2000}
+            onClose={() => setSuccess('')}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          >
+            <Alert severity="success" sx={{ borderRadius: 2 }}>
+              {success}
+            </Alert>
+          </Snackbar>
+        )}
+
+        {loading ? (
+          <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+            <CircularProgress />
           </Box>
         ) : (
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold', color: '#383A29' }}>Produto</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: '#383A29' }}>Preço</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: '#383A29' }}>Comissão</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: '#383A29' }}>Quantidade Vendida</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: '#383A29' }}>Subtotal</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', color: '#383A29' }}>Ações</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {products.map((product) => {
-                  const quantity = sales[product._id] || 0;
-                  const subtotal = product.finalPrice * quantity;
-                  const commission = product.commission || (product.finalPrice * 0.3);
-                  const isProcessing = processingProduct === product._id;
+          <Box sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(3, 1fr)',
+              lg: 'repeat(4, 1fr)'
+            },
+            gap: { xs: 2, sm: 3, md: 4 },
+          }}>
+            {products.map((product) => (
+              <Card key={product._id} sx={{
+                background: 'rgba(255,255,255,0.97)',
+                border: '1.5px solid rgba(102,126,234,0.10)',
+                borderRadius: 3,
+                overflow: 'hidden',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: '0 8px 32px rgba(102,126,234,0.10)',
+                '&:hover': {
+                  boxShadow: '0 20px 40px rgba(102,126,234,0.18)',
+                  border: '2px solid #764ba2',
+                  transform: 'translateY(-4px) scale(1.02)',
+                },
+                p: { xs: 1.5, sm: 2, md: 3 },
+                minHeight: { xs: '200px', sm: '220px', md: '240px' },
+                position: 'relative',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  background: product.category === 'feminino' 
+                    ? 'linear-gradient(90deg, #ec4899 0%, #f472b6 100%)'
+                    : product.category === 'masculino'
+                    ? 'linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%)'
+                    : 'linear-gradient(90deg, #10b981 0%, #34d399 100%)',
+                  borderRadius: '3px 3px 0 0',
+                },
+              }}>
+                <CardContent sx={{ p: { xs: 1, sm: 1.5, md: 2 }, pb: { xs: 1, sm: 1.5, md: 2 } }}>
+                  <Typography variant="h6" component="h3" sx={{
+                    fontWeight: 700,
+                    color: theme.palette.text.primary,
+                    mb: 1,
+                    fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' },
+                    lineHeight: 1.3,
+                    minHeight: '2.6em',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                  }}>
+                    {product.name}
+                  </Typography>
                   
-                  return (
-                    <TableRow key={product._id}>
-                      <TableCell>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#383A29' }}>
-                          {product.name}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {product.description}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#383A29' }}>
-                          R$ {product.finalPrice.toFixed(2)}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" color="text.secondary">
-                          R$ {commission.toFixed(2)}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: quantity > 0 ? 'success.main' : 'text.secondary' }}>
-                          {quantity}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: subtotal > 0 ? 'success.main' : subtotal < 0 ? 'error.main' : 'text.secondary' }}>
-                          R$ {subtotal.toFixed(2)}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Box display="flex" gap={1}>
-                          <IconButton
-                            color="error"
-                            onClick={() => handleQuantityChange(product._id, false)}
-                            disabled={quantity === 0 || isProcessing}
-                            sx={{
-                              backgroundColor: quantity === 0 || isProcessing ? '#ccc' : '#d32f2f',
-                              color: 'white',
-                              '&:hover': {
-                                backgroundColor: quantity === 0 || isProcessing ? '#ccc' : '#b71c1c'
-                              }
-                            }}
-                          >
-                            <Remove />
-                          </IconButton>
-                          <IconButton
-                            color="success"
-                            onClick={() => handleQuantityChange(product._id, true)}
-                            disabled={isProcessing || (typeof product.quantity === 'number' && product.quantity === 0)}
-                            sx={{
-                              backgroundColor: (isProcessing || (typeof product.quantity === 'number' && product.quantity === 0)) ? '#ccc' : '#2e7d32',
-                              color: 'white',
-                              '&:hover': {
-                                backgroundColor: (isProcessing || (typeof product.quantity === 'number' && product.quantity === 0)) ? '#ccc' : '#1b5e20'
-                              }
-                            }}
-                          >
-                            <Add />
-                          </IconButton>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                  <Typography variant="body2" color="text.secondary" sx={{
+                    mb: 2,
+                    fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' },
+                    lineHeight: 1.4,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                  }}>
+                    {product.description}
+                  </Typography>
+
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="h6" sx={{ 
+                      fontWeight: 700, 
+                      color: theme.palette.success.main,
+                      fontSize: { xs: '1.1rem', sm: '1.2rem', md: '1.3rem' },
+                    }}>
+                      R$ {product.finalPrice?.toFixed(2) || '0.00'}
+                    </Typography>
+                    <Typography variant="body2" sx={{ 
+                      color: theme.palette.warning.main,
+                      fontWeight: 600,
+                      fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' },
+                    }}>
+                      Comissão: R$ {((product.finalPrice || 0) * 0.30).toFixed(2)}
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                    <Chip
+                      label={product.category}
+                      size="small"
+                      sx={{
+                        background: product.category === 'feminino' 
+                          ? 'rgba(236, 72, 153, 0.1)'
+                          : product.category === 'masculino'
+                          ? 'rgba(59, 130, 246, 0.1)'
+                          : 'rgba(16, 185, 129, 0.1)',
+                        color: product.category === 'feminino' 
+                          ? '#ec4899'
+                          : product.category === 'masculino'
+                          ? '#3b82f6'
+                          : '#10b981',
+                        fontWeight: 600,
+                        fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' },
+                        border: product.category === 'feminino' 
+                          ? '1px solid rgba(236, 72, 153, 0.3)'
+                          : product.category === 'masculino'
+                          ? '1px solid rgba(59, 130, 246, 0.3)'
+                          : '1px solid rgba(16, 185, 129, 0.3)',
+                      }}
+                    />
+                    <Typography variant="body2" color="text.secondary" sx={{ 
+                      fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
+                      fontWeight: 600,
+                    }}>
+                      Estoque: {product.quantity || 0}
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography variant="body2" sx={{ 
+                      fontWeight: 600,
+                      fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' },
+                    }}>
+                      Quantidade: {sales[product._id] || 0}
+                    </Typography>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <IconButton
+                        onClick={() => handleQuantityChange(product._id, false)}
+                        disabled={processingProduct === product._id || (sales[product._id] || 0) === 0}
+                        sx={{
+                          background: 'rgba(229, 62, 62, 0.1)',
+                          color: theme.palette.error.main,
+                          '&:hover': {
+                            background: theme.palette.error.main,
+                            color: 'white',
+                          },
+                          '&:disabled': {
+                            background: 'rgba(0, 0, 0, 0.12)',
+                            color: 'rgba(0, 0, 0, 0.26)',
+                          },
+                          width: { xs: 32, sm: 36, md: 40 },
+                          height: { xs: 32, sm: 36, md: 40 },
+                        }}
+                      >
+                        <Remove sx={{ fontSize: { xs: 16, sm: 18, md: 20 } }} />
+                      </IconButton>
+                      
+                      <IconButton
+                        onClick={() => handleQuantityChange(product._id, true)}
+                        disabled={processingProduct === product._id || (typeof product.quantity === 'number' && product.quantity === 0)}
+                        sx={{
+                          background: 'rgba(76, 175, 80, 0.1)',
+                          color: theme.palette.success.main,
+                          '&:hover': {
+                            background: theme.palette.success.main,
+                            color: 'white',
+                          },
+                          '&:disabled': {
+                            background: 'rgba(0, 0, 0, 0.12)',
+                            color: 'rgba(0, 0, 0, 0.26)',
+                          },
+                          width: { xs: 32, sm: 36, md: 40 },
+                          height: { xs: 32, sm: 36, md: 40 },
+                        }}
+                      >
+                        <Add sx={{ fontSize: { xs: 16, sm: 18, md: 20 } }} />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            ))}
+          </Box>
         )}
-      </Paper>
+      </Box>
 
-      <SalesSummary />
+      {/* Sales Summary Section - Now at bottom for larger screens */}
+      <Box sx={{ 
+        width: '100%',
+        display: { xs: 'block', md: 'flex' },
+        justifyContent: 'center',
+      }}>
+        <Card sx={{
+          background: 'linear-gradient(135deg, rgba(74, 85, 104, 0.95) 0%, rgba(113, 128, 150, 0.95) 100%)',
+          color: 'white',
+          border: '1.5px solid rgba(74, 85, 104, 0.3)',
+          borderRadius: 3,
+          boxShadow: '0 8px 32px rgba(74, 85, 104, 0.15)',
+          p: { xs: 2, sm: 3, md: 4 },
+          backdropFilter: 'blur(10px)',
+          '&:hover': {
+            transform: 'translateY(-2px)',
+            boxShadow: '0 12px 40px rgba(74, 85, 104, 0.25)',
+          },
+          transition: 'all 0.3s ease',
+          maxWidth: { xs: '100%', md: '600px' },
+          width: '100%',
+        }}>
+          <Typography variant="h5" component="h2" sx={{ 
+            mb: 3, 
+            color: 'white', 
+            fontWeight: 'bold',
+            fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem' },
+            textAlign: 'center',
+          }}>
+            Resumo de Vendas
+          </Typography>
+          
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: { xs: 'column', sm: 'row' },
+            gap: { xs: 2, sm: 3, md: 4 },
+            justifyContent: 'space-around',
+            alignItems: 'center',
+          }}>
+            <Box sx={{ textAlign: 'center', flex: 1 }}>
+              <Typography variant="h4" sx={{ 
+                color: '#4ade80',
+                fontWeight: 'bold',
+                fontSize: { xs: '1.75rem', sm: '2rem', md: '2.25rem' },
+                textShadow: '0 2px 4px rgba(0,0,0,0.1)',
+              }}>
+                R$ {totalVendas.toFixed(2)}
+              </Typography>
+              <Typography variant="body2" sx={{
+                fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' },
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontWeight: 500,
+              }}>
+                Total de Vendas
+              </Typography>
+            </Box>
+            
+            <Box sx={{ textAlign: 'center', flex: 1 }}>
+              <Typography variant="h5" sx={{ 
+                color: '#fbbf24',
+                fontWeight: 'bold',
+                fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+                textShadow: '0 2px 4px rgba(0,0,0,0.1)',
+              }}>
+                R$ {totalComissoes.toFixed(2)}
+              </Typography>
+              <Typography variant="body2" sx={{
+                fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' },
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontWeight: 500,
+              }}>
+                Total de Comissões
+              </Typography>
+            </Box>
+            
+            <Box sx={{ textAlign: 'center', flex: 1 }}>
+              <Typography variant="h5" sx={{ 
+                color: '#60a5fa',
+                fontWeight: 'bold',
+                fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+                textShadow: '0 2px 4px rgba(0,0,0,0.1)',
+              }}>
+                {totalProdutos}
+              </Typography>
+              <Typography variant="body2" sx={{
+                fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' },
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontWeight: 500,
+              }}>
+                Produtos Vendidos
+              </Typography>
+            </Box>
+          </Box>
 
-      <Snackbar
-        open={!!error}
-        autoHideDuration={3000}
-        onClose={() => setError('')}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
-          {error}
-        </Alert>
-      </Snackbar>
-
-      <Snackbar
-        open={!!success}
-        autoHideDuration={2000}
-        onClose={() => setSuccess('')}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert onClose={() => setSuccess('')} severity="success" sx={{ width: '100%' }}>
-          {success}
-        </Alert>
-      </Snackbar>
-    </Container>
+          {/* Informações adicionais para usuários */}
+          {!isAdmin && (
+            <Box sx={{ 
+              mt: 3, 
+              p: 2, 
+              borderRadius: 2, 
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+            }}>
+              <Typography variant="body2" sx={{
+                fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
+                color: 'rgba(255, 255, 255, 0.9)',
+                textAlign: 'center',
+                fontStyle: 'italic',
+              }}>
+                💡 Dica: Use os botões + e - para adicionar ou remover produtos da sua venda
+              </Typography>
+            </Box>
+          )}
+          
+          {isAdmin && (
+            <Box sx={{ mt: 3, textAlign: 'center' }}>
+              <Button
+                variant="contained"
+                onClick={() => navigate('/sales/summary')}
+                sx={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  color: 'white',
+                  fontWeight: 700,
+                  fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                  py: { xs: 1, sm: 1.2, md: 1.5 },
+                  px: { xs: 2, sm: 3, md: 4 },
+                  borderRadius: 3,
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  backdropFilter: 'blur(10px)',
+                  '&:hover': {
+                    background: 'rgba(255, 255, 255, 0.3)',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 8px 25px rgba(0,0,0,0.2)',
+                  },
+                }}
+              >
+                Ver Resumo Detalhado
+              </Button>
+            </Box>
+          )}
+        </Card>
+      </Box>
+    </Box>
   );
 };
 

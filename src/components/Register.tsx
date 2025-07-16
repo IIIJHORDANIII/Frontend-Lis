@@ -96,50 +96,52 @@ const Register: React.FC = () => {
     <Box
       sx={{
         minHeight: '100vh',
+        width: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 3,
+        padding: { xs: 2, sm: 3, md: 4 },
         position: 'relative',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          pointerEvents: 'none'
-        }
+        fontFamily: 'Poppins, Inter, Montserrat, Arial',
+        background: 'transparent',
+        backgroundSize: '200% 200%',
+        animation: 'gradientMove 15s ease-in-out infinite',
+        '@keyframes gradientMove': {
+          '0%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
+        },
       }}
     >
-      <Container maxWidth="xl" sx={{
+      <Box sx={{
+        width: '100%',
+        maxWidth: { xs: '100%', sm: 600, md: 700, lg: 800 },
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        minHeight: '100vh',
-        px: { xs: 1, sm: 2, md: 3 },
+        alignItems: 'center',
+        justifyContent: 'center'
       }}>
         <Fade in>
           <Paper
             elevation={0}
             sx={{
-              maxWidth: { xs: 340, sm: 400, md: 700, xl: 900 },
               width: '100%',
-              mx: 'auto',
-              mt: { xs: 1, sm: 2, md: 4 },
-              mb: { xs: 1, sm: 2, md: 4 },
-              p: { xs: 1, sm: 2, md: 4 },
-              borderRadius: 3,
-              boxShadow: '0 8px 32px 0 rgba(45,55,72,0.10)',
-              background: 'white',
-              '@media (min-width: 1600px)': {
-                maxWidth: 1100,
-                p: 6,
-              },
-              '@media (min-width: 1920px)': {
-                maxWidth: 1300,
-                p: 8,
-              },
+              p: { xs: 3, sm: 4, md: 5, lg: 6 },
+              borderRadius: 4,
+              boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.4)',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '4px',
+                background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`
+              }
             }}
           >
             <Box sx={{ textAlign: 'center', mb: 5 }}>
@@ -204,38 +206,21 @@ const Register: React.FC = () => {
 
             <Box component="form" onSubmit={handleSubmit}>
               <Stack spacing={3}>
-                <TextField
-                  required
-                  id="name"
-                  label="Nome Completo"
-                  name="name"
-                  autoComplete="name"
-                  autoFocus
-                  value={formData.name}
-                  onChange={handleChange}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Person sx={{ color: theme.palette.primary.main }} />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                
                 <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', sm: 'row' } }}>
                   <TextField
                     required
-                    id="email"
-                    label="Email"
-                    name="email"
-                    autoComplete="email"
-                    value={formData.email}
+                    id="name"
+                    label="Nome Completo*"
+                    name="name"
+                    autoComplete="name"
+                    autoFocus
+                    value={formData.name}
                     onChange={handleChange}
                     sx={{ flex: 1 }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Email sx={{ color: theme.palette.primary.main }} />
+                          <Person sx={{ color: theme.palette.primary.main }} />
                         </InputAdornment>
                       ),
                     }}
@@ -244,7 +229,7 @@ const Register: React.FC = () => {
                   <TextField
                     required
                     id="cpf"
-                    label="CPF"
+                    label="CPF*"
                     name="cpf"
                     value={formData.cpf}
                     onChange={handleChange}
@@ -263,18 +248,17 @@ const Register: React.FC = () => {
                 <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', sm: 'row' } }}>
                   <TextField
                     required
-                    name="password"
-                    label="Senha"
-                    type="password"
-                    id="password"
-                    autoComplete="new-password"
-                    value={formData.password}
+                    id="email"
+                    label="Email*"
+                    name="email"
+                    autoComplete="email"
+                    value={formData.email}
                     onChange={handleChange}
                     sx={{ flex: 1 }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Lock sx={{ color: theme.palette.primary.main }} />
+                          <Email sx={{ color: theme.palette.primary.main }} />
                         </InputAdornment>
                       ),
                     }}
@@ -283,7 +267,7 @@ const Register: React.FC = () => {
                   <TextField
                     required
                     name="confirmPassword"
-                    label="Confirmar Senha"
+                    label="Confirmar Senha*"
                     type="password"
                     id="confirmPassword"
                     autoComplete="new-password"
@@ -329,7 +313,7 @@ const Register: React.FC = () => {
             </Box>
           </Paper>
         </Fade>
-      </Container>
+      </Box>
     </Box>
   );
 };

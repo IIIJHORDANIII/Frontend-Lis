@@ -162,7 +162,7 @@ const UserStockLists: React.FC = () => {
   return (
     <Box sx={{ 
       minHeight: '100vh',
-      background: 'white',
+      background: 'transparent',
       py: { xs: 2, sm: 3, md: 4 },
       display: 'flex',
       justifyContent: 'center',
@@ -188,7 +188,7 @@ const UserStockLists: React.FC = () => {
               p: { xs: 1, sm: 2, md: 4 },
               borderRadius: 3,
               boxShadow: '0 8px 32px 0 rgba(45,55,72,0.10)',
-              background: 'rgba(255,255,255,0.13)',
+              background: 'white',
               backdropFilter: 'blur(12px)',
               border: '1.5px solid rgba(255,255,255,0.22)',
               '@media (min-width: 1600px)': {
@@ -196,7 +196,7 @@ const UserStockLists: React.FC = () => {
                 p: 6,
               },
               '@media (min-width: 1920px)': {
-                maxWidth: 1300,
+                maxWidth: 1200,
                 p: 8,
               },
             }}

@@ -150,52 +150,48 @@ const ProductForm: React.FC = () => {
     <Box
       sx={{
         minHeight: '100vh',
+        width: '100%',
         display: 'flex',
-        justifyContent: 'center',
         alignItems: 'center',
-        py: 4,
+        justifyContent: 'center',
+        padding: { xs: 2, sm: 3, md: 4 },
         position: 'relative',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          pointerEvents: 'none'
-        }
+        fontFamily: 'Poppins, Inter, Montserrat, Arial',
+        background: 'transparent',
+        backgroundSize: '200% 200%',
+        animation: 'gradientMove 15s ease-in-out infinite',
+        '@keyframes gradientMove': {
+          '0%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
+        },
       }}
     >
-      <Container maxWidth="xl" sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        minHeight: '100vh',
-        px: { xs: 1, sm: 2, md: 3 },
-      }}>
-        <Fade in>
-          <Paper
-            elevation={0}
-            sx={{
-              maxWidth: { xs: 340, sm: 400, md: 700, xl: 900 },
-              width: '100%',
-              mx: 'auto',
-              mt: { xs: 1, sm: 2, md: 4 },
-              mb: { xs: 1, sm: 2, md: 4 },
-              p: { xs: 1, sm: 2, md: 4 },
-              borderRadius: 3,
-              boxShadow: '0 8px 32px 0 rgba(45,55,72,0.10)',
-              background: 'white',
-              '@media (min-width: 1600px)': {
-                maxWidth: 1100,
-                p: 6,
-              },
-              '@media (min-width: 1920px)': {
-                maxWidth: 1300,
-                p: 8,
-              },
-            }}
-          >
+      <Fade in>
+        <Paper
+          elevation={0}
+          sx={{
+            maxWidth: { xs: '100%', sm: 600, md: 700, lg: 800 },
+            width: '100%',
+            p: { xs: 3, sm: 4, md: 5, lg: 6 },
+            borderRadius: 4,
+            boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.4)',
+            position: 'relative',
+            overflow: 'hidden',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '4px',
+              background: 'linear-gradient(90deg, #2d3748 0%, #4a5568 100%)'
+            }
+          }}
+        >
             <Box sx={{ textAlign: 'center', mb: 5 }}>
               <Avatar
                 sx={{
@@ -487,7 +483,6 @@ const ProductForm: React.FC = () => {
             </Box>
           </Paper>
         </Fade>
-      </Container>
     </Box>
   );
 };

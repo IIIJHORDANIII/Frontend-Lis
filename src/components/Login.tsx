@@ -93,7 +93,7 @@ const Login: React.FC = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: { xs: 2, sm: 3 },
+        padding: { xs: 2, sm: 3, md: 4 },
         position: 'relative',
         fontFamily: 'Poppins, Inter, Montserrat, Arial',
       }}
@@ -105,7 +105,7 @@ const Login: React.FC = () => {
         zIndex: 0,
         background: 'linear-gradient(135deg, #f7fafc 0%, #edf2f7 50%, #e2e8f0 100%)',
         backgroundSize: '200% 200%',
-        animation: 'gradientMove 12s ease-in-out infinite',
+        animation: 'gradientMove 15s ease-in-out infinite',
         '@keyframes gradientMove': {
           '0%': { backgroundPosition: '0% 50%' },
           '50%': { backgroundPosition: '100% 50%' },
@@ -113,20 +113,29 @@ const Login: React.FC = () => {
         },
       }} />
 
-      <Container maxWidth="xs" sx={{ position: 'relative', zIndex: 2 }}>
+      <Container maxWidth="sm" sx={{ 
+        position: 'relative', 
+        zIndex: 2,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        py: { xs: 2, sm: 3, md: 4 }
+      }}>
         <Fade in timeout={800}>
           <Paper 
             elevation={0}
             sx={{ 
-              p: { xs: 3, sm: 4, md: 6 },
+              p: { xs: 3, sm: 4, md: 5, lg: 6 },
               borderRadius: 4,
-              background: 'rgba(255, 255, 255, 0.9)',
+              background: 'rgba(255, 255, 255, 0.95)',
               backdropFilter: 'blur(20px)',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.08)',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
+              border: '1px solid rgba(255, 255, 255, 0.4)',
               position: 'relative',
               overflow: 'hidden',
-              maxWidth: 750,
+              width: '100%',
+              maxWidth: 500,
               margin: '0 auto',
               '&::before': {
                 content: '""',

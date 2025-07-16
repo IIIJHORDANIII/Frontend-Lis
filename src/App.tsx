@@ -124,7 +124,7 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         zIndex: 0,
         background: 'linear-gradient(135deg, #f7fafc 0%, #edf2f7 50%, #e2e8f0 100%)',
         backgroundSize: '200% 200%',
-        animation: 'gradientMove 12s ease-in-out infinite',
+        animation: 'gradientMove 15s ease-in-out infinite',
         '@keyframes gradientMove': {
           '0%': { backgroundPosition: '0% 50%' },
           '50%': { backgroundPosition: '100% 50%' },
@@ -140,20 +140,26 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           component="main" 
           sx={{ 
             flexGrow: 1,
-            py: { xs: 1, sm: 2, md: 3, lg: 4 },
-            px: { xs: 1, sm: 2, md: 3, lg: 4 },
+            py: { xs: 2, sm: 3, md: 4, lg: 5, xl: 6 },
+            px: { xs: 2, sm: 3, md: 4, lg: 5, xl: 6 },
             position: 'relative',
             zIndex: 1,
             pt: { 
-              xs: 10, // 48px header + 2px top + 2px bottom + 16px padding
-              sm: 12, // 56px header + 8px top + 8px bottom + 16px padding  
-              md: 14, // 64px header + 16px top + 16px bottom + 16px padding
-              lg: 16  // 64px header + 24px top + 24px bottom + 16px padding
+              xs: 18, // 56px header + 112px padding (increased significantly)
+              sm: 20, // 64px header + 112px padding (increased significantly)
+              md: 22, // 72px header + 112px padding (increased significantly)
+              lg: 24, // 80px header + 112px padding (increased significantly)
+              xl: 26  // 80px header + 120px padding (increased significantly)
             },
             '@media (max-width: 600px)': {
-              px: 0.5,
-              py: 0.5,
-              pt: 9, // Ajuste fino para mobile
+              px: 1.5,
+              py: 1.5,
+              pt: 16, // Increased significantly for mobile
+            },
+            '@media (min-width: 1920px)': {
+              px: 8,
+              py: 8,
+              pt: 28, // Increased for large screens
             },
           }}
         >

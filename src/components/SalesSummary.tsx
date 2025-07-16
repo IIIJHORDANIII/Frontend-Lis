@@ -198,8 +198,17 @@ const SalesSummary: React.FC = () => {
   }
 
   return (
-    <Paper sx={{ p: 3, mt: 4, border: '2px solid #white' }}>
-      <Typography variant="h5" sx={{ color: '#2d3748', fontWeight: 'bold', mb: 3 }}>
+    <Paper sx={{ 
+      p: { xs: 2, sm: 3, md: 4 }, 
+      border: '2px solid #white',
+      borderRadius: 3,
+    }}>
+      <Typography variant="h5" sx={{ 
+        color: '#2d3748', 
+        fontWeight: 'bold', 
+        mb: 3,
+        fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem', lg: '2rem' },
+      }}>
         Resumo de Vendas por Vendedora
       </Typography>
       
@@ -210,7 +219,11 @@ const SalesSummary: React.FC = () => {
       )}
       
       {error && (
-        <Typography color="error" sx={{ textAlign: 'center', py: 2 }}>
+        <Typography color="error" sx={{ 
+          textAlign: 'center', 
+          py: 2,
+          fontSize: { xs: '0.875rem', sm: '1rem' },
+        }}>
           {error}
         </Typography>
       )}
@@ -219,145 +232,204 @@ const SalesSummary: React.FC = () => {
         <>
           <Box sx={{ 
             display: 'grid', 
-            gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, 
-            gap: 2, 
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)' }, 
+            gap: { xs: 2, sm: 3, md: 4 }, 
             mb: 3 
           }}>
-            <Paper sx={{ p: 2, backgroundColor: '#2d3748', color: 'white' }}>
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            <Paper sx={{ 
+              p: { xs: 2, sm: 3, md: 4 }, 
+              backgroundColor: '#2d3748', 
+              color: 'white',
+              borderRadius: 3,
+            }}>
+              <Typography variant="h6" sx={{ 
+                fontWeight: 'bold',
+                fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
+              }}>
                 Total de Vendas
               </Typography>
-              <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+              <Typography variant="h4" sx={{ 
+                fontWeight: 'bold',
+                fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem', lg: '2.25rem' },
+              }}>
                 {formatCurrency(totalVendas)}
               </Typography>
             </Paper>
-            <Paper sx={{ p: 2, backgroundColor: '#d9d9d9', color: '#2d3748' }}>
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            <Paper sx={{ 
+              p: { xs: 2, sm: 3, md: 4 }, 
+              backgroundColor: '#d9d9d9', 
+              color: '#2d3748',
+              borderRadius: 3,
+            }}>
+              <Typography variant="h6" sx={{ 
+                fontWeight: 'bold',
+                fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
+              }}>
                 Total de Comissões
               </Typography>
-              <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+              <Typography variant="h4" sx={{ 
+                fontWeight: 'bold',
+                fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem', lg: '2.25rem' },
+              }}>
                 {formatCurrency(totalComissoes)}
               </Typography>
             </Paper>
           </Box>
           
           {groupedSalesArray.map((userGroup) => (
-            <Accordion key={userGroup.userId} sx={{ mb: 2, border: '1px solid #d9d9d9' }}>
+            <Accordion key={userGroup.userId} sx={{ 
+              mb: 2, 
+              border: '1px solid #d9d9d9',
+              borderRadius: 2,
+              '&:before': {
+                display: 'none',
+              },
+            }}>
               <AccordionSummary 
                 expandIcon={<ExpandMoreIcon sx={{ color: '#383A29' }} />}
-                sx={{ backgroundColor: '#f5f5f5' }}
+                sx={{ 
+                  backgroundColor: '#f5f5f5',
+                  minHeight: { xs: '48px', sm: '56px', md: '64px' },
+                }}
               >
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mr: 2 }}>
-                  <Typography sx={{ color: '#383A29', fontWeight: 'bold' }}>
-                    {userGroup.userName} ({userGroup.sales.length} venda{userGroup.sales.length > 1 ? 's' : ''})
-                  </Typography>
-                  <Box sx={{ textAlign: 'right' }}>
-                    <Typography sx={{ color: '#383A29', fontWeight: 'bold' }}>
-                      {formatCurrency(userGroup.totalValue)}
+                <Box sx={{ 
+                  display: 'flex', 
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  justifyContent: 'space-between', 
+                  width: '100%', 
+                  mr: 2,
+                  gap: { xs: 1, sm: 0 },
+                }}>
+                  <Box>
+                    <Typography variant="h6" sx={{ 
+                      color: '#383A29', 
+                      fontWeight: 'bold',
+                      fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
+                    }}>
+                      {userGroup.userName}
                     </Typography>
-                    <Typography sx={{ color: '#666', fontSize: '0.8rem' }}>
+                    <Typography variant="body2" sx={{ 
+                      color: '#718096',
+                      fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
+                    }}>
+                      {userGroup.sales.length} venda{userGroup.sales.length > 1 ? 's' : ''}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    gap: { xs: 0.5, sm: 2, md: 3 },
+                    alignItems: { xs: 'flex-start', sm: 'center' },
+                  }}>
+                    <Typography variant="body1" sx={{ 
+                      color: '#2d3748', 
+                      fontWeight: 'bold',
+                      fontSize: { xs: '0.9rem', sm: '1rem', md: '1.125rem' },
+                    }}>
+                      Total: {formatCurrency(userGroup.totalValue)}
+                    </Typography>
+                    <Typography variant="body1" sx={{ 
+                      color: '#718096',
+                      fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' },
+                    }}>
                       Comissão: {formatCurrency(userGroup.totalCommission)}
                     </Typography>
                   </Box>
                 </Box>
               </AccordionSummary>
-              <AccordionDetails>
-                {userGroup.sales.map((sale, saleIndex) => (
-                  <Box key={sale._id} sx={{ mb: saleIndex < userGroup.sales.length - 1 ? 3 : 0 }}>
-                    <Typography variant="h6" sx={{ color: '#383A29', fontWeight: 'bold', mb: 2 }}>
-                      Venda #{saleIndex + 1} - {new Date(sale.createdAt).toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </Typography>
-                    <TableContainer>
-                      <Table size="small">
-                        <TableHead>
-                          <TableRow sx={{ backgroundColor: '#d9d9d9' }}>
-                            <TableCell sx={{ color: '#383A29', fontWeight: 'bold' }}>Produto</TableCell>
-                            <TableCell sx={{ color: '#383A29', fontWeight: 'bold' }}>Quantidade</TableCell>
-                            <TableCell sx={{ color: '#383A29', fontWeight: 'bold' }}>Preço Unit.</TableCell>
-                            <TableCell sx={{ color: '#383A29', fontWeight: 'bold' }}>Subtotal</TableCell>
+              <AccordionDetails sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
+                <TableContainer sx={{ 
+                  borderRadius: 2,
+                  border: '1px solid #e2e8f0',
+                }}>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ 
+                          fontWeight: 'bold', 
+                          color: '#2d3748',
+                          fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
+                        }}>
+                          Produto
+                        </TableCell>
+                        <TableCell sx={{ 
+                          fontWeight: 'bold', 
+                          color: '#2d3748',
+                          fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
+                        }}>
+                          Qtd
+                        </TableCell>
+                        <TableCell sx={{ 
+                          fontWeight: 'bold', 
+                          color: '#2d3748',
+                          fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
+                        }}>
+                          Preço
+                        </TableCell>
+                        <TableCell sx={{ 
+                          fontWeight: 'bold', 
+                          color: '#2d3748',
+                          fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
+                        }}>
+                          Subtotal
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {userGroup.sales.flatMap(sale => 
+                        sale.products.map((product, index) => (
+                          <TableRow key={`${sale._id}-${index}`}>
+                            <TableCell sx={{ 
+                              fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
+                            }}>
+                              {product.name}
+                            </TableCell>
+                            <TableCell sx={{ 
+                              fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
+                            }}>
+                              {product.quantity}
+                            </TableCell>
+                            <TableCell sx={{ 
+                              fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
+                            }}>
+                              {formatCurrency(product.price)}
+                            </TableCell>
+                            <TableCell sx={{ 
+                              fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
+                            }}>
+                              {formatCurrency(product.subtotal)}
+                            </TableCell>
                           </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {sale.products.map((product, index) => (
-                            <TableRow key={index}>
-                              <TableCell sx={{ color: '#383A29' }}>{product.name}</TableCell>
-                              <TableCell sx={{ color: '#383A29' }}>{product.quantity}</TableCell>
-                              <TableCell sx={{ color: '#383A29' }}>{formatCurrency(product.price)}</TableCell>
-                              <TableCell sx={{ color: '#383A29', fontWeight: 'bold' }}>
-                                {formatCurrency(product.subtotal)}
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                    <Box sx={{ mt: 2, p: 2, backgroundColor: '#f5f5f5', borderRadius: 1, display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography sx={{ color: '#383A29', fontWeight: 'bold' }}>
-                        Total da Venda: {formatCurrency(sale.total)}
-                      </Typography>
-                      <Typography sx={{ color: '#383A29', fontWeight: 'bold' }}>
-                        Comissão: {formatCurrency(sale.commission)}
-                      </Typography>
-                    </Box>
-                    {saleIndex < userGroup.sales.length - 1 && (
-                      <Box sx={{ borderBottom: '1px solid #d9d9d9', mt: 2 }} />
-                    )}
-                  </Box>
-                ))}
-                
-                {/* Resumo total do usuário */}
-                <Box sx={{ mt: 3, p: 2, backgroundColor: '#2d3748', color: 'white', borderRadius: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Box>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                      Resumo de {userGroup.userName}
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 3 }}>
-                      <Typography sx={{ fontWeight: 'bold' }}>
-                        Total de Vendas: {formatCurrency(userGroup.totalValue)}
-                      </Typography>
-                      <Typography sx={{ fontWeight: 'bold' }}>
-                        Total de Comissões: {formatCurrency(userGroup.totalCommission)}
-                      </Typography>
-                    </Box>
-                  </Box>
-                  {user?.isAdmin && (
-                    <Button
-                      variant="contained"
-                      color="error"
-                      disabled={deletingUserId === userGroup.userId}
-                      onClick={() => handleDeleteUserSales(userGroup.userId)}
-                      sx={{
-                        backgroundColor: '#d32f2f',
-                        color: 'white',
-                        fontWeight: 'bold',
-                        '&:hover': {
-                          backgroundColor: '#b71c1c',
-                        },
-                        '&:disabled': {
-                          backgroundColor: '#ccc',
-                          color: '#666',
-                        },
-                        ml: 2,
-                        px: 3,
-                        py: 1,
-                      }}
-                    >
-                      {deletingUserId === userGroup.userId ? (
-                        <>
-                          <CircularProgress size={16} sx={{ color: 'white', mr: 1 }} />
-                          Zerando...
-                        </>
-                      ) : (
-                        'Zerar vendas deste usuário'
+                        ))
                       )}
-                    </Button>
-                  )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                
+                <Box sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'flex-end', 
+                  mt: 2,
+                  gap: { xs: 1, sm: 2 },
+                }}>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() => handleDeleteUserSales(userGroup.userId)}
+                    disabled={deletingUserId === userGroup.userId}
+                    sx={{
+                      borderColor: '#e53e3e',
+                      color: '#e53e3e',
+                      fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
+                      minHeight: { xs: '32px', sm: '36px', md: '40px' },
+                      '&:hover': {
+                        backgroundColor: 'rgba(229, 62, 62, 0.1)',
+                        borderColor: '#c53030',
+                      },
+                    }}
+                  >
+                    {deletingUserId === userGroup.userId ? 'Zerando...' : 'Zerar Vendas'}
+                  </Button>
                 </Box>
               </AccordionDetails>
             </Accordion>

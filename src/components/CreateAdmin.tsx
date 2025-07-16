@@ -21,7 +21,10 @@ import { createAdmin } from '../services/api';
 const CreateAdmin: React.FC = () => {
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
+    fullName: '',
+    cpf: '',
+    confirmPassword: ''
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -43,7 +46,7 @@ const CreateAdmin: React.FC = () => {
     try {
       await createAdmin(formData.email, formData.password);
       setSuccess('Usuário admin criado com sucesso!');
-      setFormData({ email: '', password: '' });
+      setFormData({ email: '', password: '', fullName: '', cpf: '', confirmPassword: '' });
     } catch (err) {
       setError('Falha ao criar usuário admin');
     } finally {
@@ -55,18 +58,26 @@ const CreateAdmin: React.FC = () => {
     <Box
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        width: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        p: 2
+        padding: { xs: 2, sm: 3, md: 4 },
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       }}
     >
-      <Container maxWidth="sm">
+      <Box sx={{
+        width: '100%',
+        maxWidth: { xs: '100%', sm: 500, md: 600 },
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
         <Fade in timeout={800}>
           <Paper 
             elevation={24}
             sx={{ 
+              width: '100%',
               p: { xs: 3, sm: 5 },
               borderRadius: 4,
               background: 'rgba(255, 255, 255, 0.95)',
@@ -109,10 +120,10 @@ const CreateAdmin: React.FC = () => {
                   mb: 1
                 }}
               >
-                Criar Admin
+                Nova Vendedora
               </Typography>
               <Typography variant="body1" color="text.secondary">
-                Crie um novo usuário administrador
+                Preencha os dados para criar uma nova conta
               </Typography>
             </Box>
 
@@ -147,29 +158,92 @@ const CreateAdmin: React.FC = () => {
             )}
 
             <Box component="form" onSubmit={handleSubmit}>
-              <TextField
-                fullWidth
-                label="Email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                margin="normal"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Email color="primary" />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 2,
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+              <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+                <TextField
+                  fullWidth
+                  label="Nome Completo*"
+                  name="fullName"
+                  value={formData.fullName || ''}
+                  onChange={handleChange}
+                  required
+                  margin="normal"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AdminPanelSettings color="primary" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                      },
+                      '&.Mui-focused': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)'
+                      }
+                    }
+                  }}
+                />
+                <TextField
+                  fullWidth
+                  label="CPF*"
+                  name="cpf"
+                  value={formData.cpf || '00000000000'}
+                  onChange={handleChange}
+                  required
+                  margin="normal"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AdminPanelSettings color="primary" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                      },
+                      '&.Mui-focused': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)'
+                      }
+                    }
+                  }}
+                />
+              </Box>
+              <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+                <TextField
+                  fullWidth
+                  label="Email*"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  margin="normal"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Email color="primary" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                     },
                     '&.Mui-focused': {
                       transform: 'translateY(-2px)',
@@ -180,10 +254,10 @@ const CreateAdmin: React.FC = () => {
               />
               <TextField
                 fullWidth
-                label="Senha"
-                name="password"
+                label="Confirmar Senha*"
+                name="confirmPassword"
                 type="password"
-                value={formData.password}
+                value={formData.confirmPassword || ''}
                 onChange={handleChange}
                 required
                 margin="normal"
@@ -209,6 +283,7 @@ const CreateAdmin: React.FC = () => {
                   }
                 }}
               />
+              </Box>
               <Button
                 type="submit"
                 fullWidth
@@ -233,12 +308,12 @@ const CreateAdmin: React.FC = () => {
                   }
                 }}
               >
-                {loading ? 'Criando Admin...' : 'Criar Admin'}
+                {loading ? 'Criando Conta...' : 'Criar Conta'}
               </Button>
             </Box>
           </Paper>
         </Fade>
-      </Container>
+      </Box>
     </Box>
   );
 };

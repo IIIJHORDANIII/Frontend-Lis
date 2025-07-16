@@ -156,29 +156,29 @@ const LandingPage: React.FC = () => {
         flexDirection: { xs: 'column', md: 'row' },
         alignItems: 'center',
         justifyContent: 'space-between',
-        px: { xs: 2, sm: 3, md: 10 },
-        pt: { xs: 8, sm: 10, md: 16 },
-        pb: { xs: 4, sm: 6, md: 10 },
-        minHeight: { xs: 'auto', md: '70vh' },
-        gap: { xs: 4, md: 0 },
+        px: { xs: 2, sm: 3, md: 6, lg: 8, xl: 10 },
+        pt: { xs: 10, sm: 12, md: 16, lg: 20, xl: 24 },
+        pb: { xs: 6, sm: 8, md: 12, lg: 16, xl: 20 },
+        minHeight: { xs: 'auto', md: '80vh' },
+        gap: { xs: 6, md: 0 },
       }}>
         <Box sx={{ 
           flex: 1, 
           color: '#2d3748', 
-          pr: { md: 8 }, 
-          mb: { xs: 4, md: 0 },
+          pr: { md: 8, lg: 10, xl: 12 }, 
+          mb: { xs: 6, md: 0 },
           textAlign: { xs: 'center', md: 'left' },
         }}>
           <Typography 
             variant="h1" 
             sx={{ 
               fontWeight: 800, 
-              fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem', lg: '3.5rem' }, 
+              fontSize: { xs: '2.25rem', sm: '2.75rem', md: '3.25rem', lg: '3.75rem', xl: '4.25rem' }, 
               lineHeight: 1.1, 
-              mb: 2, 
+              mb: 3, 
               letterSpacing: -1,
               '@media (max-width: 600px)': {
-                fontSize: '1.75rem',
+                fontSize: '2rem',
               },
             }}
           >
@@ -189,9 +189,9 @@ const LandingPage: React.FC = () => {
             sx={{ 
               fontWeight: 400, 
               color: '#718096', 
-              mb: 4, 
-              maxWidth: 520,
-              fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
+              mb: 6, 
+              maxWidth: 600,
+              fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.375rem', lg: '1.5rem', xl: '1.625rem' },
               mx: { xs: 'auto', md: 0 },
             }}
           >
@@ -202,14 +202,14 @@ const LandingPage: React.FC = () => {
             variant="contained"
             endIcon={<ArrowForwardIcon />}
             sx={{
-              px: { xs: 3, sm: 4, md: 5 },
-              py: { xs: 1.5, sm: 1.6, md: 1.8 },
+              px: { xs: 4, sm: 5, md: 6, lg: 7, xl: 8 },
+              py: { xs: 1.75, sm: 2, md: 2.25, lg: 2.5, xl: 2.75 },
               fontWeight: 700,
-              fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
-              borderRadius: 3,
+              fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.375rem', lg: '1.5rem', xl: '1.625rem' },
+              borderRadius: 4,
               background: 'linear-gradient(90deg, #2d3748 0%, #4a5568 100%)',
               color: '#fff',
-              boxShadow: '0 4px 24px 0 rgba(45,55,72,0.15)',
+              boxShadow: '0 8px 32px 0 rgba(45,55,72,0.20)',
               transition: 'transform 0.2s',
               '&:hover': {
                 transform: 'scale(1.05)',
@@ -229,13 +229,13 @@ const LandingPage: React.FC = () => {
           order: { xs: -1, md: 0 },
         }}>
           <Box sx={{
-            p: { xs: 2, sm: 3 },
+            p: { xs: 3, sm: 4, md: 5, lg: 6 },
             borderRadius: 6,
-            boxShadow: '0 8px 40px 0 rgba(0,0,0,0.08)',
-            background: 'rgba(255,255,255,0.8)',
-            backdropFilter: 'blur(12px)',
-            border: '1px solid rgba(255,255,255,0.3)',
-            maxWidth: { xs: 300, sm: 420 },
+            boxShadow: '0 16px 60px 0 rgba(0,0,0,0.12)',
+            background: 'rgba(255,255,255,0.9)',
+            backdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255,255,255,0.4)',
+            maxWidth: { xs: 350, sm: 450, md: 500, lg: 550, xl: 600 },
             mx: 'auto',
             width: '100%',
           }}>
@@ -248,63 +248,85 @@ const LandingPage: React.FC = () => {
       <Box sx={{
         position: 'relative',
         zIndex: 2,
-        maxWidth: 1200,
-        mx: 'auto',
-        px: { xs: 1, sm: 2, md: 6 },
-        py: { xs: 4, sm: 6, md: 8 },
-        display: 'grid',
-        gridTemplateColumns: { 
-          xs: '1fr', 
-          sm: 'repeat(2, 1fr)', 
-          md: 'repeat(4, 1fr)' 
-        },
-        gap: { xs: 2, sm: 3, md: 4 },
+        py: { xs: 8, sm: 10, md: 12, lg: 16, xl: 20 },
+        px: { xs: 2, sm: 3, md: 6, lg: 8, xl: 10 },
       }}>
-        {features.map((f, i) => (
-          <Card key={i} elevation={0} sx={{
-            background: 'rgba(255,255,255,0.9)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: 5,
-            boxShadow: '0 2px 16px 0 rgba(0,0,0,0.05)',
-            border: '1px solid rgba(255,255,255,0.3)',
-            color: '#2d3748',
-            minHeight: { xs: 160, sm: 180 },
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'transform 0.18s',
-            '&:hover': { 
-              transform: 'translateY(-6px) scale(1.04)', 
-              boxShadow: '0 8px 32px 0 rgba(0,0,0,0.1)' 
-            },
-            px: { xs: 1.5, sm: 2 },
-            py: { xs: 2, sm: 2 },
-          }}>
-            <Box sx={{ mb: 2 }}>{f.icon}</Box>
-            <Typography 
-              variant="h6" 
-              sx={{ 
-                fontWeight: 700, 
-                mb: 1,
-                fontSize: { xs: '1rem', sm: '1.125rem' },
+        <Box sx={{ textAlign: 'center', mb: { xs: 6, sm: 8, md: 10, lg: 12 } }}>
+          <Typography 
+            variant="h2" 
+            sx={{ 
+              fontWeight: 700, 
+              color: '#2d3748', 
+              mb: 3,
+              fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem', lg: '3.5rem', xl: '4rem' },
+            }}
+          >
+            Recursos Principais
+          </Typography>
+          <Typography 
+            variant="h5" 
+            sx={{ 
+              color: '#718096', 
+              maxWidth: 700,
+              mx: 'auto',
+              fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.375rem', lg: '1.5rem' },
+            }}
+          >
+            Tudo que você precisa para gerenciar seu estoque de forma eficiente
+          </Typography>
+        </Box>
+        
+        <Box sx={{ 
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
+          gap: 4,
+          maxWidth: 1200,
+          mx: 'auto'
+        }}>
+          {features.map((feature, index) => (
+            <Box key={index}>
+              <Card sx={{
+                p: { xs: 3, sm: 4, md: 5 },
+                height: '100%',
                 textAlign: 'center',
-              }}
-            >
-              {f.title}
-            </Typography>
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                color: '#718096', 
-                textAlign: 'center',
-                fontSize: { xs: '0.8125rem', sm: '0.875rem' },
-              }}
-            >
-              {f.desc}
-            </Typography>
-          </Card>
-        ))}
+                background: 'rgba(255,255,255,0.9)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255,255,255,0.3)',
+                borderRadius: 4,
+                boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-8px)',
+                  boxShadow: '0 16px 48px rgba(0,0,0,0.12)',
+                }
+              }}>
+                <Box sx={{ mb: 3, display: 'flex', justifyContent: 'center' }}>
+                  {feature.icon}
+                </Box>
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    fontWeight: 600, 
+                    mb: 2, 
+                    color: '#2d3748',
+                    fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.375rem' },
+                  }}
+                >
+                  {feature.title}
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: '#718096',
+                    fontSize: { xs: '0.875rem', sm: '0.9375rem', md: '1rem' },
+                  }}
+                >
+                  {feature.desc}
+                                 </Typography>
+               </Card>
+             </Box>
+           ))}
+         </Box>
       </Box>
 
       {/* Testimonials Section */}
