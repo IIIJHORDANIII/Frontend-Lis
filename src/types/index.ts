@@ -19,11 +19,17 @@ export interface Product {
   quantity?: number;
 }
 
+export interface ProductWithQuantity {
+  productId: string;
+  quantity: number;
+  product?: Product;
+}
+
 export interface CustomList {
   _id: string;
   name: string;
   description: string;
-  products: Product[];
+  products: ProductWithQuantity[];
   userId: string;
   isPublic: boolean;
   sharedWith: User[];

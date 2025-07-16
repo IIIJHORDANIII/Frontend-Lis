@@ -365,13 +365,13 @@ const CustomLists: React.FC = () => {
                       </AccordionSummary>
                       <AccordionDetails sx={{ p: { xs: 1, sm: 1.5, md: 2 } }}>
                         <List dense>
-                          {list.products?.map((product, index) => (
-                            <React.Fragment key={product._id || index}>
+                          {list.products?.map((productItem, index) => (
+                            <React.Fragment key={productItem.productId || index}>
                               <ListItem sx={{ px: 0, py: { xs: 0.5, sm: 1 } }}>
                                 <ListItemAvatar>
                                   <Avatar
-                                    src={product.image || DEFAULT_IMAGE}
-                                    alt={product.name}
+                                    src={productItem.product?.image || DEFAULT_IMAGE}
+                                    alt={productItem.product?.name || 'Produto'}
                                     sx={{ 
                                       width: { xs: 32, sm: 36, md: 40 }, 
                                       height: { xs: 32, sm: 36, md: 40 },
@@ -386,7 +386,7 @@ const CustomLists: React.FC = () => {
                                       fontWeight: 'bold',
                                       fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
                                     }}>
-                                      {product.name}
+                                      {productItem.product?.name || 'Produto não encontrado'}
                                     </Typography>
                                   }
                                   secondary={
@@ -395,16 +395,14 @@ const CustomLists: React.FC = () => {
                                         fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.85rem' },
                                         color: theme.customColors.text.secondary,
                                       }}>
-                                        {formatPrice(product.finalPrice)}
+                                        {formatPrice(productItem.product?.finalPrice || 0)}
                                       </Typography>
-                                      {product.quantity && (
-                                        <Typography variant="body2" sx={{ 
-                                          color: theme.customColors.text.primary,
-                                          fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.85rem' },
-                                        }}>
-                                          Qtd: {product.quantity}
-                                        </Typography>
-                                      )}
+                                      <Typography variant="body2" sx={{ 
+                                        color: theme.customColors.text.primary,
+                                        fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.85rem' },
+                                      }}>
+                                        Qtd: {productItem.quantity}
+                                      </Typography>
                                     </Box>
                                   }
                                 />

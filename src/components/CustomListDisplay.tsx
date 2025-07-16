@@ -108,8 +108,8 @@ const CustomListDisplay: React.FC = () => {
                   {list.name}
                 </Typography>
                 <List>
-                  {list.products.map((product) => (
-                    <ListItem key={product._id} sx={{
+                  {list.products.map((productItem) => (
+                    <ListItem key={productItem.productId} sx={{
                       borderRadius: 2,
                       mb: 1,
                       backgroundColor: alpha(theme.customColors.text.primary, 0.02),
@@ -126,17 +126,25 @@ const CustomListDisplay: React.FC = () => {
                             fontWeight: 600,
                             fontSize: { xs: '0.875rem', sm: '1rem' },
                           }}>
-                            {product.name}
+                            {productItem.product?.name || 'Produto não encontrado'}
                           </Typography>
                         }
                         secondary={
-                          <Typography sx={{ 
-                            color: theme.customColors.status.success,
-                            fontWeight: 700,
-                            fontSize: { xs: '0.875rem', sm: '1rem' },
-                          }}>
-                            R$ {product.finalPrice.toFixed(2)}
-                          </Typography>
+                          <Box>
+                            <Typography sx={{ 
+                              color: theme.customColors.status.success,
+                              fontWeight: 700,
+                              fontSize: { xs: '0.875rem', sm: '1rem' },
+                            }}>
+                              R$ {(productItem.product?.finalPrice || 0).toFixed(2)}
+                            </Typography>
+                            <Typography sx={{ 
+                              color: theme.customColors.text.secondary,
+                              fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                            }}>
+                              Quantidade: {productItem.quantity}
+                            </Typography>
+                          </Box>
                         }
                       />
                     </ListItem>

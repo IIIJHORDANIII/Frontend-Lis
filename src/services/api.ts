@@ -88,7 +88,7 @@ export const getProducts = async (): Promise<Product[]> => {
 
 export const createCustomList = async (
   name: string,
-  products: string[],
+  products: Array<{ productId: string; quantity: number }>,
   sharedWith?: string[],
   isPublic?: boolean,
   description?: string
@@ -101,6 +101,19 @@ export const createCustomList = async (
       isPublic,
       description
     }, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const addProductToList = async (listId: string, productId: string, quantity: number = 1): Promise<CustomList> => {
+  try {
+    const response = await api.post<CustomList>(`/custom-lists/${listId}/products/${productId}`, { quantity }, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
@@ -206,15 +219,40 @@ export const getCustomListById = async (id: string) => {
   return response.data;
 };
 
-export const updateCustomList = async (id: string, listData: any) => {
-  const token = localStorage.getItem('token');
-  const response = await axios.put(`${API_URL}/custom-lists/${id}`, listData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
+export const updateCustomList = async (id: string, listData: {
+  name: string;
+  description: string;
+  products: Array<{ productId: string; quantity: number }> | string[];
+  sharedWith: string[];
+  isPublic: boolean;
+}) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token de autenticação não encontrado');
     }
-  });
-  return response.data;
+
+    const response = await axios.put(`${API_URL}/custom-lists/${id}`, listData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        // Erro do servidor com resposta
+        const errorMessage = error.response.data?.message || error.response.data?.error || 'Erro ao atualizar lista';
+        throw new Error(errorMessage);
+      } else if (error.request) {
+        // Erro de rede
+        throw new Error('Sem resposta do servidor. Verifique se o servidor está rodando.');
+      }
+    }
+    // Erro genérico
+    throw new Error('Erro inesperado ao atualizar lista');
+  }
 };
 
 export const deleteCustomList = async (listId: string): Promise<void> => {

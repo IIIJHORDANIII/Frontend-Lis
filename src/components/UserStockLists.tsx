@@ -55,20 +55,22 @@ const UserStockLists: React.FC = () => {
   // Extrair todos os produtos de todas as listas
   const allProducts = lists.reduce((products: Product[], list) => {
     if (list.products) {
-      return [...products, ...list.products];
+      // Converter ProductWithQuantity para Product
+      const productList = list.products.map(item => item.product).filter(Boolean) as Product[];
+      return [...products, ...productList];
     }
     return products;
   }, []);
 
   // Remover produtos duplicados baseado no _id
-  const uniqueProducts = allProducts.filter((product, index, self) => 
-    index === self.findIndex(p => p._id === product._id)
+  const uniqueProducts = allProducts.filter((product: Product, index: number, self: Product[]) => 
+    index === self.findIndex((p: Product) => p._id === product._id)
   );
 
   // Filtrar produtos por categoria
   const filteredProducts = selectedCategory === 'all' 
     ? uniqueProducts 
-    : uniqueProducts.filter(product => product.category === selectedCategory);
+    : uniqueProducts.filter((product: Product) => product.category === selectedCategory);
 
   const handleCategoryFilter = (category: string) => {
     setSelectedCategory(category);

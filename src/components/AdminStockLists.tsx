@@ -338,9 +338,9 @@ const AdminStockLists: React.FC = () => {
                           },
                           gap: 2,
                         }}>
-                          {list.products.map((product) => (
+                          {list.products.map((productItem) => (
                             <Card
-                              key={product._id}
+                              key={productItem.productId}
                               sx={{
                                 background: alpha(theme.customColors.text.primary, 0.02),
                                 border: `1px solid ${theme.customColors.border.primary}`,
@@ -353,12 +353,12 @@ const AdminStockLists: React.FC = () => {
                                 },
                               }}
                             >
-                              {product.image && (
+                              {productItem.product?.image && (
                                 <CardMedia
                                   component="img"
                                   width="100%"
-                                  image={product.image}
-                                  alt={product.name}
+                                  image={productItem.product.image}
+                                  alt={productItem.product.name}
                                   sx={{ 
                                     objectFit: 'cover',
                                     aspectRatio: '3/5'
@@ -381,7 +381,7 @@ const AdminStockLists: React.FC = () => {
                                     WebkitBoxOrient: 'vertical',
                                   }}
                                 >
-                                  {product.name}
+                                  {productItem.product?.name || 'Produto não encontrado'}
                                 </Typography>
                                 <Typography
                                   variant="body2"
@@ -396,7 +396,7 @@ const AdminStockLists: React.FC = () => {
                                     WebkitBoxOrient: 'vertical',
                                   }}
                                 >
-                                  {product.description}
+                                  {productItem.product?.description || ''}
                                 </Typography>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                   <Typography
@@ -407,10 +407,10 @@ const AdminStockLists: React.FC = () => {
                                       fontSize: { xs: '0.875rem', sm: '1rem' },
                                     }}
                                   >
-                                    R$ {product.finalPrice?.toFixed(2) || '0.00'}
+                                    R$ {(productItem.product?.finalPrice || 0).toFixed(2)}
                                   </Typography>
                                   <Chip
-                                    label={product.category}
+                                    label={productItem.product?.category || 'N/A'}
                                     size="small"
                                     sx={{
                                       backgroundColor: alpha(theme.customColors.primary.main, 0.1),
@@ -419,17 +419,28 @@ const AdminStockLists: React.FC = () => {
                                     }}
                                   />
                                 </Box>
-                                {product.quantity !== undefined && (
+                                <Typography
+                                  variant="caption"
+                                  sx={{
+                                    color: theme.customColors.text.secondary,
+                                    fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                                    display: 'block',
+                                    mt: 1,
+                                  }}
+                                >
+                                  Quantidade na lista: {productItem.quantity}
+                                </Typography>
+                                {productItem.product?.quantity !== undefined && (
                                   <Typography
                                     variant="caption"
                                     sx={{
                                       color: theme.customColors.text.secondary,
                                       fontSize: { xs: '0.7rem', sm: '0.8rem' },
                                       display: 'block',
-                                      mt: 1,
+                                      mt: 0.5,
                                     }}
                                   >
-                                    Estoque: {product.quantity}
+                                    Estoque disponível: {productItem.product.quantity}
                                   </Typography>
                                 )}
                               </CardContent>

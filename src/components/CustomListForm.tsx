@@ -35,12 +35,18 @@ import {
   Image as ImageIcon
 } from '@mui/icons-material';
 import { getProducts, getAllUsers, createCustomList } from '../services/api';
-import { Product } from '../types';
+import { Product, ProductWithQuantity } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 
 type User = {
   _id: string;
   email: string;
+};
+
+type ProductWithQuantityState = {
+  productId: string;
+  quantity: number;
+  product: Product;
 };
 
 const CustomListForm: React.FC = () => {
@@ -51,7 +57,7 @@ const CustomListForm: React.FC = () => {
   const [description, setDescription] = useState('');
   const [products, setProducts] = useState<Product[]>([]);
   const [users, setUsers] = useState<User[]>([]);
-  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [selectedProductsWithQuantity, setSelectedProductsWithQuantity] = useState<ProductWithQuantityState[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [isPublic, setIsPublic] = useState(false);
   const [error, setError] = useState('');
@@ -101,7 +107,7 @@ const CustomListForm: React.FC = () => {
       return;
     }
 
-    if (selectedProducts.length === 0) {
+    if (selectedProductsWithQuantity.length === 0) {
       setError('Por favor, selecione pelo menos um produto');
       setLoading(false);
       return;
@@ -110,7 +116,10 @@ const CustomListForm: React.FC = () => {
     try {
       const response = await createCustomList(
         name.trim(),
-        selectedProducts,
+        selectedProductsWithQuantity.map(item => ({
+          productId: item.productId,
+          quantity: item.quantity
+        })),
         selectedUsers.map(user => user._id),
         isPublic,
         description.trim()
@@ -119,7 +128,7 @@ const CustomListForm: React.FC = () => {
       setSuccess('Lista criada com sucesso!');
       setName('');
       setDescription('');
-      setSelectedProducts([]);
+      setSelectedProductsWithQuantity([]);
       setSelectedUsers([]);
       setIsPublic(false);
       
@@ -360,9 +369,14 @@ const CustomListForm: React.FC = () => {
               multiple
               options={products}
               getOptionLabel={(option) => `${option.name} - ${formatPrice(option.finalPrice || 0)}`}
-              value={products.filter(product => selectedProducts.includes(product._id))}
+              value={products.filter(product => selectedProductsWithQuantity.some(item => item.productId === product._id))}
               onChange={(_, newValue) => {
-                setSelectedProducts(newValue.map(product => product._id));
+                const newSelectedProducts = newValue.map(product => ({
+                  productId: product._id,
+                  quantity: 1,
+                  product: product
+                }));
+                setSelectedProductsWithQuantity(newSelectedProducts);
               }}
               renderInput={(params) => (
                 <TextField
@@ -442,6 +456,144 @@ const CustomListForm: React.FC = () => {
                 ))
               }
             />
+
+            {/* Produtos Selecionados com Quantidades */}
+            {selectedProductsWithQuantity.length > 0 && (
+              <Box sx={{ mt: 2 }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    color: theme.customColors.text.primary,
+                    fontWeight: 600,
+                    mb: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1
+                  }}
+                >
+                  <InventoryIcon sx={{ fontSize: 20 }} />
+                  Produtos Selecionados
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  {selectedProductsWithQuantity.map((item, index) => (
+                    <Paper
+                      key={item.productId}
+                      elevation={0}
+                      sx={{
+                        p: 2,
+                        borderRadius: 2,
+                        border: `1px solid ${theme.customColors.border.primary}`,
+                        backgroundColor: alpha(theme.customColors.text.primary, 0.02),
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                        {item.product.image && (
+                          <Avatar
+                            src={item.product.image}
+                            sx={{ width: 50, height: 50 }}
+                          />
+                        )}
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                          <Typography
+                            variant="body1"
+                            sx={{
+                              color: theme.customColors.text.primary,
+                              fontWeight: 600,
+                              mb: 0.5
+                            }}
+                          >
+                            {item.product.name}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              color: theme.customColors.text.secondary,
+                              mb: 1
+                            }}
+                          >
+                            {formatPrice(item.product.finalPrice || 0)} - Estoque: {item.product.quantity || 0}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={() => {
+                              if (item.quantity > 1) {
+                                const updated = [...selectedProductsWithQuantity];
+                                updated[index].quantity = item.quantity - 1;
+                                setSelectedProductsWithQuantity(updated);
+                              }
+                            }}
+                            sx={{
+                              minWidth: 40,
+                              height: 40,
+                              borderRadius: 2,
+                              borderColor: theme.customColors.primary.main,
+                              color: theme.customColors.primary.main,
+                              '&:hover': {
+                                backgroundColor: alpha(theme.customColors.primary.main, 0.1),
+                              },
+                            }}
+                          >
+                            -
+                          </Button>
+                          <TextField
+                            type="number"
+                            value={item.quantity}
+                            onChange={(e) => {
+                              const newQuantity = Math.max(1, Math.min(parseInt(e.target.value) || 1, item.product.quantity || 1));
+                              const updated = [...selectedProductsWithQuantity];
+                              updated[index].quantity = newQuantity;
+                              setSelectedProductsWithQuantity(updated);
+                            }}
+                            inputProps={{
+                              min: 1,
+                              max: item.product.quantity || 1,
+                              style: { textAlign: 'center' }
+                            }}
+                            sx={{
+                              width: 80,
+                              '& .MuiOutlinedInput-root': {
+                                borderRadius: 2,
+                                '& input': {
+                                  textAlign: 'center',
+                                  fontWeight: 600,
+                                  color: theme.customColors.text.primary,
+                                },
+                              },
+                            }}
+                          />
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={() => {
+                              if (item.quantity < (item.product.quantity || 1)) {
+                                const updated = [...selectedProductsWithQuantity];
+                                updated[index].quantity = item.quantity + 1;
+                                setSelectedProductsWithQuantity(updated);
+                              }
+                            }}
+                            sx={{
+                              minWidth: 40,
+                              height: 40,
+                              borderRadius: 2,
+                              borderColor: theme.customColors.primary.main,
+                              color: theme.customColors.primary.main,
+                              '&:hover': {
+                                backgroundColor: alpha(theme.customColors.primary.main, 0.1),
+                              },
+                            }}
+                          >
+                            +
+                          </Button>
+                        </Box>
+                      </Box>
+                    </Paper>
+                  ))}
+                </Box>
+              </Box>
+            )}
 
             {/* Compartilhamento com Usuários */}
             <Autocomplete

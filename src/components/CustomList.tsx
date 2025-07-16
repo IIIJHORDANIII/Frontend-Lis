@@ -18,8 +18,8 @@ interface CustomListProps {
 const CustomList: React.FC<CustomListProps> = ({ list }) => {
   return (
     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: 2 }}>
-      {list.products.map((product) => (
-        <Card key={product._id} sx={{ height: 500, display: 'flex', flexDirection: 'column' }}>
+      {list.products.map((productItem) => (
+        <Card key={productItem.productId} sx={{ height: 500, display: 'flex', flexDirection: 'column' }}>
           <CardMedia
             component="img"
             width="100%"
@@ -27,8 +27,8 @@ const CustomList: React.FC<CustomListProps> = ({ list }) => {
               objectFit: 'cover',
               aspectRatio: '3/5'
             }}
-            image={product.image || DEFAULT_IMAGE}
-            alt={product.name}
+            image={productItem.product?.image || DEFAULT_IMAGE}
+            alt={productItem.product?.name || 'Produto'}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.src = DEFAULT_IMAGE;
@@ -37,17 +37,20 @@ const CustomList: React.FC<CustomListProps> = ({ list }) => {
           <CardContent sx={{ flexGrow: 1, p: 1 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
           <Typography variant="h6" component="div">
-                {product.name}
+                {productItem.product?.name || 'Produto não encontrado'}
           </Typography>
               <Typography variant="h6" color="primary">
                 {new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
-                }).format(product.finalPrice)}
+                }).format(productItem.product?.finalPrice || 0)}
               </Typography>
         </Box>
             <Typography variant="body2" color="text.secondary">
-              {product.description}
+              {productItem.product?.description || ''}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+              Quantidade: {productItem.quantity}
             </Typography>
           </CardContent>
         </Card>

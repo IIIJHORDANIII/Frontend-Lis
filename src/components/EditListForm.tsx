@@ -25,18 +25,27 @@ import {
   DialogActions,
   Paper,
   useTheme,
-  alpha
+  alpha,
+  Avatar
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import { getProducts, getAllUsers, getCustomListById, updateCustomList } from '../services/api';
-import { Product, CustomList } from '../types';
+import { getProducts, getAllUsers, getCustomListById, updateCustomList, addProductToList } from '../services/api';
+import { Product, CustomList, ProductWithQuantity } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 
 type User = {
   _id: string;
   email: string;
 };
+
+type ProductWithQuantityState = {
+  productId: string;
+  quantity: number;
+  product: Product;
+};
+
+const DEFAULT_IMAGE = 'https://via.placeholder.com/150'; // Placeholder for default image
 
 const EditListForm: React.FC = () => {
   const navigate = useNavigate();
@@ -47,7 +56,7 @@ const EditListForm: React.FC = () => {
   const [description, setDescription] = useState('');
   const [products, setProducts] = useState<Product[]>([]);
   const [users, setUsers] = useState<User[]>([]);
-  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [selectedProductsWithQuantity, setSelectedProductsWithQuantity] = useState<ProductWithQuantityState[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [isPublic, setIsPublic] = useState(false);
   const [error, setError] = useState('');
@@ -81,7 +90,48 @@ const EditListForm: React.FC = () => {
         setName(listData.name);
         setDescription(listData.description || '');
         setIsPublic(listData.isPublic);
-        setSelectedProducts(listData.products.map((p: Product) => p._id));
+        
+        // Converter produtos da lista para o novo formato com quantidades
+        // O backend agora retorna produtos no formato { productId, quantity, product }
+        const productsWithQuantity = listData.products
+          .filter((item: any) => {
+            // Filtrar apenas itens que têm produto válido
+            if (item.productId && item.quantity && item.product && item.product._id) {
+              return true;
+            }
+            // Se o item é apenas um ID (formato antigo), verificar se o produto existe
+            if (typeof item === 'string') {
+              const product = productsData.find(prod => prod._id === item);
+              return product !== undefined;
+            }
+            return false;
+          })
+          .map((item: any) => {
+            // Se o item já tem a estrutura correta (novo formato)
+            if (item.productId && item.quantity && item.product) {
+              return {
+                productId: item.productId,
+                quantity: item.quantity,
+                product: item.product
+              };
+            }
+            // Se o item é apenas um ID (formato antigo)
+            else if (typeof item === 'string') {
+              const product = productsData.find(prod => prod._id === item);
+              return {
+                productId: item,
+                quantity: 1, // Quantidade padrão para formato antigo
+                product: product
+              };
+            }
+            // Fallback para outros casos
+            return {
+              productId: item._id || item,
+              quantity: item.quantity || 1,
+              product: item.product || item
+            };
+          });
+        setSelectedProductsWithQuantity(productsWithQuantity);
         setSelectedUsers(listData.sharedWith || []);
 
         // Carregar todos os produtos disponíveis
@@ -89,7 +139,9 @@ const EditListForm: React.FC = () => {
         setUsers(usersData);
         
         // Produtos disponíveis para adicionar (não estão na lista)
-        const currentProductIds = listData.products.map((p: Product) => p._id);
+        const currentProductIds = listData.products.map((item: any) => 
+          typeof item === 'string' ? item : item.productId
+        );
         setAvailableProducts(productsData.filter(p => !currentProductIds.includes(p._id)));
       } catch (err) {
         setError('Erro ao carregar dados. Tente novamente.');
@@ -118,35 +170,41 @@ const EditListForm: React.FC = () => {
       return;
     }
 
-    if (selectedProducts.length === 0) {
+    if (selectedProductsWithQuantity.length === 0) {
       setError('Por favor, selecione pelo menos um produto');
       setLoading(false);
       return;
     }
 
     try {
+      // TODO: O backend ainda não foi atualizado para suportar produtos com quantidades
+      // Por enquanto, enviamos apenas os IDs dos produtos (estrutura antiga)
       const listData = {
         name: name.trim(),
         description: description.trim(),
-        products: selectedProducts,
-        sharedWith: selectedUsers.map(user => user._id),
+        products: selectedProductsWithQuantity.map(item => item.productId), // Estrutura antiga
+        sharedWith: selectedUsers.filter(user => user && user._id).map(user => user._id),
         isPublic
       };
+
+      console.log('Dados sendo enviados para atualização:', listData);
 
       await updateCustomList(id!, listData);
       setSuccess('Lista atualizada com sucesso!');
       setTimeout(() => {
         navigate('/admin/stock-lists');
       }, 2000);
-    } catch (err) {
-      setError('Erro ao atualizar lista. Tente novamente.');
+    } catch (err: any) {
+      console.error('Erro detalhado:', err);
+      const errorMessage = err.message || 'Erro ao atualizar lista. Tente novamente.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   const handleRemoveProduct = (productId: string) => {
-    setSelectedProducts(prev => prev.filter(id => id !== productId));
+    setSelectedProductsWithQuantity(prev => prev.filter(item => item.productId !== productId));
     // Adicionar produto de volta aos disponíveis
     const product = products.find(p => p._id === productId);
     if (product) {
@@ -154,11 +212,44 @@ const EditListForm: React.FC = () => {
     }
   };
 
+  const [selectedProductForAdd, setSelectedProductForAdd] = useState<Product | null>(null);
+  const [addQuantity, setAddQuantity] = useState(1);
+  const [addQuantityDialogOpen, setAddQuantityDialogOpen] = useState(false);
+
   const handleAddProduct = (productId: string) => {
-    setSelectedProducts(prev => [...prev, productId]);
-    // Remover produto dos disponíveis
-    setAvailableProducts(prev => prev.filter(p => p._id !== productId));
-    setAddProductDialogOpen(false);
+    const product = products.find(p => p._id === productId);
+    if (product) {
+      setSelectedProductForAdd(product);
+      setAddQuantity(1);
+      setAddQuantityDialogOpen(true);
+    }
+  };
+
+  const handleConfirmAddProduct = async () => {
+    if (!selectedProductForAdd || !id) return;
+    
+    try {
+      setLoading(true);
+      const updatedList = await addProductToList(id, selectedProductForAdd._id, addQuantity);
+      
+      // Atualizar a lista local com os dados retornados do backend
+      setSelectedProductsWithQuantity(updatedList.products.map((item: any) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        product: item.product
+      })));
+      
+      // Remover produto dos disponíveis
+      setAvailableProducts(prev => prev.filter(p => p._id !== selectedProductForAdd._id));
+      
+      setSuccess('Produto adicionado com sucesso!');
+    } catch (error) {
+      setError('Erro ao adicionar produto à lista');
+    } finally {
+      setLoading(false);
+      setAddQuantityDialogOpen(false);
+      setSelectedProductForAdd(null);
+    }
   };
 
   const formatPrice = (price: number) => {
@@ -169,7 +260,7 @@ const EditListForm: React.FC = () => {
   };
 
   const getSelectedProductsData = () => {
-    return products.filter(product => selectedProducts.includes(product._id));
+    return selectedProductsWithQuantity.map(item => item.product);
   };
 
   if (dataLoading) {
@@ -406,7 +497,7 @@ const EditListForm: React.FC = () => {
                     mb: 2,
                   }}
                 >
-                  Produtos na Lista ({selectedProducts.length})
+                  Produtos na Lista ({selectedProductsWithQuantity.length})
                 </Typography>
                 <Button
                   variant="outlined"
@@ -437,79 +528,128 @@ const EditListForm: React.FC = () => {
                 },
                 gap: 2,
               }}>
-                {getSelectedProductsData().map((product) => (
-                  <Card
-                    key={product._id}
-                    sx={{
-                      background: alpha(theme.customColors.text.primary, 0.02),
-                      border: `1px solid ${theme.customColors.border.primary}`,
-                      borderRadius: 3,
-                      position: 'relative',
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: theme.customColors.shadow.secondary,
-                      },
-                    }}
-                  >
-                    {product.image && (
-                      <CardMedia
-                        component="img"
-                        width="100%"
-                        image={product.image}
-                        alt={product.name}
-                        sx={{ 
-                          objectFit: 'cover',
-                          aspectRatio: '3/5'
-                        }}
-                      />
-                    )}
-                    <CardContent sx={{ p: 2 }}>
-                      <Typography
-                        variant="subtitle1"
-                        sx={{
-                          fontWeight: 600,
-                          color: theme.customColors.text.primary,
-                          mb: 1,
-                          fontSize: { xs: '0.875rem', sm: '1rem' },
-                          lineHeight: 1.3,
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                        }}
-                      >
-                        {product.name}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: theme.customColors.text.secondary,
-                          mb: 1,
-                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                        }}
-                      >
-                        {product.description}
-                      </Typography>
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          fontWeight: 700,
-                          color: theme.customColors.status.success,
-                          fontSize: { xs: '0.875rem', sm: '1rem' },
-                        }}
-                      >
-                        {formatPrice(product.finalPrice)}
-                      </Typography>
-                    </CardContent>
+                {selectedProductsWithQuantity.map((item, index) => {
+                  // Skip rendering if product is undefined
+                  if (!item.product) {
+                    return null;
+                  }
+                  
+                  return (
+                    <Paper
+                      key={item.productId}
+                      elevation={0}
+                      sx={{
+                        p: 2,
+                        borderRadius: 2,
+                        border: `1px solid ${theme.customColors.border.primary}`,
+                        backgroundColor: alpha(theme.customColors.text.primary, 0.02),
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                        <Avatar
+                          src={item.product.image || DEFAULT_IMAGE}
+                          sx={{ width: 50, height: 50 }}
+                        />
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                          <Typography
+                            variant="body1"
+                            sx={{
+                              color: theme.customColors.text.primary,
+                              fontWeight: 600,
+                              mb: 0.5
+                            }}
+                          >
+                            {item.product.name || 'Produto não encontrado'}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              color: theme.customColors.text.secondary,
+                              mb: 1
+                            }}
+                          >
+                            {formatPrice(item.product.finalPrice || 0)} - Estoque: {item.product.quantity ?? 0}
+                          </Typography>
+                        </Box>
+                      {/* Controles de Quantidade */}
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2 }}>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() => {
+                            if (item.quantity > 1) {
+                              const updated = [...selectedProductsWithQuantity];
+                              updated[index].quantity = item.quantity - 1;
+                              setSelectedProductsWithQuantity(updated);
+                            }
+                          }}
+                          sx={{
+                            minWidth: 32,
+                            height: 32,
+                            borderRadius: 2,
+                            borderColor: theme.customColors.primary.main,
+                            color: theme.customColors.primary.main,
+                            '&:hover': {
+                              backgroundColor: alpha(theme.customColors.primary.main, 0.1),
+                            },
+                          }}
+                        >
+                          -
+                        </Button>
+                        <TextField
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) => {
+                            const newQuantity = Math.max(1, Math.min(parseInt(e.target.value) || 1, item.product.quantity || 1));
+                            const updated = [...selectedProductsWithQuantity];
+                            updated[index].quantity = newQuantity;
+                            setSelectedProductsWithQuantity(updated);
+                          }}
+                          inputProps={{
+                            min: 1,
+                            max: item.product.quantity || 1,
+                            style: { textAlign: 'center' }
+                          }}
+                          sx={{
+                            width: 60,
+                            '& .MuiOutlinedInput-root': {
+                              borderRadius: 2,
+                              '& input': {
+                                textAlign: 'center',
+                                fontWeight: 600,
+                                color: theme.customColors.text.primary,
+                                fontSize: '0.875rem',
+                              },
+                            },
+                          }}
+                        />
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() => {
+                            if (item.quantity < (item.product.quantity || 1)) {
+                              const updated = [...selectedProductsWithQuantity];
+                              updated[index].quantity = item.quantity + 1;
+                              setSelectedProductsWithQuantity(updated);
+                            }
+                          }}
+                          sx={{
+                            minWidth: 32,
+                            height: 32,
+                            borderRadius: 2,
+                            borderColor: theme.customColors.primary.main,
+                            color: theme.customColors.primary.main,
+                            '&:hover': {
+                              backgroundColor: alpha(theme.customColors.primary.main, 0.1),
+                            },
+                          }}
+                        >
+                          +
+                        </Button>
+                      </Box>
+                    </Box>
                     <IconButton
-                      onClick={() => handleRemoveProduct(product._id)}
+                      onClick={() => handleRemoveProduct(item.productId)}
                       sx={{
                         position: 'absolute',
                         top: 8,
@@ -523,8 +663,9 @@ const EditListForm: React.FC = () => {
                     >
                       <DeleteIcon />
                     </IconButton>
-                  </Card>
-                ))}
+                  </Paper>
+                );
+                })}
               </Box>
             </Box>
 
@@ -704,6 +845,131 @@ const EditListForm: React.FC = () => {
             }}
           >
             Fechar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Modal para escolher quantidade */}
+      <Dialog
+        open={addQuantityDialogOpen}
+        onClose={() => setAddQuantityDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 4,
+            background: theme.customColors.surface.card,
+            backdropFilter: 'blur(20px)',
+            border: `1.5px solid ${theme.customColors.border.primary}`,
+            boxShadow: theme.customColors.shadow.primary,
+          },
+        }}
+      >
+        <DialogTitle sx={{ color: theme.customColors.text.primary, fontWeight: 600 }}>
+          Escolher Quantidade
+        </DialogTitle>
+        <DialogContent>
+          {selectedProductForAdd && (
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="h6" sx={{ color: theme.customColors.text.primary, mb: 1 }}>
+                {selectedProductForAdd.name}
+              </Typography>
+              <Typography variant="body2" sx={{ color: theme.customColors.text.secondary, mb: 2 }}>
+                Estoque disponível: {selectedProductForAdd.quantity || 0}
+              </Typography>
+              
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, justifyContent: 'center' }}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => setAddQuantity(Math.max(1, addQuantity - 1))}
+                  disabled={addQuantity <= 1}
+                  sx={{
+                    minWidth: 40,
+                    height: 40,
+                    borderRadius: 2,
+                    borderColor: theme.customColors.primary.main,
+                    color: theme.customColors.primary.main,
+                    '&:hover': {
+                      backgroundColor: alpha(theme.customColors.primary.main, 0.1),
+                    },
+                  }}
+                >
+                  -
+                </Button>
+                <TextField
+                  type="number"
+                  value={addQuantity}
+                  onChange={(e) => {
+                    const newQuantity = Math.max(1, Math.min(parseInt(e.target.value) || 1, selectedProductForAdd.quantity || 1));
+                    setAddQuantity(newQuantity);
+                  }}
+                  inputProps={{
+                    min: 1,
+                    max: selectedProductForAdd.quantity || 1,
+                    style: { textAlign: 'center' }
+                  }}
+                  sx={{
+                    width: 100,
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                      '& input': {
+                        textAlign: 'center',
+                        fontWeight: 600,
+                        color: theme.customColors.text.primary,
+                      },
+                    },
+                  }}
+                />
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => setAddQuantity(Math.min(addQuantity + 1, selectedProductForAdd.quantity || 1))}
+                  disabled={addQuantity >= (selectedProductForAdd.quantity || 1)}
+                  sx={{
+                    minWidth: 40,
+                    height: 40,
+                    borderRadius: 2,
+                    borderColor: theme.customColors.primary.main,
+                    color: theme.customColors.primary.main,
+                    '&:hover': {
+                      backgroundColor: alpha(theme.customColors.primary.main, 0.1),
+                    },
+                  }}
+                >
+                  +
+                </Button>
+              </Box>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button
+            onClick={() => setAddQuantityDialogOpen(false)}
+            sx={{
+              borderRadius: 3,
+              fontWeight: 600,
+              color: theme.customColors.text.primary,
+              '&:hover': {
+                backgroundColor: alpha(theme.customColors.text.primary, 0.05),
+              },
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleConfirmAddProduct}
+            variant="contained"
+            sx={{
+              borderRadius: 3,
+              fontWeight: 600,
+              background: theme.customColors.primary.main,
+              '&:hover': {
+                background: theme.customColors.primary.dark,
+              },
+            }}
+          >
+            Adicionar
           </Button>
         </DialogActions>
       </Dialog>
