@@ -21,6 +21,7 @@ import {
   CardActions,
   Chip,
   Button,
+  ButtonGroup,
   alpha,
   Fade,
   Stack,
@@ -59,6 +60,7 @@ const Sales: React.FC = () => {
   const [success, setSuccess] = useState('');
   const [processingProduct, setProcessingProduct] = useState<string | null>(null);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isExtraSmallMobile = useMediaQuery(theme.breakpoints.down('xs'));
@@ -276,9 +278,18 @@ const Sales: React.FC = () => {
   
   const totalProdutos = Object.values(sales).reduce((sum, quantity) => sum + quantity, 0);
 
+  // Filtrar produtos por categoria
+  const filteredProducts = selectedCategory === 'all' 
+    ? products 
+    : products.filter(product => product.category === selectedCategory);
+
   // New summary calculations
   const totalSales = Object.values(sales).reduce((sum, quantity) => sum + quantity, 0) * (products.find(p => p._id === Object.keys(sales)[0])?.finalPrice || 0);
   const averagePrice = totalSales / totalProdutos;
+
+  const handleCategoryFilter = (category: string) => {
+    setSelectedCategory(category);
+  };
 
   return (
     <Box sx={{ 
@@ -384,6 +395,90 @@ const Sales: React.FC = () => {
         </Alert>
       )}
       
+      {/* Category Filter */}
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        mb: 4,
+        width: '100%',
+        maxWidth: 900,
+      }}>
+        <ButtonGroup
+          variant="outlined"
+          sx={{
+            borderRadius: 3,
+            boxShadow: theme.customColors.shadow.secondary,
+            background: theme.customColors.surface.card,
+            border: `1px solid ${theme.customColors.border.primary}`,
+            '& .MuiButton-root': {
+              borderColor: theme.customColors.border.primary,
+              color: theme.customColors.text.secondary,
+              '&:hover': {
+                backgroundColor: alpha(theme.customColors.primary.main, 0.1),
+                borderColor: theme.customColors.primary.main,
+                color: theme.customColors.primary.main,
+              },
+              '&.Mui-selected': {
+                backgroundColor: theme.customColors.primary.main,
+                color: theme.customColors.text.inverse,
+                '&:hover': {
+                  backgroundColor: theme.customColors.primary.light,
+                },
+              },
+            },
+          }}
+        >
+          <Button
+            onClick={() => handleCategoryFilter('all')}
+            sx={{
+              backgroundColor: selectedCategory === 'all' ? theme.customColors.primary.main : 'transparent',
+              color: selectedCategory === 'all' ? theme.customColors.text.inverse : theme.customColors.text.secondary,
+              '&:hover': {
+                backgroundColor: selectedCategory === 'all' ? theme.customColors.primary.light : alpha(theme.customColors.primary.main, 0.1),
+              },
+            }}
+          >
+            Todos
+          </Button>
+          <Button
+            onClick={() => handleCategoryFilter('feminino')}
+            sx={{
+              backgroundColor: selectedCategory === 'feminino' ? theme.customColors.primary.main : 'transparent',
+              color: selectedCategory === 'feminino' ? theme.customColors.text.inverse : theme.customColors.text.secondary,
+              '&:hover': {
+                backgroundColor: selectedCategory === 'feminino' ? theme.customColors.primary.light : alpha(theme.customColors.primary.main, 0.1),
+              },
+            }}
+          >
+            Feminino
+          </Button>
+          <Button
+            onClick={() => handleCategoryFilter('masculino')}
+            sx={{
+              backgroundColor: selectedCategory === 'masculino' ? theme.customColors.primary.main : 'transparent',
+              color: selectedCategory === 'masculino' ? theme.customColors.text.inverse : theme.customColors.text.secondary,
+              '&:hover': {
+                backgroundColor: selectedCategory === 'masculino' ? theme.customColors.primary.light : alpha(theme.customColors.primary.main, 0.1),
+              },
+            }}
+          >
+            Masculino
+          </Button>
+          <Button
+            onClick={() => handleCategoryFilter('unissex')}
+            sx={{
+              backgroundColor: selectedCategory === 'unissex' ? theme.customColors.primary.main : 'transparent',
+              color: selectedCategory === 'unissex' ? theme.customColors.text.inverse : theme.customColors.text.secondary,
+              '&:hover': {
+                backgroundColor: selectedCategory === 'unissex' ? theme.customColors.primary.light : alpha(theme.customColors.primary.main, 0.1),
+              },
+            }}
+          >
+            Unissex
+          </Button>
+        </ButtonGroup>
+      </Box>
+      
       {/* Products Grid */}
       {loading ? (
         <Box sx={{ 
@@ -410,7 +505,7 @@ const Sales: React.FC = () => {
           mx: 'auto',
           width: '100%',
         }}>
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <Fade in key={product._id} timeout={400}>
               <Card
                 sx={{
@@ -437,13 +532,12 @@ const Sales: React.FC = () => {
                 <Box sx={{ position: 'relative' }}>
                   <CardMedia
                     component="img"
-                    height={isExtraSmallMobile ? 140 : isSmallMobile ? 160 : isMobile ? 180 : 200}
                     width="100%"
                     image={product.image}
                     alt={product.name}
                     sx={{
                       objectFit: 'cover',
-                      aspectRatio: '9/16',
+                      aspectRatio: '3/5',
                       transition: 'transform 0.3s ease',
                       transform: hoveredCard === product._id ? 'scale(1.05)' : 'scale(1)',
                       borderRadius: 3,

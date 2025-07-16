@@ -89,7 +89,6 @@ const Header: React.FC = () => {
   ];
 
   const userMenuItems = [
-    { path: '/user-lists', label: 'Minhas Listas', icon: <ListIcon /> },
     { path: '/sales', label: 'Vendas', icon: <TrendingUp /> },
   ];
 

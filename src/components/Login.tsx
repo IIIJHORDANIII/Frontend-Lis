@@ -15,7 +15,7 @@ import {
   IconButton
 } from '@mui/material';
 import { Visibility, VisibilityOff, Email, Lock } from '@mui/icons-material';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { login as apiLogin } from '../services/api';
 
@@ -25,9 +25,20 @@ const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, isAuthenticated, isAdmin, isLoading } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
+
+  // Redirecionamento automático para usuários já logados
+  React.useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      if (isAdmin) {
+        navigate('/admin/products');
+      } else {
+        navigate('/sales');
+      }
+    }
+  }, [isAuthenticated, isAdmin, isLoading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,7 +56,7 @@ const Login: React.FC = () => {
         if (userWithId.isAdmin) {
           navigate('/admin/products');
         } else {
-          navigate('/user-lists');
+          navigate('/sales');
         }
       } else {
         setError('Resposta inválida do servidor');
@@ -56,6 +67,11 @@ const Login: React.FC = () => {
       setLoading(false);
     }
   };
+
+  // Não renderizar se estiver carregando ou se o usuário estiver logado
+  if (isLoading || isAuthenticated) {
+    return null;
+  }
 
   return (
     <Box
@@ -271,27 +287,7 @@ const Login: React.FC = () => {
                 )}
               </Button>
 
-              <Box sx={{ mt: 3, textAlign: 'center' }}>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: theme.customColors.text.secondary,
-                    fontSize: { xs: '0.875rem', sm: '1rem' },
-                  }}
-                >
-                  Não tem uma conta?{' '}
-                  <Link
-                    to="/register"
-                    style={{
-                      color: theme.customColors.primary.main,
-                      textDecoration: 'none',
-                      fontWeight: 600,
-                    }}
-                  >
-                    Registre-se aqui
-                  </Link>
-                </Typography>
-              </Box>
+
             </Box>
           </Paper>
         </Fade>

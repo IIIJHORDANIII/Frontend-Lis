@@ -22,9 +22,10 @@ const CustomList: React.FC<CustomListProps> = ({ list }) => {
         <Card key={product._id} sx={{ height: 500, display: 'flex', flexDirection: 'column' }}>
           <CardMedia
             component="img"
+            width="100%"
             sx={{
-              height: '85%',
-              objectFit: 'cover'
+              objectFit: 'cover',
+              aspectRatio: '3/5'
             }}
             image={product.image || DEFAULT_IMAGE}
             alt={product.name}

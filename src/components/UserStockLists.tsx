@@ -379,11 +379,12 @@ const UserStockLists: React.FC = () => {
               >
                 <CardMedia
                   component="img"
-                  height={isSmallMobile ? 140 : isMobile ? 160 : 180}
+                  width="100%"
                   image={product.image}
                   alt={product.name}
                   sx={{
                     objectFit: 'cover',
+                    aspectRatio: '3/5',
                     borderRadius: 3,
                     transition: 'transform 0.3s ease',
                     '&:hover': {

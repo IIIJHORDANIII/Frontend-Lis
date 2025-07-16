@@ -15,7 +15,6 @@ import SalesSummary from './components/SalesSummary';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import AdminStockLists from './components/AdminStockLists';
-import UserStockLists from './components/UserStockLists';
 import PrivacyPolicy from './components/PrivacyPolicy';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -53,7 +52,7 @@ const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     );
   }
   
-  return isAuthenticated && isAdmin ? <>{children}</> : <Navigate to="/user-lists" />;
+  return isAuthenticated && isAdmin ? <>{children}</> : <Navigate to="/sales" />;
 };
 
 const AppContent: React.FC = () => {
@@ -82,7 +81,7 @@ const AppContent: React.FC = () => {
             <CircularProgress size={60} />
           </Box>
         ) : (
-          <Navigate to={isAuthenticated ? (isAdmin ? "/admin/products" : "/user-lists") : "/login"} />
+          <Navigate to={isAuthenticated ? (isAdmin ? "/admin/products" : "/sales") : "/login"} />
         )
       } />
       
@@ -98,7 +97,6 @@ const AppContent: React.FC = () => {
       <Route path="/custom-lists/new" element={<AdminRoute><AppLayout><CustomListForm /></AppLayout></AdminRoute>} />
       <Route path="/edit-list/:id" element={<AdminRoute><AppLayout><EditListForm /></AppLayout></AdminRoute>} />
       <Route path="/sales" element={<ProtectedRoute><AppLayout><Sales /></AppLayout></ProtectedRoute>} />
-      <Route path="/user-lists" element={<ProtectedRoute><AppLayout><UserStockLists /></AppLayout></ProtectedRoute>} />
     </Routes>
   );
 };

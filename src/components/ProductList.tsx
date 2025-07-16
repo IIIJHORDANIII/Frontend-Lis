@@ -365,13 +365,12 @@ const ProductList: React.FC = () => {
                 <Box sx={{ position: 'relative' }}>
                   <CardMedia
                     component="img"
-                    height={isExtraSmallMobile ? 140 : isSmallMobile ? 160 : isMobile ? 180 : 200}
                     width="100%"
                     image={product.image}
                     alt={product.name}
                     sx={{
                       objectFit: 'cover',
-                      aspectRatio: '9/16',
+                      aspectRatio: '3/5',
                       transition: 'transform 0.3s ease',
                       transform: hoveredCard === product._id ? 'scale(1.05)' : 'scale(1)',
                       borderRadius: 3,

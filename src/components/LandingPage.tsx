@@ -4,6 +4,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { useNavigate } from "react-router-dom";
 import { useTheme as useAppTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
 
 // SVG Illustration Placeholder
 const DashboardMockup = ({ isDark }: { isDark: boolean }) => (
@@ -92,9 +93,21 @@ const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const { isDark } = useAppTheme();
+  const { isAuthenticated, isAdmin, isLoading } = useAuth();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [testimonialIdx, setTestimonialIdx] = React.useState(0);
+
+  // Redirecionamento automático para usuários já logados
+  React.useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      if (isAdmin) {
+        navigate('/admin/products');
+      } else {
+        navigate('/sales');
+      }
+    }
+  }, [isAuthenticated, isAdmin, isLoading, navigate]);
 
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -108,6 +121,11 @@ const LandingPage: React.FC = () => {
     const whatsappUrl = `https://wa.me/5546999019800?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
+
+  // Não renderizar se estiver carregando ou se o usuário estiver logado
+  if (isLoading || isAuthenticated) {
+    return null;
+  }
 
   return (
     <Box sx={{

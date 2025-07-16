@@ -455,10 +455,13 @@ const EditListForm: React.FC = () => {
                     {product.image && (
                       <CardMedia
                         component="img"
-                        height={120}
+                        width="100%"
                         image={product.image}
                         alt={product.name}
-                        sx={{ objectFit: 'cover' }}
+                        sx={{ 
+                          objectFit: 'cover',
+                          aspectRatio: '3/5'
+                        }}
                       />
                     )}
                     <CardContent sx={{ p: 2 }}>
@@ -631,10 +634,13 @@ const EditListForm: React.FC = () => {
                 {product.image && (
                   <CardMedia
                     component="img"
-                    height={120}
+                    width="100%"
                     image={product.image}
                     alt={product.name}
-                    sx={{ objectFit: 'cover' }}
+                    sx={{ 
+                      objectFit: 'cover',
+                      aspectRatio: '3/5'
+                    }}
                   />
                 )}
                 <CardContent sx={{ p: 2 }}>
