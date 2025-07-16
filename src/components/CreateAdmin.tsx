@@ -9,7 +9,9 @@ import {
   Paper,
   InputAdornment,
   Avatar,
-  Fade
+  Fade,
+  useTheme,
+  alpha
 } from '@mui/material';
 import {
   AdminPanelSettings,
@@ -19,6 +21,7 @@ import {
 import { createAdmin } from '../services/api';
 
 const CreateAdmin: React.FC = () => {
+  const theme = useTheme();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -57,13 +60,14 @@ const CreateAdmin: React.FC = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        flex: 1,
         width: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: { xs: 2, sm: 3, md: 4 },
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        position: 'relative',
+        fontFamily: 'Poppins, Inter, Montserrat, Arial',
+        background: theme.customColors.background.gradient,
       }}
     >
       <Box sx={{
@@ -75,15 +79,15 @@ const CreateAdmin: React.FC = () => {
       }}>
         <Fade in timeout={800}>
           <Paper 
-            elevation={24}
+            elevation={0}
             sx={{ 
               width: '100%',
               p: { xs: 3, sm: 5 },
               borderRadius: 4,
-              background: 'rgba(255, 255, 255, 0.95)',
+              background: theme.customColors.surface.card,
               backdropFilter: 'blur(20px)',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: theme.customColors.shadow.primary,
+              border: `1.5px solid ${theme.customColors.border.primary}`,
               position: 'relative',
               overflow: 'hidden',
               '&::before': {
@@ -93,7 +97,7 @@ const CreateAdmin: React.FC = () => {
                 left: 0,
                 right: 0,
                 height: '4px',
-                background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)'
+                background: `linear-gradient(90deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`
               }
             }}
           >
@@ -103,7 +107,8 @@ const CreateAdmin: React.FC = () => {
                   width: 80,
                   height: 80,
                   margin: '0 auto 16px',
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                  background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
+                  color: theme.customColors.text.inverse,
                 }}
               >
                 <AdminPanelSettings sx={{ fontSize: 40 }} />
@@ -113,16 +118,34 @@ const CreateAdmin: React.FC = () => {
                 component="h1" 
                 sx={{
                   fontWeight: 700,
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  mb: 1
+                  color: theme.customColors.text.primary,
+                  mb: 1,
+                  fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem', lg: '2.25rem', xl: '2.5rem' },
+                  lineHeight: 1.2,
+                  '@media (min-width: 1600px)': {
+                    fontSize: '2.75rem',
+                  },
+                  '@media (min-width: 1920px)': {
+                    fontSize: '3rem',
+                  },
                 }}
               >
                 Nova Vendedora
               </Typography>
-              <Typography variant="body1" color="text.secondary">
+              <Typography 
+                variant="body1" 
+                sx={{
+                  color: theme.customColors.text.secondary,
+                  fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem', lg: '1.25rem', xl: '1.375rem' },
+                  lineHeight: 1.4,
+                  '@media (min-width: 1600px)': {
+                    fontSize: '1.5rem',
+                  },
+                  '@media (min-width: 1920px)': {
+                    fontSize: '1.625rem',
+                  },
+                }}
+              >
                 Preencha os dados para criar uma nova conta
               </Typography>
             </Box>
@@ -133,6 +156,9 @@ const CreateAdmin: React.FC = () => {
                 sx={{ 
                   mb: 3,
                   borderRadius: 2,
+                  background: alpha(theme.customColors.status.error, 0.1),
+                  border: `1px solid ${alpha(theme.customColors.status.error, 0.3)}`,
+                  color: theme.customColors.status.error,
                   '& .MuiAlert-icon': {
                     fontSize: '1.5rem'
                   }
@@ -148,6 +174,9 @@ const CreateAdmin: React.FC = () => {
                 sx={{ 
                   mb: 3,
                   borderRadius: 2,
+                  background: alpha(theme.customColors.status.success, 0.1),
+                  border: `1px solid ${alpha(theme.customColors.status.success, 0.3)}`,
+                  color: theme.customColors.status.success,
                   '& .MuiAlert-icon': {
                     fontSize: '1.5rem'
                   }
@@ -170,23 +199,40 @@ const CreateAdmin: React.FC = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <AdminPanelSettings color="primary" />
+                        <AdminPanelSettings sx={{ color: theme.customColors.text.secondary }} />
                       </InputAdornment>
                     ),
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 2,
+                      borderRadius: 3,
+                      backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                       transition: 'all 0.3s ease',
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: theme.customColors.primary.main,
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: theme.customColors.primary.main,
+                        borderWidth: 2,
+                      },
                       '&:hover': {
                         transform: 'translateY(-2px)',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                        boxShadow: theme.customColors.shadow.secondary,
                       },
                       '&.Mui-focused': {
                         transform: 'translateY(-2px)',
-                        boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)'
+                        boxShadow: theme.customColors.shadow.secondary,
                       }
-                    }
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: theme.customColors.text.secondary,
+                      '&.Mui-focused': {
+                        color: theme.customColors.primary.main,
+                      },
+                    },
+                    '& .MuiInputBase-input': {
+                      color: theme.customColors.text.primary,
+                    },
                   }}
                 />
                 <TextField
@@ -200,115 +246,225 @@ const CreateAdmin: React.FC = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <AdminPanelSettings color="primary" />
+                        <AdminPanelSettings sx={{ color: theme.customColors.text.secondary }} />
                       </InputAdornment>
                     ),
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 2,
+                      borderRadius: 3,
+                      backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                       transition: 'all 0.3s ease',
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: theme.customColors.primary.main,
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: theme.customColors.primary.main,
+                        borderWidth: 2,
+                      },
                       '&:hover': {
                         transform: 'translateY(-2px)',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                        boxShadow: theme.customColors.shadow.secondary,
                       },
                       '&.Mui-focused': {
                         transform: 'translateY(-2px)',
-                        boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)'
+                        boxShadow: theme.customColors.shadow.secondary,
                       }
-                    }
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: theme.customColors.text.secondary,
+                      '&.Mui-focused': {
+                        color: theme.customColors.primary.main,
+                      },
+                    },
+                    '& .MuiInputBase-input': {
+                      color: theme.customColors.text.primary,
+                    },
                   }}
                 />
               </Box>
-              <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
-                <TextField
-                  fullWidth
-                  label="Email*"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  margin="normal"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Email color="primary" />
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      borderRadius: 2,
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-                    },
-                    '&.Mui-focused': {
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)'
-                    }
-                  }
-                }}
-              />
+
               <TextField
                 fullWidth
-                label="Confirmar Senha*"
-                name="confirmPassword"
-                type="password"
-                value={formData.confirmPassword || ''}
+                label="Email*"
+                name="email"
+                type="email"
+                value={formData.email}
                 onChange={handleChange}
                 required
                 margin="normal"
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Lock color="primary" />
+                      <Email sx={{ color: theme.customColors.text.secondary }} />
                     </InputAdornment>
                   ),
                 }}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: 2,
+                    borderRadius: 3,
+                    backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                     transition: 'all 0.3s ease',
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: theme.customColors.primary.main,
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: theme.customColors.primary.main,
+                      borderWidth: 2,
+                    },
                     '&:hover': {
                       transform: 'translateY(-2px)',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                      boxShadow: theme.customColors.shadow.secondary,
                     },
                     '&.Mui-focused': {
                       transform: 'translateY(-2px)',
-                      boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)'
+                      boxShadow: theme.customColors.shadow.secondary,
                     }
-                  }
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: theme.customColors.text.secondary,
+                    '&.Mui-focused': {
+                      color: theme.customColors.primary.main,
+                    },
+                  },
+                  '& .MuiInputBase-input': {
+                    color: theme.customColors.text.primary,
+                  },
                 }}
               />
+
+              <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+                <TextField
+                  fullWidth
+                  label="Senha*"
+                  name="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  margin="normal"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Lock sx={{ color: theme.customColors.text.secondary }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 3,
+                      backgroundColor: alpha(theme.customColors.text.primary, 0.02),
+                      transition: 'all 0.3s ease',
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: theme.customColors.primary.main,
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: theme.customColors.primary.main,
+                        borderWidth: 2,
+                      },
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: theme.customColors.shadow.secondary,
+                      },
+                      '&.Mui-focused': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: theme.customColors.shadow.secondary,
+                      }
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: theme.customColors.text.secondary,
+                      '&.Mui-focused': {
+                        color: theme.customColors.primary.main,
+                      },
+                    },
+                    '& .MuiInputBase-input': {
+                      color: theme.customColors.text.primary,
+                    },
+                  }}
+                />
+                <TextField
+                  fullWidth
+                  label="Confirmar Senha*"
+                  name="confirmPassword"
+                  type="password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                  margin="normal"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Lock sx={{ color: theme.customColors.text.secondary }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 3,
+                      backgroundColor: alpha(theme.customColors.text.primary, 0.02),
+                      transition: 'all 0.3s ease',
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: theme.customColors.primary.main,
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: theme.customColors.primary.main,
+                        borderWidth: 2,
+                      },
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: theme.customColors.shadow.secondary,
+                      },
+                      '&.Mui-focused': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: theme.customColors.shadow.secondary,
+                      }
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: theme.customColors.text.secondary,
+                      '&.Mui-focused': {
+                        color: theme.customColors.primary.main,
+                      },
+                    },
+                    '& .MuiInputBase-input': {
+                      color: theme.customColors.text.primary,
+                    },
+                  }}
+                />
               </Box>
+
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 disabled={loading}
                 sx={{
-                  mt: 3,
-                  py: 1.5,
-                  borderRadius: 2,
-                  fontSize: '1.1rem',
-                  fontWeight: 600,
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
-                  transition: 'all 0.3s ease',
+                  mt: 4,
+                  py: { xs: 1.5, sm: 2, md: 2.5 },
+                  px: { xs: 3, sm: 4, md: 5 },
+                  borderRadius: 3,
+                  fontWeight: 700,
+                  fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
+                  background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
+                  color: theme.customColors.text.inverse,
+                  boxShadow: theme.customColors.shadow.secondary,
+                  border: `1px solid ${alpha(theme.customColors.text.inverse, 0.2)}`,
+                  backdropFilter: 'blur(10px)',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  minHeight: { xs: '48px', sm: '52px', md: '56px' },
                   '&:hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 8px 25px rgba(102, 126, 234, 0.6)',
-                    background: 'linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%)'
+                    transform: 'translateY(-2px) scale(1.02)',
+                    boxShadow: theme.customColors.shadow.primary,
+                    background: `linear-gradient(135deg, ${theme.customColors.primary.light} 0%, ${theme.customColors.primary.main} 100%)`,
                   },
                   '&:disabled': {
-                    background: 'linear-gradient(135deg, #a0aec0 0%, #718096 100%)'
-                  }
+                    background: alpha(theme.customColors.text.primary, 0.12),
+                    color: alpha(theme.customColors.text.primary, 0.38),
+                    transform: 'none',
+                    boxShadow: 'none',
+                  },
                 }}
               >
-                {loading ? 'Criando Conta...' : 'Criar Conta'}
+                {loading ? 'Criando...' : 'Criar Vendedora'}
               </Button>
             </Box>
           </Paper>

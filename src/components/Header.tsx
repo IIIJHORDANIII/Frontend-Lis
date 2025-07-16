@@ -36,12 +36,17 @@ import {
   List as ListIcon,
   Inventory,
   TrendingUp,
-  Menu as MenuIcon
+  Menu as MenuIcon,
+  LightMode,
+  DarkMode,
+  Settings
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme as useAppTheme } from '../contexts/ThemeContext';
 
 const Header: React.FC = () => {
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
+  const { themeMode, isDark, toggleTheme, setThemeMode } = useAppTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
@@ -109,18 +114,24 @@ const Header: React.FC = () => {
           fontSize: { xs: '0.7rem', sm: '0.8rem', md: '0.9rem', lg: '1rem' },
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           backgroundColor: isActiveRoute(item.path) 
-            ? 'rgba(255, 255, 255, 0.2)'
+            ? (theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(26, 32, 44, 0.1)')
             : 'transparent',
-          color: isActiveRoute(item.path) ? '#fff' : 'rgba(255, 255, 255, 0.9)',
+          color: isActiveRoute(item.path) 
+            ? (theme.palette.mode === 'dark' ? '#fff' : '#1a202c')
+            : (theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(26, 32, 44, 0.8)'),
           backdropFilter: isActiveRoute(item.path) ? 'blur(10px)' : 'none',
           border: isActiveRoute(item.path) ? '1px solid rgba(255, 255, 255, 0.3)' : '1px solid transparent',
           minHeight: { xs: '36px', sm: '40px', md: '44px' },
           '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.15)',
+            backgroundColor: theme.palette.mode === 'dark' 
+              ? 'rgba(255, 255, 255, 0.15)' 
+              : 'rgba(26, 32, 44, 0.08)',
             transform: 'translateY(-2px) scale(1.02)',
-            color: '#fff',
+            color: theme.palette.mode === 'dark' ? '#fff' : '#1a202c',
             backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
+            border: theme.palette.mode === 'dark' 
+              ? '1px solid rgba(255, 255, 255, 0.3)' 
+              : '1px solid rgba(26, 32, 44, 0.2)',
           },
         }}
       >
@@ -176,10 +187,10 @@ const Header: React.FC = () => {
         position="fixed" 
         elevation={0}
         sx={{
-          background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
+          background: theme.customColors.surface.header,
           backdropFilter: 'blur(10px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-          boxShadow: '0 4px 20px rgba(45,55,72,0.12)',
+          borderBottom: `1px solid ${theme.customColors.border.header}`,
+          boxShadow: theme.customColors.shadow.header,
           top: 0,
           left: 0,
           right: 0,
@@ -225,7 +236,7 @@ const Header: React.FC = () => {
                   objectFit: 'contain',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
-                  filter: 'brightness(0) invert(1)',
+                  filter: theme.palette.mode === 'dark' ? 'brightness(0) invert(1)' : 'brightness(0)',
                   '&:hover': {
                     transform: 'scale(1.05)',
                     opacity: 0.8
@@ -264,6 +275,28 @@ const Header: React.FC = () => {
             }}>
               {isAuthenticated ? (
                 <>
+                  {/* Theme Toggle Button */}
+                  <IconButton
+                    color="inherit"
+                    onClick={toggleTheme}
+                    sx={{
+                      borderRadius: 2,
+                      p: { xs: 0.75, sm: 1, md: 1.25 },
+                      fontSize: 18,
+                      mr: { xs: 0.5, sm: 1 },
+                      '& .MuiSvgIcon-root': { 
+                        fontSize: { xs: 20, sm: 22, md: 24 } 
+                      },
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        transform: 'scale(1.05)',
+                      }
+                    }}
+                  >
+                    {isDark ? <LightMode /> : <DarkMode />}
+                  </IconButton>
+
                   {/* Mobile Menu Button */}
                   {isMobile && (
                     <IconButton
@@ -295,11 +328,15 @@ const Header: React.FC = () => {
                         label={isAdmin ? 'Admin' : 'Usuário'}
                         size="small"
                         sx={{
-                          backgroundColor: isAdmin ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.15)',
-                          color: '#fff',
+                          backgroundColor: isAdmin 
+                            ? (theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(26, 32, 44, 0.15)')
+                            : (theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.15)' : 'rgba(26, 32, 44, 0.1)'),
+                          color: theme.palette.mode === 'dark' ? '#fff' : '#1a202c',
                           fontWeight: 600,
                           fontSize: { xs: '0.625rem', sm: '0.6875rem', md: '0.75rem', lg: '0.8125rem' },
-                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          border: theme.palette.mode === 'dark' 
+                            ? '1px solid rgba(255, 255, 255, 0.2)' 
+                            : '1px solid rgba(26, 32, 44, 0.2)',
                           height: { xs: 20, sm: 24, md: 28, lg: 32 },
                           '& .MuiChip-label': {
                             px: { xs: 1, sm: 1.25, md: 1.5 },
@@ -323,11 +360,15 @@ const Header: React.FC = () => {
                         sx={{
                           width: { xs: 28, sm: 32, md: 36, lg: 40, xl: 44 },
                           height: { xs: 28, sm: 32, md: 36, lg: 40, xl: 44 },
-                          backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                          color: '#fff',
+                          backgroundColor: theme.palette.mode === 'dark' 
+                            ? 'rgba(255, 255, 255, 0.2)' 
+                            : 'rgba(26, 32, 44, 0.15)',
+                          color: theme.palette.mode === 'dark' ? '#fff' : '#1a202c',
                           fontWeight: 600,
                           fontSize: { xs: '0.75rem', sm: '0.8125rem', md: '0.875rem', lg: '0.9375rem' },
-                          border: '1px solid rgba(255, 255, 255, 0.3)',
+                          border: theme.palette.mode === 'dark' 
+                            ? '1px solid rgba(255, 255, 255, 0.3)' 
+                            : '1px solid rgba(26, 32, 44, 0.25)',
                         }}
                       >
                         {user?.email?.charAt(0).toUpperCase() || 'U'}
@@ -345,16 +386,24 @@ const Header: React.FC = () => {
                     py: { xs: 0.75, sm: 1, md: 1.25, lg: 1.5 },
                     fontWeight: 700,
                     fontSize: { xs: '0.75rem', sm: '0.8125rem', md: '0.875rem', lg: '0.9375rem' },
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    color: '#fff',
-                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    background: theme.palette.mode === 'dark' 
+                      ? 'rgba(255, 255, 255, 0.2)' 
+                      : 'rgba(26, 32, 44, 0.15)',
+                    color: theme.palette.mode === 'dark' ? '#fff' : '#1a202c',
+                    border: theme.palette.mode === 'dark' 
+                      ? '1px solid rgba(255, 255, 255, 0.3)' 
+                      : '1px solid rgba(26, 32, 44, 0.25)',
                     backdropFilter: 'blur(10px)',
                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     minHeight: { xs: '36px', sm: '40px', md: '44px', lg: '48px' },
                     '&:hover': {
                       transform: 'translateY(-2px) scale(1.02)',
-                      background: 'rgba(255, 255, 255, 0.3)',
-                      border: '1px solid rgba(255, 255, 255, 0.5)',
+                      background: theme.palette.mode === 'dark' 
+                        ? 'rgba(255, 255, 255, 0.3)' 
+                        : 'rgba(26, 32, 44, 0.25)',
+                      border: theme.palette.mode === 'dark' 
+                        ? '1px solid rgba(255, 255, 255, 0.5)' 
+                        : '1px solid rgba(26, 32, 44, 0.4)',
                     },
                   }}
                 >
@@ -375,9 +424,9 @@ const Header: React.FC = () => {
           '& .MuiDrawer-paper': {
             width: { xs: '280px', sm: '320px', md: '360px' },
             pt: 2,
-            background: 'rgba(255, 255, 255, 0.95)',
+            background: theme.customColors.surface.primary,
             backdropFilter: 'blur(10px)',
-            borderLeft: '1px solid rgba(255, 255, 255, 0.3)',
+            borderLeft: `1px solid ${theme.customColors.border.primary}`,
           },
         }}
       >
@@ -386,7 +435,7 @@ const Header: React.FC = () => {
             variant="h6" 
             sx={{ 
               mb: 3, 
-              color: '#2d3748', 
+              color: theme.customColors.text.primary, 
               fontWeight: 700,
               fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.375rem' },
             }}
@@ -398,12 +447,39 @@ const Header: React.FC = () => {
             <Divider sx={{ my: 2 }} />
             <ListItem disablePadding>
               <ListItemButton
+                onClick={toggleTheme}
+                sx={{
+                  borderRadius: 2,
+                  mx: 1,
+                  mb: 0.5,
+                  py: { xs: 1.5, sm: 2 },
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    backgroundColor: 'rgba(45, 55, 72, 0.05)',
+                  }
+                }}
+              >
+                <ListItemIcon sx={{ color: 'inherit', minWidth: 40 }}>
+                  {isDark ? <LightMode /> : <DarkMode />}
+                </ListItemIcon>
+                <ListItemText 
+                  primary={`Modo ${isDark ? 'Claro' : 'Escuro'}`}
+                  primaryTypographyProps={{
+                    fontSize: { xs: '0.875rem', sm: '1rem' },
+                    fontWeight: 500,
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton
                 onClick={handleLogout}
                 sx={{
                   borderRadius: 2,
                   mx: 1,
-                  color: '#e53e3e',
+                  mb: 0.5,
                   py: { xs: 1.5, sm: 2 },
+                  transition: 'all 0.3s ease',
                   '&:hover': {
                     backgroundColor: 'rgba(229, 62, 62, 0.1)',
                   }
@@ -413,7 +489,7 @@ const Header: React.FC = () => {
                   <ExitToApp />
                 </ListItemIcon>
                 <ListItemText 
-                  primary="Sair" 
+                  primary="Sair"
                   primaryTypographyProps={{
                     fontSize: { xs: '0.875rem', sm: '1rem' },
                     fontWeight: 500,
@@ -433,64 +509,46 @@ const Header: React.FC = () => {
         sx={{
           '& .MuiPaper-root': {
             borderRadius: 3,
-            mt: 1,
-            minWidth: { xs: 140, sm: 160, md: 180 },
-            background: 'rgba(255, 255, 255, 0.95)',
+            background: theme.customColors.surface.primary,
             backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
+            border: `1px solid ${theme.customColors.border.primary}`,
+            boxShadow: theme.customColors.shadow.primary,
+            mt: 1,
           },
         }}
       >
-        <MenuItem
-          onClick={handleClose}
-          sx={{
-            borderRadius: 1,
-            mx: 0.5,
-            mb: 0.25,
-            py: { xs: 0.75, sm: 1 },
-            transition: 'all 0.3s ease',
-            '&:hover': {
-              backgroundColor: 'rgba(45, 55, 72, 0.1)',
-            }
-          }}
-        >
-          <AccountCircle sx={{ mr: 1, color: '#4a5568', fontSize: 18 }} />
-          <Typography 
-            variant="body2" 
-            sx={{ 
-              color: '#2d3748', 
-              fontWeight: 600,
-              fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
-            }}
-          >
-            {user?.email || 'Usuário'}
-          </Typography>
+        <MenuItem onClick={handleClose} sx={{ 
+          borderRadius: 2, 
+          mx: 1, 
+          mb: 0.5,
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            backgroundColor: 'rgba(45, 55, 72, 0.05)',
+          }
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <AccountCircle sx={{ fontSize: 20 }} />
+            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              {user?.email || 'Usuário'}
+            </Typography>
+          </Box>
         </MenuItem>
-        <Divider />
-        <MenuItem
-          onClick={handleLogout}
-          sx={{
-            borderRadius: 1,
-            mx: 0.5,
-            mt: 0.25,
-            color: '#e53e3e',
-            py: { xs: 0.75, sm: 1 },
-            transition: 'all 0.3s ease',
-            '&:hover': {
-              backgroundColor: 'rgba(229, 62, 62, 0.1)',
-            }
-          }}
-        >
-          <ExitToApp sx={{ mr: 1, fontSize: 18 }} />
-          <Typography 
-            variant="body2" 
-            sx={{ 
-              fontWeight: 600,
-              fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
-            }}
-          >
-            Sair
-          </Typography>
+        <Divider sx={{ my: 1 }} />
+        <MenuItem onClick={handleLogout} sx={{ 
+          borderRadius: 2, 
+          mx: 1, 
+          mb: 0.5,
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            backgroundColor: 'rgba(229, 62, 62, 0.1)',
+          }
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <ExitToApp sx={{ fontSize: 20 }} />
+            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              Sair
+            </Typography>
+          </Box>
         </MenuItem>
       </Menu>
     </>

@@ -95,15 +95,14 @@ const Register: React.FC = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        flex: 1,
         width: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: { xs: 2, sm: 3, md: 4 },
         position: 'relative',
         fontFamily: 'Poppins, Inter, Montserrat, Arial',
-        background: 'transparent',
+        background: theme.customColors.background.gradient,
         backgroundSize: '200% 200%',
         animation: 'gradientMove 15s ease-in-out infinite',
         '@keyframes gradientMove': {
@@ -127,10 +126,10 @@ const Register: React.FC = () => {
               width: '100%',
               p: { xs: 3, sm: 4, md: 5, lg: 6 },
               borderRadius: 4,
-              boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
-              background: 'rgba(255, 255, 255, 0.95)',
+              boxShadow: theme.customColors.shadow.primary,
+              background: theme.customColors.surface.card,
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.4)',
+              border: `1px solid ${theme.customColors.border.primary}`,
               position: 'relative',
               overflow: 'hidden',
               '&::before': {
@@ -140,7 +139,7 @@ const Register: React.FC = () => {
                 left: 0,
                 right: 0,
                 height: '4px',
-                background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`
+                background: `linear-gradient(90deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`
               }
             }}
           >
@@ -150,9 +149,9 @@ const Register: React.FC = () => {
                   width: 80,
                   height: 80,
                   margin: '0 auto 20px',
-                  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
-                  color: theme.palette.primary.contrastText,
-                  boxShadow: '0 8px 32px rgba(56, 58, 41, 0.3)'
+                  background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
+                  color: theme.customColors.text.inverse,
+                  boxShadow: theme.customColors.shadow.secondary
                 }}
               >
                 <PersonAdd sx={{ fontSize: 40 }} />
@@ -162,7 +161,7 @@ const Register: React.FC = () => {
                 component="h1" 
                 sx={{
                   fontWeight: 700,
-                  color: theme.palette.primary.main,
+                  color: theme.customColors.text.primary,
                   mb: 1,
                   fontSize: { xs: '1.3rem', sm: '1.7rem', md: '2.5rem' },
                   '@media (min-width: 1600px)': {
@@ -175,7 +174,8 @@ const Register: React.FC = () => {
               >
                 Nova Vendedora
               </Typography>
-              <Typography variant="body1" sx={{ color: theme.palette.text.secondary,
+              <Typography variant="body1" sx={{ 
+                color: theme.customColors.text.secondary,
                 mb: 2,
                 fontSize: { xs: '0.9rem', sm: '1.05rem', md: '1.15rem' },
                 '@media (min-width: 1600px)': {
@@ -195,6 +195,9 @@ const Register: React.FC = () => {
                 sx={{ 
                   mb: 4,
                   borderRadius: 2,
+                  background: alpha(theme.customColors.status.error, 0.1),
+                  border: `1px solid ${alpha(theme.customColors.status.error, 0.3)}`,
+                  color: theme.customColors.status.error,
                   '& .MuiAlert-icon': {
                     fontSize: '1.5rem'
                   }
@@ -220,7 +223,7 @@ const Register: React.FC = () => {
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Person sx={{ color: theme.palette.primary.main }} />
+                          <Person sx={{ color: alpha(theme.customColors.text.primary, 0.7) }} />
                         </InputAdornment>
                       ),
                     }}
@@ -238,7 +241,7 @@ const Register: React.FC = () => {
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Badge sx={{ color: theme.palette.primary.main }} />
+                          <Badge sx={{ color: alpha(theme.customColors.text.primary, 0.7) }} />
                         </InputAdornment>
                       ),
                     }}
@@ -258,7 +261,7 @@ const Register: React.FC = () => {
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Email sx={{ color: theme.palette.primary.main }} />
+                          <Email sx={{ color: alpha(theme.customColors.text.primary, 0.7) }} />
                         </InputAdornment>
                       ),
                     }}
@@ -266,50 +269,99 @@ const Register: React.FC = () => {
                   
                   <TextField
                     required
-                    name="confirmPassword"
-                    label="Confirmar Senha*"
+                    id="password"
+                    label="Senha*"
+                    name="password"
                     type="password"
-                    id="confirmPassword"
                     autoComplete="new-password"
-                    value={formData.confirmPassword}
+                    value={formData.password}
                     onChange={handleChange}
                     sx={{ flex: 1 }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Lock sx={{ color: theme.palette.primary.main }} />
+                          <Lock sx={{ color: alpha(theme.customColors.text.primary, 0.7) }} />
                         </InputAdornment>
                       ),
                     }}
                   />
                 </Box>
                 
+                <TextField
+                  required
+                  id="confirmPassword"
+                  label="Confirmar Senha*"
+                  name="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Lock sx={{ color: alpha(theme.customColors.text.primary, 0.7) }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Stack>
+
+              <Box sx={{ mt: 4, display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                 <Button
                   type="submit"
                   variant="contained"
-                  size="large"
+                  fullWidth
                   disabled={loading}
+                  startIcon={loading ? <CircularProgress size={20} /> : <PersonAdd />}
                   sx={{
-                    py: 2,
-                    fontSize: '1.1rem',
-                    fontWeight: 600,
-                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
+                    py: { xs: 1.5, sm: 2 },
+                    px: { xs: 3, sm: 4 },
+                    borderRadius: 3,
+                    fontWeight: 700,
+                    fontSize: { xs: '1rem', sm: '1.125rem' },
+                    background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
+                    color: theme.customColors.text.inverse,
+                    boxShadow: theme.customColors.shadow.secondary,
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     '&:hover': {
-                      background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+                      transform: 'translateY(-2px) scale(1.02)',
+                      boxShadow: theme.customColors.shadow.primary,
+                      background: `linear-gradient(135deg, ${theme.customColors.primary.light} 0%, ${theme.customColors.primary.main} 100%)`,
                     },
                     '&:disabled': {
-                      background: theme.palette.grey[300],
-                      color: theme.palette.grey[500]
-                    }
+                      background: alpha(theme.customColors.primary.main, 0.12),
+                      color: alpha(theme.customColors.primary.main, 0.38),
+                      transform: 'none',
+                      boxShadow: 'none',
+                    },
                   }}
                 >
-                  {loading ? (
-                    <CircularProgress size={24} color="inherit" />
-                  ) : (
-                    'Criar Conta'
-                  )}
+                  {loading ? 'Criando...' : 'Criar Conta'}
                 </Button>
-              </Stack>
+                
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  onClick={() => navigate('/login')}
+                  sx={{
+                    py: { xs: 1.5, sm: 2 },
+                    px: { xs: 3, sm: 4 },
+                    borderRadius: 3,
+                    fontWeight: 700,
+                    fontSize: { xs: '1rem', sm: '1.125rem' },
+                    border: `2px solid ${alpha(theme.customColors.primary.main, 0.3)}`,
+                    color: theme.customColors.primary.main,
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    '&:hover': {
+                      borderColor: theme.customColors.primary.main,
+                      backgroundColor: alpha(theme.customColors.primary.main, 0.1),
+                      transform: 'translateY(-2px)',
+                    },
+                  }}
+                >
+                  Já tenho conta
+                </Button>
+              </Box>
             </Box>
           </Paper>
         </Fade>

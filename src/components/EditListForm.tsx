@@ -18,13 +18,14 @@ import {
   Chip,
   Alert,
   CircularProgress,
-  Grid,
   IconButton,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  Paper
+  Paper,
+  useTheme,
+  alpha
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
@@ -40,6 +41,7 @@ type User = {
 const EditListForm: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const theme = useTheme();
   const { isAuthenticated } = useAuth();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -177,8 +179,9 @@ const EditListForm: React.FC = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        background: theme.customColors.background.default,
       }}>
-        <CircularProgress sx={{ color: '#383A29' }} />
+        <CircularProgress sx={{ color: theme.customColors.text.primary }} />
       </Box>
     );
   }
@@ -186,430 +189,518 @@ const EditListForm: React.FC = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        flex: 1,
         width: '100vw',
         overflowX: 'hidden',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: { xs: 2, sm: 3, md: 4 },
         position: 'relative',
         fontFamily: 'Poppins, Inter, Montserrat, Arial',
+        background: theme.customColors.background.gradient,
       }}
     >
       {/* Subtle Gradient Background */}
-      <Box sx={{
-        position: 'absolute',
-        inset: 0,
-        zIndex: 0,
-        background: 'linear-gradient(135deg, #f7fafc 0%, #edf2f7 50%, #e2e8f0 100%)',
-        backgroundSize: '200% 200%',
-        animation: 'gradientMove 15s ease-in-out infinite',
-        '@keyframes gradientMove': {
-          '0%': { backgroundPosition: '0% 50%' },
-          '50%': { backgroundPosition: '100% 50%' },
-          '100%': { backgroundPosition: '0% 50%' },
-        },
-      }} />
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: theme.customColors.background.gradient,
+          zIndex: -1,
+        }}
+      />
 
-      <Container maxWidth="lg" sx={{
-        position: 'relative',
-        zIndex: 2,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        py: { xs: 2, sm: 3, md: 4 }
-      }}>
-        <Box sx={{ width: '100%', maxWidth: { xs: '100%', sm: 700, md: 900, lg: 1100 }, mx: 'auto' }}>
-          <Paper
-            elevation={0}
-            sx={{
-              background: 'rgba(45, 55, 72, 0.95)',
-              backdropFilter: 'blur(20px)',
-              borderRadius: 4,
-              p: { xs: 3, sm: 4, md: 5, lg: 6 },
-              mb: 4,
-              color: 'white',
-              position: 'relative',
-              overflow: 'hidden',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                height: '4px',
-                background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)'
-              }
-            }}
-          >
-            <Typography variant="h4" component="h1" sx={{ 
-              fontWeight: 'bold', 
-              fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' }, 
-              color: 'white',
-              mb: 1
-            }}>
+      <Container maxWidth="md" sx={{ zIndex: 1 }}>
+        <Paper
+          elevation={0}
+          sx={{
+            p: { xs: 3, sm: 4, md: 5 },
+            borderRadius: 4,
+            background: theme.customColors.surface.card,
+            backdropFilter: 'blur(20px)',
+            border: `1.5px solid ${theme.customColors.border.primary}`,
+            boxShadow: theme.customColors.shadow.primary,
+            maxWidth: 800,
+            mx: 'auto',
+          }}
+        >
+          {/* Header */}
+          <Box sx={{ textAlign: 'center', mb: 4 }}>
+            <Typography
+              variant="h3"
+              component="h1"
+              sx={{
+                fontWeight: 700,
+                color: theme.customColors.text.primary,
+                mb: 1,
+                fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem', lg: '2.25rem', xl: '2.5rem' },
+                lineHeight: 1.2,
+                '@media (min-width: 1600px)': {
+                  fontSize: '2.75rem',
+                },
+                '@media (min-width: 1920px)': {
+                  fontSize: '3rem',
+                },
+              }}
+            >
               Editar Lista
             </Typography>
-            <Typography variant="body1" sx={{ opacity: 0.9, fontSize: { xs: '0.875rem', sm: '1rem' } }}>
+            <Typography
+              variant="body1"
+              sx={{
+                color: theme.customColors.text.secondary,
+                mb: 2,
+                fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem', lg: '1.25rem', xl: '1.375rem' },
+                lineHeight: 1.4,
+                '@media (min-width: 1600px)': {
+                  fontSize: '1.5rem',
+                },
+                '@media (min-width: 1920px)': {
+                  fontSize: '1.625rem',
+                },
+              }}
+            >
               Modifique os detalhes da sua lista personalizada
             </Typography>
-          </Paper>
+          </Box>
 
-          <Paper
-            elevation={0}
-            sx={{
-              borderRadius: 4,
-              p: { xs: 3, sm: 4, md: 5 },
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.4)',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
-              position: 'relative',
-              overflow: 'hidden',
-            }}
-          >
-            
-
-            {error && (
-              <Alert severity="error" sx={{ mb: 3, backgroundColor: '#ffebee', borderLeft: '4px solid #383A29' }}>
-                {error}
-              </Alert>
-            )}
-
-            {success && (
-              <Alert severity="success" sx={{ mb: 3, backgroundColor: '#e8f5e8', borderLeft: '4px solid #383A29' }}>
-                {success}
-              </Alert>
-            )}
-
-            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, background: '#fff', borderRadius: { xs: 2, sm: 3 }, p: { xs: 1, sm: 3 }, boxShadow: '0 2px 8px rgba(45,55,72,0.06)' }}>
-              <Grid container spacing={3}>
-                <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Nome da Lista"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        '&.Mui-focused fieldset': {
-                          borderColor: '#383A29'
-                        }
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': {
-                        color: '#383A29'
-                      }
-                    }}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12, md: 6 }}>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={isPublic}
-                        onChange={(e) => setIsPublic(e.target.checked)}
-                        sx={{
-                          '& .MuiSwitch-switchBase.Mui-checked': {
-                            color: '#383A29'
-                          },
-                          '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                            backgroundColor: '#383A29'
-                          }
-                        }}
-                      />
-                    }
-                    label="Lista Pública"
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12 }}>
-                  <TextField
-                    fullWidth
-                    label="Descrição"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    multiline
-                    rows={3}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        '&.Mui-focused fieldset': {
-                          borderColor: '#383A29'
-                        }
-                      },
-                      '& .MuiInputLabel-root.Mui-focused': {
-                        color: '#383A29'
-                      }
-                    }}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                    <Typography variant="h6" sx={{ color: '#2d3748', fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.25rem' } }}>
-                      Produtos na Lista ({getSelectedProductsData().length})
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      startIcon={<AddIcon />}
-                      onClick={() => setAddProductDialogOpen(true)}
-                      disabled={availableProducts.length === 0}
-                      sx={{
-                        backgroundColor: '#2d3748',
-                        color: 'white',
-                        fontSize: { xs: '0.8rem', sm: '1rem' },
-                        borderRadius: { xs: 2, sm: 3 },
-                        px: { xs: 1, sm: 2 },
-                        py: { xs: 0.5, sm: 1 },
-                        '&:hover': {
-                          backgroundColor: '#1a202c'
-                        }
-                      }}
-                    >
-                      Adicionar Produto
-                    </Button>
-                  </Box>
-
-                  <Grid container spacing={2}>
-                    {getSelectedProductsData().map((product) => (
-                      <Grid size={{ xs: 12, sm: 6, md: 4 }} key={product._id}>
-                        <Card sx={{
-                          border: '1px solid #d9d9d9',
-                          position: 'relative'
-                        }}>
-                          <IconButton
-                            onClick={() => handleRemoveProduct(product._id)}
-                            sx={{
-                              position: 'absolute',
-                              top: 8,
-                              right: 8,
-                              backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                              color: '#d32f2f',
-                              '&:hover': {
-                                backgroundColor: 'rgba(255, 255, 255, 0.9)'
-                              }
-                            }}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                          {product.image && (
-                            <CardMedia
-                              component="img"
-                              height="120"
-                              image={product.image}
-                              alt={product.name}
-                              sx={{ objectFit: 'cover' }}
-                            />
-                          )}
-                          <CardContent sx={{ p: 2 }}>
-                            <Typography variant="subtitle1" sx={{
-                              color: '#383A29',
-                              fontWeight: 'bold',
-                              mb: 1,
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap'
-                            }}>
-                              {product.name}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                              {product.description}
-                            </Typography>
-                            <Typography variant="h6" sx={{ color: '#383A29', fontWeight: 'bold' }}>
-                              {formatPrice(product.finalPrice)}
-                            </Typography>
-                          </CardContent>
-                        </Card>
-                      </Grid>
-                    ))}
-                  </Grid>
-                </Grid>
-
-                <Grid size={{ xs: 12 }}>
-                  <FormControl fullWidth sx={{
-                    '& .MuiOutlinedInput-root': {
-                      '&.Mui-focused fieldset': {
-                        borderColor: '#383A29'
-                      }
-                    },
-                    '& .MuiInputLabel-root.Mui-focused': {
-                      color: '#383A29'
-                    }
-                  }}>
-                    <InputLabel>Compartilhar com Usuários</InputLabel>
-                    <Select
-                      multiple
-                      value={selectedUsers.map(user => user._id)}
-                      onChange={(e) => {
-                        const selectedIds = e.target.value as string[];
-                        const selected = users.filter(user => selectedIds.includes(user._id));
-                        setSelectedUsers(selected);
-                      }}
-                      renderValue={(selected) => (
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                          {(selected as string[]).map((userId) => {
-                            const user = users.find(u => u._id === userId);
-                            return (
-                              <Chip
-                                key={userId}
-                                label={user?.email || userId}
-                                size="small"
-                                sx={{
-                                  backgroundColor: '#383A29',
-                                  color: 'white'
-                                }}
-                              />
-                            );
-                          })}
-                        </Box>
-                      )}
-                    >
-                      {users.map((user) => (
-                        <MenuItem key={user._id} value={user._id}>
-                          {user.email}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-
-                <Grid size={{ xs: 12 }}>
-                  <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2 }}>
-                    <Button
-                      variant="outlined"
-                      onClick={() => navigate('/admin/stock-lists')}
-                      sx={{
-                        borderColor: '#2d3748',
-                        color: '#2d3748',
-                        borderRadius: { xs: 2, sm: 3 },
-                        px: { xs: 1, sm: 2 },
-                        py: { xs: 0.5, sm: 1 },
-                        fontSize: { xs: '0.8rem', sm: '1rem' },
-                        '&:hover': {
-                          borderColor: '#1a202c',
-                          backgroundColor: 'rgba(45, 55, 72, 0.04)'
-                        }
-                      }}
-                    >
-                      Cancelar
-                    </Button>
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      disabled={loading}
-                      sx={{
-                        backgroundColor: '#2d3748',
-                        color: 'white',
-                        borderRadius: { xs: 2, sm: 3 },
-                        px: { xs: 1, sm: 2 },
-                        py: { xs: 0.5, sm: 1 },
-                        fontSize: { xs: '0.8rem', sm: '1rem' },
-                        '&:hover': {
-                          backgroundColor: '#1a202c'
-                        }
-                      }}
-                    >
-                      {loading ? <CircularProgress size={24} color="inherit" /> : 'Atualizar Lista'}
-                    </Button>
-                  </Box>
-                </Grid>
-              </Grid>
-            </Box>
-
-            {/* Dialog para adicionar produtos */}
-            <Dialog
-              open={addProductDialogOpen}
-              onClose={() => setAddProductDialogOpen(false)}
-              maxWidth="md"
-              fullWidth
-              PaperProps={{
-                sx: {
-                  '@media (min-width: 1920px)': {
-                    maxWidth: 1100,
-                    minWidth: 900,
-                    p: 4,
-                  },
-                  background: '#fff',
-                  borderRadius: { xs: 2, sm: 3 },
+          {error && (
+            <Alert
+              severity="error"
+              sx={{
+                mb: 4,
+                borderRadius: 2,
+                background: alpha(theme.customColors.status.error, 0.1),
+                border: `1px solid ${alpha(theme.customColors.status.error, 0.3)}`,
+                color: theme.customColors.status.error,
+                '& .MuiAlert-icon': {
+                  fontSize: '1.5rem'
                 }
               }}
             >
-              <DialogTitle sx={{ color: '#2d3748', fontWeight: 'bold', fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>
-                Adicionar Produtos
-              </DialogTitle>
-              <DialogContent sx={{ background: '#f7fafc', p: { xs: 1, sm: 3 } }}>
-                <Grid container spacing={2} sx={{ mt: 1 }}>
-                  {availableProducts.map((product) => (
-                    <Grid size={{ xs: 12, sm: 6, md: 4 }} key={product._id}>
-                      <Card sx={{
-                        border: '1.5px solid #2d3748',
-                        borderRadius: { xs: 2, sm: 3 },
-                        background: '#fff',
-                        boxShadow: 'none',
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          border: '1.5px solid #1a202c',
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 4px 12px rgba(45, 55, 72, 0.10)'
-                        }
-                      }}
-                      onClick={() => handleAddProduct(product._id)}
-                      >
-                        {product.image && (
-                          <CardMedia
-                            component="img"
-                            height={54}
-                            image={product.image}
-                            alt={product.name}
-                            sx={{ objectFit: 'cover', borderTopLeftRadius: { xs: 2, sm: 3 }, borderTopRightRadius: { xs: 2, sm: 3 } }}
-                          />
-                        )}
-                        <CardContent sx={{ p: { xs: 0.5, sm: 1.5 }, display: 'block' }}>
-                          <Typography variant="subtitle1" sx={{
-                            color: '#2d3748',
-                            fontWeight: 'bold',
-                            mb: 0.25,
-                            fontSize: { xs: '0.75rem', sm: '1rem' },
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap'
-                          }}>
-                            {product.name}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary" sx={{ mb: 0.25, fontSize: { xs: '0.65rem', sm: '0.875rem' } }}>
-                            {product.description}
-                          </Typography>
-                          <Typography variant="h6" sx={{ color: '#2d3748', fontWeight: 'bold', fontSize: { xs: '0.9rem', sm: '1.1rem' } }}>
-                            {formatPrice(product.finalPrice)}
-                          </Typography>
-                        </CardContent>
-                      </Card>
-                    </Grid>
-                  ))}
-                </Grid>
-                {availableProducts.length === 0 && (
-                  <Typography variant="body1" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
-                    Todos os produtos já estão na lista.
-                  </Typography>
-                )}
-              </DialogContent>
-              <DialogActions sx={{ background: '#fff', borderRadius: { xs: 2, sm: 3 } }}>
-                <Button
-                  onClick={() => setAddProductDialogOpen(false)}
-                  sx={{ color: '#2d3748', fontWeight: 600 }}
+              {error}
+            </Alert>
+          )}
+
+          {success && (
+            <Alert
+              severity="success"
+              sx={{
+                mb: 4,
+                borderRadius: 2,
+                background: alpha(theme.customColors.status.success, 0.1),
+                border: `1px solid ${alpha(theme.customColors.status.success, 0.3)}`,
+                color: theme.customColors.status.success,
+                '& .MuiAlert-icon': {
+                  fontSize: '1.5rem'
+                }
+              }}
+            >
+              {success}
+            </Alert>
+          )}
+
+          <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            {/* Nome da Lista */}
+            <TextField
+              fullWidth
+              label="Nome da Lista"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              variant="outlined"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 3,
+                  backgroundColor: alpha(theme.customColors.text.primary, 0.02),
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: theme.customColors.primary.main,
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: theme.customColors.primary.main,
+                    borderWidth: 2,
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: theme.customColors.text.secondary,
+                  '&.Mui-focused': {
+                    color: theme.customColors.primary.main,
+                  },
+                },
+                '& .MuiInputBase-input': {
+                  color: theme.customColors.text.primary,
+                },
+              }}
+            />
+
+            {/* Descrição */}
+            <TextField
+              fullWidth
+              label="Descrição (opcional)"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              multiline
+              rows={3}
+              variant="outlined"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 3,
+                  backgroundColor: alpha(theme.customColors.text.primary, 0.02),
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: theme.customColors.primary.main,
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: theme.customColors.primary.main,
+                    borderWidth: 2,
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: theme.customColors.text.secondary,
+                  '&.Mui-focused': {
+                    color: theme.customColors.primary.main,
+                  },
+                },
+                '& .MuiInputBase-input': {
+                  color: theme.customColors.text.primary,
+                },
+              }}
+            />
+
+            {/* Visibilidade */}
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isPublic}
+                  onChange={(e) => setIsPublic(e.target.checked)}
+                  sx={{
+                    '& .MuiSwitch-switchBase.Mui-checked': {
+                      color: theme.customColors.primary.main,
+                      '&:hover': {
+                        backgroundColor: alpha(theme.customColors.primary.main, 0.08),
+                      },
+                    },
+                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                      backgroundColor: theme.customColors.primary.main,
+                    },
+                  }}
+                />
+              }
+              label={
+                <Typography sx={{ color: theme.customColors.text.primary }}>
+                  Lista Pública
+                </Typography>
+              }
+            />
+
+            {/* Produtos Selecionados */}
+            <Box>
+              <Box sx={{ mb: 2 }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    color: theme.customColors.text.primary,
+                    fontWeight: 600,
+                    mb: 2,
+                  }}
                 >
-                  Fechar
+                  Produtos na Lista ({selectedProducts.length})
+                </Typography>
+                <Button
+                  variant="outlined"
+                  startIcon={<AddIcon />}
+                  onClick={() => setAddProductDialogOpen(true)}
+                  sx={{
+                    mb: 2,
+                    borderRadius: 3,
+                    border: `2px dashed ${alpha(theme.customColors.primary.main, 0.3)}`,
+                    color: theme.customColors.primary.main,
+                    backgroundColor: alpha(theme.customColors.primary.main, 0.05),
+                    '&:hover': {
+                      borderColor: theme.customColors.primary.main,
+                      backgroundColor: alpha(theme.customColors.primary.main, 0.1),
+                    },
+                  }}
+                >
+                  Adicionar Produto
                 </Button>
-              </DialogActions>
-            </Dialog>
-          </Paper>
-        </Box>
+              </Box>
+
+              <Box sx={{
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: '1fr',
+                  sm: 'repeat(2, 1fr)',
+                  md: 'repeat(3, 1fr)'
+                },
+                gap: 2,
+              }}>
+                {getSelectedProductsData().map((product) => (
+                  <Card
+                    key={product._id}
+                    sx={{
+                      background: alpha(theme.customColors.text.primary, 0.02),
+                      border: `1px solid ${theme.customColors.border.primary}`,
+                      borderRadius: 3,
+                      position: 'relative',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: theme.customColors.shadow.secondary,
+                      },
+                    }}
+                  >
+                    {product.image && (
+                      <CardMedia
+                        component="img"
+                        height={120}
+                        image={product.image}
+                        alt={product.name}
+                        sx={{ objectFit: 'cover' }}
+                      />
+                    )}
+                    <CardContent sx={{ p: 2 }}>
+                      <Typography
+                        variant="subtitle1"
+                        sx={{
+                          fontWeight: 600,
+                          color: theme.customColors.text.primary,
+                          mb: 1,
+                          fontSize: { xs: '0.875rem', sm: '1rem' },
+                          lineHeight: 1.3,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                        }}
+                      >
+                        {product.name}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: theme.customColors.text.secondary,
+                          mb: 1,
+                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                        }}
+                      >
+                        {product.description}
+                      </Typography>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontWeight: 700,
+                          color: theme.customColors.status.success,
+                          fontSize: { xs: '0.875rem', sm: '1rem' },
+                        }}
+                      >
+                        {formatPrice(product.finalPrice)}
+                      </Typography>
+                    </CardContent>
+                    <IconButton
+                      onClick={() => handleRemoveProduct(product._id)}
+                      sx={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                        backgroundColor: alpha(theme.customColors.status.error, 0.1),
+                        color: theme.customColors.status.error,
+                        '&:hover': {
+                          backgroundColor: alpha(theme.customColors.status.error, 0.2),
+                        },
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Card>
+                ))}
+              </Box>
+            </Box>
+
+            {/* Botões */}
+            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
+              <Button
+                type="button"
+                variant="outlined"
+                onClick={() => navigate('/admin/stock-lists')}
+                sx={{
+                  py: { xs: 1.5, sm: 2 },
+                  px: { xs: 3, sm: 4 },
+                  borderRadius: 3,
+                  fontWeight: 600,
+                  fontSize: { xs: '1rem', sm: '1.125rem' },
+                  borderColor: theme.customColors.text.primary,
+                  color: theme.customColors.text.primary,
+                  '&:hover': {
+                    borderColor: theme.customColors.primary.main,
+                    color: theme.customColors.primary.main,
+                    backgroundColor: alpha(theme.customColors.primary.main, 0.05),
+                  },
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={loading}
+                sx={{
+                  py: { xs: 1.5, sm: 2 },
+                  px: { xs: 3, sm: 4 },
+                  borderRadius: 3,
+                  fontWeight: 700,
+                  fontSize: { xs: '1rem', sm: '1.125rem' },
+                  background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
+                  color: theme.customColors.text.inverse,
+                  boxShadow: theme.customColors.shadow.secondary,
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&:hover': {
+                    transform: 'translateY(-2px) scale(1.02)',
+                    boxShadow: theme.customColors.shadow.primary,
+                    background: `linear-gradient(135deg, ${theme.customColors.primary.light} 0%, ${theme.customColors.primary.main} 100%)`,
+                  },
+                  '&:disabled': {
+                    background: alpha(theme.customColors.text.primary, 0.12),
+                    color: alpha(theme.customColors.text.primary, 0.38),
+                    transform: 'none',
+                    boxShadow: 'none',
+                  },
+                }}
+              >
+                {loading ? 'Salvando...' : 'Salvar Alterações'}
+              </Button>
+            </Box>
+          </Box>
+        </Paper>
       </Container>
+
+      {/* Dialog para adicionar produtos */}
+      <Dialog
+        open={addProductDialogOpen}
+        onClose={() => setAddProductDialogOpen(false)}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 4,
+            background: theme.customColors.surface.card,
+            backdropFilter: 'blur(20px)',
+            border: `1.5px solid ${theme.customColors.border.primary}`,
+            boxShadow: theme.customColors.shadow.primary,
+          },
+        }}
+      >
+        <DialogTitle sx={{ color: theme.customColors.text.primary, fontWeight: 600 }}>
+          Adicionar Produtos
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(3, 1fr)'
+            },
+            gap: 2,
+          }}>
+            {availableProducts.map((product) => (
+              <Card
+                key={product._id}
+                sx={{
+                  background: alpha(theme.customColors.text.primary, 0.02),
+                  border: `1px solid ${theme.customColors.border.primary}`,
+                  borderRadius: 3,
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: theme.customColors.shadow.secondary,
+                    borderColor: theme.customColors.primary.main,
+                  },
+                }}
+                onClick={() => handleAddProduct(product._id)}
+              >
+                {product.image && (
+                  <CardMedia
+                    component="img"
+                    height={120}
+                    image={product.image}
+                    alt={product.name}
+                    sx={{ objectFit: 'cover' }}
+                  />
+                )}
+                <CardContent sx={{ p: 2 }}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      fontWeight: 600,
+                      color: theme.customColors.text.primary,
+                      mb: 1,
+                      fontSize: { xs: '0.875rem', sm: '1rem' },
+                      lineHeight: 1.3,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                    }}
+                  >
+                    {product.name}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: theme.customColors.text.secondary,
+                      mb: 1,
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                    }}
+                  >
+                    {product.description}
+                  </Typography>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 700,
+                      color: theme.customColors.status.success,
+                      fontSize: { xs: '0.875rem', sm: '1rem' },
+                    }}
+                  >
+                    {formatPrice(product.finalPrice)}
+                  </Typography>
+                </CardContent>
+              </Card>
+            ))}
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ p: 3 }}>
+          <Button
+            onClick={() => setAddProductDialogOpen(false)}
+            sx={{
+              borderRadius: 3,
+              fontWeight: 600,
+              color: theme.customColors.text.primary,
+              '&:hover': {
+                backgroundColor: alpha(theme.customColors.text.primary, 0.05),
+              },
+            }}
+          >
+            Fechar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

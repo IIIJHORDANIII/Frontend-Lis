@@ -19,7 +19,8 @@ import {
   Paper,
   Fade,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  alpha
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PersonIcon from '@mui/icons-material/Person';
@@ -77,30 +78,28 @@ const AdminStockLists: React.FC = () => {
     return (
       <Box sx={{ 
         minHeight: '100vh',
-        background: 'white',
+        background: theme.customColors.background.default,
         display: 'flex', 
         justifyContent: 'center', 
         alignItems: 'center'
       }}>
-        <CircularProgress size={60} sx={{ color: 'white' }} />
+        <CircularProgress size={60} sx={{ color: theme.customColors.text.primary }} />
       </Box>
     );
   }
 
   return (
     <Box sx={{ 
-      minHeight: '100vh',
-      background: 'transparent',
-      py: { xs: 2, sm: 3, md: 4 },
+      width: '100%',
       display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'flex-start',
+      flexDirection: 'column',
+      alignItems: 'center',
     }}>
       <Container maxWidth="xl" sx={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        minHeight: '100vh',
+        width: '100%',
         px: { xs: 1, sm: 2, md: 3 },
       }}>
         {/* Header */}
@@ -109,16 +108,16 @@ const AdminStockLists: React.FC = () => {
             elevation={0}
             sx={{
               maxWidth: { xs: 340, sm: 400, md: 700, xl: 800 },
-              width: '900%',
+              width: '100%',
               mx: 'auto',
-              mt: { xs: 1, sm: 2, md: 4 },
+              mt: 0, // No top margin since AppLayout already provides padding
               mb: { xs: 1, sm: 2, md: 4 },
               p: { xs: 1, sm: 2, md: 4 },
               borderRadius: 3,
-              boxShadow: '0 8px 32px 0 rgba(45,55,72,0.10)',
-              background: 'white',
+              boxShadow: theme.customColors.shadow.secondary,
+              background: theme.customColors.surface.card,
               backdropFilter: 'blur(12px)',
-              border: '1.5px solid rgba(255,255,255,0.22)',
+              border: `1.5px solid ${theme.customColors.border.primary}`,
               '@media (min-width: 1600px)': {
                 maxWidth: 1000,
                 p: 6,
@@ -135,7 +134,7 @@ const AdminStockLists: React.FC = () => {
                 component="h1"
                 sx={{
                   fontWeight: 700,
-                  color: theme.palette.primary.main,
+                  color: theme.customColors.text.primary,
                   mb: 1,
                   fontSize: { xs: '1.7rem', sm: '2.2rem', md: '2.7rem' },
                   '@media (min-width: 1600px)': {
@@ -151,7 +150,7 @@ const AdminStockLists: React.FC = () => {
               <Typography
                 variant="body1"
                 sx={{
-                  color: theme.palette.text.secondary,
+                  color: theme.customColors.text.secondary,
                   mb: 2,
                   fontSize: { xs: '0.9rem', sm: '1.05rem', md: '1.15rem' },
                   '@media (min-width: 1600px)': {
@@ -173,6 +172,9 @@ const AdminStockLists: React.FC = () => {
             sx={{ 
               mb: 4,
               borderRadius: 2,
+              background: alpha(theme.customColors.status.error, 0.1),
+              border: `1px solid ${alpha(theme.customColors.status.error, 0.3)}`,
+              color: theme.customColors.status.error,
               '& .MuiAlert-icon': {
                 fontSize: '1.5rem'
               }
@@ -190,7 +192,10 @@ const AdminStockLists: React.FC = () => {
               fontSize: '1.1rem',
               maxWidth: 900,
               mx: 'auto',
-              boxShadow: '0 2px 8px rgba(45,55,72,0.10)',
+              boxShadow: theme.customColors.shadow.secondary,
+              background: alpha(theme.customColors.status.info, 0.1),
+              border: `1px solid ${alpha(theme.customColors.status.info, 0.3)}`,
+              color: theme.customColors.status.info,
               '& .MuiAlert-icon': {
                 fontSize: '1.5rem'
               }
@@ -199,222 +204,252 @@ const AdminStockLists: React.FC = () => {
             Nenhuma lista encontrada.
           </Alert>
         )}
-        {/* Lists */}
-        <Box sx={{ mt: { xs: 2, sm: 3, md: 4 }, width: '100%', maxWidth: 1200, mx: 'auto' }}>
-          {lists.map((list, index) => (
-            <Fade in timeout={400 + index * 100} key={list._id}>
-              <Accordion
-                expanded={expanded === list._id}
-                onChange={() => handleAccordionChange(list._id)}
+        
+        <Box sx={{ width: '100%', maxWidth: 1200 }}>
+          {lists.map((list) => (
+            <Fade in key={list._id} timeout={400}>
+              <Card
                 sx={{
-                  background: 'rgba(255,255,255,0.97)',
-                  border: '1.5px solid rgba(102,126,234,0.10)',
-                  borderRadius: 3,
-                  mb: { xs: 3, sm: 4 },
+                  mb: 3,
+                  background: theme.customColors.surface.card,
+                  border: `1.5px solid ${theme.customColors.border.primary}`,
+                  borderRadius: 4,
                   overflow: 'hidden',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0 8px 32px rgba(102,126,234,0.10)',
+                  boxShadow: theme.customColors.shadow.secondary,
                   '&:hover': {
-                    boxShadow: '0 20px 40px rgba(102,126,234,0.18)',
-                    border: '2px solid #764ba2',
-                    transform: 'translateY(-8px) scale(1.04)',
+                    boxShadow: theme.customColors.shadow.primary,
+                    border: `2px solid ${theme.customColors.primary.main}`,
+                    transform: 'translateY(-4px)',
                   },
-                  p: 0,
                 }}
               >
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls={`panel-content-${list._id}`}
-                  id={`panel-header-${list._id}`}
-                  sx={{
-                    px: { xs: 2, sm: 3 },
-                    py: { xs: 2, sm: 3 },
-                    background: 'rgba(255,255,255,0.13)',
-                    borderBottom: '1px solid rgba(102,126,234,0.10)',
-                  }}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        fontWeight: 700,
-                        color: theme.palette.primary.main,
-                        fontSize: { xs: '1.1rem', sm: '1.25rem' },
-                        flex: 1
-                      }}
-                    >
-                      {list.name}
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                      <Chip
-                        label={`${list.products?.length || 0} produtos`}
-                        size="small"
+                <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography
+                        variant="h5"
+                        component="h2"
                         sx={{
-                          background: theme.palette.info.light,
-                          color: theme.palette.info.dark,
-                          fontSize: { xs: '0.7rem', sm: '0.9rem' },
-                          height: { xs: 24, sm: 32 },
-                          fontWeight: 600,
+                          fontWeight: 700,
+                          color: theme.customColors.text.primary,
+                          mb: 1,
+                          fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem' },
                         }}
-                      />
-                    </Box>
-                  </Box>
-                </AccordionSummary>
-                <AccordionDetails sx={{ px: { xs: 2, sm: 3 }, py: { xs: 2, sm: 3 } }}>
-                  {list.description && (
-                    <Typography 
-                      variant="body2" 
-                      sx={{ 
-                        mb: 2, 
-                        color: theme.palette.text.secondary, 
-                        fontStyle: 'italic',
-                        fontSize: { xs: '0.9rem', sm: '1rem' },
-                      }}
-                    >
-                      {list.description}
-                    </Typography>
-                  )}
-                  {list.products && list.products.length > 0 ? (
-                    <Box sx={{
-                      display: 'grid',
-                      gridTemplateColumns: {
-                        xs: '1fr',
-                        sm: 'repeat(2, 1fr)',
-                        md: 'repeat(3, 1fr)',
-                        lg: 'repeat(4, 1fr)'
-                      },
-                      gap: { xs: 3, sm: 4, md: 5 },
-                      maxWidth: 1200,
-                      mx: 'auto'
-                    }}>
-                      {list.products.map((product) => (
-                        <Card
-                          key={product._id}
+                      >
+                        {list.name}
+                      </Typography>
+                      {list.description && (
+                        <Typography
+                          variant="body2"
                           sx={{
-                            background: 'rgba(255,255,255,0.97)',
-                            border: '1.5px solid rgba(102,126,234,0.10)',
-                            borderRadius: 3,
-                            overflow: 'hidden',
-                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                            boxShadow: '0 8px 32px rgba(102,126,234,0.10)',
-                            '&:hover': {
-                              boxShadow: '0 20px 40px rgba(102,126,234,0.18)',
-                              border: '2px solid #764ba2',
-                              transform: 'translateY(-8px) scale(1.04)',
-                            },
-                            p: { xs: 2, sm: 3 },
+                            color: theme.customColors.text.secondary,
+                            mb: 2,
+                            fontSize: { xs: '0.875rem', sm: '1rem' },
                           }}
                         >
-                          {product.image && (
-                            <CardMedia
-                              component="img"
-                              height={120}
-                              image={product.image}
-                              alt={product.name}
-                              sx={{ objectFit: 'cover' }}
-                            />
-                          )}
-                          <CardContent sx={{ p: 0 }}>
-                            <Typography
-                              variant="subtitle1"
-                              sx={{
-                                fontWeight: 700,
-                                color: theme.palette.text.primary,
-                                mb: 1,
-                                fontSize: { xs: '1.1rem', sm: '1.2rem' },
-                                lineHeight: 1.3,
-                                minHeight: '2.6em',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                display: '-webkit-box',
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: 'vertical',
-                              }}
-                            >
-                              {product.name}
-                            </Typography>
-                            <Typography
-                              variant="body2"
-                              color="text.secondary"
-                              sx={{
-                                mb: 2,
-                                fontSize: { xs: '0.95rem', sm: '1rem' },
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                display: '-webkit-box',
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: 'vertical',
-                                lineHeight: 1.4
-                              }}
-                            >
-                              {product.description}
-                            </Typography>
-                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                              <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                                <strong>Custo:</strong> <span style={{ color: theme.palette.error.main }}>R$ {product.costPrice.toFixed(2)}</span>
-                              </Typography>
-                              <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                                <strong>Venda:</strong> <span style={{ color: theme.palette.success.main }}>R$ {product.finalPrice.toFixed(2)}</span>
-                              </Typography>
-                              <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                                <strong>Comissão:</strong> <span style={{ color: theme.palette.warning.main }}>R$ {product.commission.toFixed(2)}</span>
-                              </Typography>
-                              <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                                <strong>Lucro:</strong> <span style={{ color: theme.palette.info.main }}>R$ {product.profit.toFixed(2)}</span>
-                              </Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
-                              {product.quantity !== undefined && (
-                                <Chip
-                                  label={`Estoque: ${product.quantity}`}
-                                  size="small"
-                                  sx={{
-                                    backgroundColor: product.quantity > 0 ? theme.palette.success.light : theme.palette.error.light,
-                                    color: product.quantity > 0 ? theme.palette.success.dark : theme.palette.error.dark,
-                                    fontSize: '0.7rem',
-                                    fontWeight: 600
-                                  }}
-                                />
-                              )}
-                            </Box>
-                          </CardContent>
-                        </Card>
-                      ))}
+                          {list.description}
+                        </Typography>
+                      )}
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+                        <Chip
+                          icon={<PersonIcon />}
+                          label={list.createdBy?.name || 'Usuário'}
+                          size="small"
+                          sx={{
+                            backgroundColor: alpha(theme.customColors.text.primary, 0.1),
+                            color: theme.customColors.text.primary,
+                            fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' },
+                          }}
+                        />
+                        <Chip
+                          icon={list.isPublic ? <PublicIcon /> : <LockIcon />}
+                          label={list.isPublic ? 'Pública' : 'Privada'}
+                          size="small"
+                          sx={{
+                            backgroundColor: list.isPublic ? theme.customColors.primary.main : alpha(theme.customColors.text.primary, 0.1),
+                            color: list.isPublic ? theme.customColors.text.inverse : theme.customColors.text.primary,
+                            fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' },
+                          }}
+                        />
+                        <Chip
+                          label={`${list.products?.length || 0} produtos`}
+                          size="small"
+                          sx={{
+                            backgroundColor: alpha(theme.customColors.status.info, 0.1),
+                            color: theme.customColors.status.info,
+                            fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' },
+                          }}
+                        />
+                      </Box>
                     </Box>
-                  ) : (
-                    <Box sx={{ 
-                      textAlign: 'center', 
-                      py: 4,
-                      color: theme.palette.text.secondary 
-                    }}>
-                      <Typography variant="body1">
-                        Esta lista não possui produtos.
-                      </Typography>
-                    </Box>
-                  )}
-                  {/* Botão editar lista para admin na parte de baixo */}
-                  {isAdmin && (
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                    <Tooltip title="Editar Lista">
                       <IconButton
                         onClick={() => handleEditList(list._id)}
                         sx={{
-                          background: 'rgba(102,126,234,0.10)',
-                          color: theme.palette.primary.main,
+                          color: theme.customColors.text.primary,
+                          backgroundColor: alpha(theme.customColors.text.primary, 0.05),
                           '&:hover': {
-                            background: theme.palette.primary.main,
-                            color: 'white',
-                            transform: 'scale(1.1)',
+                            backgroundColor: alpha(theme.customColors.text.primary, 0.1),
                           },
-                          zIndex: 2
                         }}
-                        size="small"
                       >
-                        <EditIcon sx={{ fontSize: 22 }} />
+                        <EditIcon />
                       </IconButton>
-                    </Box>
-                  )}
-                </AccordionDetails>
-              </Accordion>
+                    </Tooltip>
+                  </Box>
+
+                  <Accordion
+                    expanded={expanded === list._id}
+                    onChange={() => handleAccordionChange(list._id)}
+                    sx={{
+                      boxShadow: 'none',
+                      border: `1px solid ${theme.customColors.border.primary}`,
+                      borderRadius: 2,
+                      '&:before': {
+                        display: 'none',
+                      },
+                    }}
+                  >
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon sx={{ color: theme.customColors.text.primary }} />}
+                      sx={{
+                        backgroundColor: alpha(theme.customColors.text.primary, 0.05),
+                        minHeight: { xs: '48px', sm: '56px', md: '64px' },
+                      }}
+                    >
+                      <Typography sx={{
+                        color: theme.customColors.text.primary,
+                        fontWeight: 600,
+                        fontSize: { xs: '0.9rem', sm: '1rem', md: '1.125rem' },
+                      }}>
+                        Ver Produtos ({list.products?.length || 0})
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
+                      {list.products && list.products.length > 0 ? (
+                        <Box sx={{
+                          display: 'grid',
+                          gridTemplateColumns: {
+                            xs: '1fr',
+                            sm: 'repeat(2, 1fr)',
+                            md: 'repeat(3, 1fr)',
+                            lg: 'repeat(4, 1fr)'
+                          },
+                          gap: 2,
+                        }}>
+                          {list.products.map((product) => (
+                            <Card
+                              key={product._id}
+                              sx={{
+                                background: alpha(theme.customColors.text.primary, 0.02),
+                                border: `1px solid ${theme.customColors.border.primary}`,
+                                borderRadius: 2,
+                                overflow: 'hidden',
+                                transition: 'all 0.3s ease',
+                                '&:hover': {
+                                  transform: 'translateY(-2px)',
+                                  boxShadow: theme.customColors.shadow.secondary,
+                                },
+                              }}
+                            >
+                              {product.image && (
+                                <CardMedia
+                                  component="img"
+                                  height={120}
+                                  image={product.image}
+                                  alt={product.name}
+                                  sx={{ objectFit: 'cover' }}
+                                />
+                              )}
+                              <CardContent sx={{ p: 2 }}>
+                                <Typography
+                                  variant="subtitle1"
+                                  sx={{
+                                    fontWeight: 600,
+                                    color: theme.customColors.text.primary,
+                                    mb: 1,
+                                    fontSize: { xs: '0.875rem', sm: '1rem' },
+                                    lineHeight: 1.3,
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: 'vertical',
+                                  }}
+                                >
+                                  {product.name}
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  sx={{
+                                    color: theme.customColors.text.secondary,
+                                    mb: 1,
+                                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: 'vertical',
+                                  }}
+                                >
+                                  {product.description}
+                                </Typography>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                  <Typography
+                                    variant="h6"
+                                    sx={{
+                                      fontWeight: 700,
+                                      color: theme.customColors.status.success,
+                                      fontSize: { xs: '0.875rem', sm: '1rem' },
+                                    }}
+                                  >
+                                    R$ {product.finalPrice?.toFixed(2) || '0.00'}
+                                  </Typography>
+                                  <Chip
+                                    label={product.category}
+                                    size="small"
+                                    sx={{
+                                      backgroundColor: alpha(theme.customColors.primary.main, 0.1),
+                                      color: theme.customColors.primary.main,
+                                      fontSize: { xs: '0.6rem', sm: '0.7rem' },
+                                    }}
+                                  />
+                                </Box>
+                                {product.quantity !== undefined && (
+                                  <Typography
+                                    variant="caption"
+                                    sx={{
+                                      color: theme.customColors.text.secondary,
+                                      fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                                      display: 'block',
+                                      mt: 1,
+                                    }}
+                                  >
+                                    Estoque: {product.quantity}
+                                  </Typography>
+                                )}
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </Box>
+                      ) : (
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            textAlign: 'center',
+                            py: 4,
+                            color: theme.customColors.text.secondary,
+                            fontSize: { xs: '0.875rem', sm: '1rem' },
+                          }}
+                        >
+                          Nenhum produto nesta lista
+                        </Typography>
+                      )}
+                    </AccordionDetails>
+                  </Accordion>
+                </CardContent>
+              </Card>
             </Fade>
           ))}
         </Box>

@@ -1,89 +1,82 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Box,
+  Container,
   Typography,
+  Box,
   Card,
   CardContent,
   CardActions,
   Button,
-  CircularProgress,
-  Alert,
-  IconButton,
-  Grid,
   Chip,
-  CardMedia,
-  Paper,
+  Avatar,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Divider,
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemAvatar,
-  Avatar,
-  Divider
+  Alert,
+  CircularProgress,
+  useTheme,
+  alpha,
+  Fade
 } from '@mui/material';
-// Remove this line:
-// import Grid2 from '@mui/material/Unstable_Grid2';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ShareIcon from '@mui/icons-material/Share';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import PersonIcon from '@mui/icons-material/Person';
-import { api } from '../services/api';
+import {
+  Add as AddIcon,
+  Share as ShareIcon,
+  Delete as DeleteIcon,
+  ExpandMore as ExpandMoreIcon,
+  Person as PersonIcon
+} from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { getCustomLists, deleteCustomList } from '../services/api';
 import { CustomList } from '../types';
+import { useAuth } from '../contexts/AuthContext';
 import ShareListDialog from './ShareListDialog';
-import { formatPrice } from '../utils/format';
 
-const DEFAULT_IMAGE = 'https://via.placeholder.com/150';
+const DEFAULT_IMAGE = 'https://via.placeholder.com/150x200/2d3748/ffffff?text=Produto';
 
 const CustomLists: React.FC = () => {
+  const navigate = useNavigate();
+  const theme = useTheme();
+  const { isAuthenticated, isAdmin } = useAuth();
   const [lists, setLists] = useState<CustomList[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const [shareModalOpen, setShareModalOpen] = useState(false);
-  const [selectedListId, setSelectedListId] = useState<string | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [selectedListId, setSelectedListId] = useState<string>('');
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    loadLists();
+  }, [isAuthenticated, navigate]);
 
   const loadLists = async () => {
     try {
       setLoading(true);
-      setError('');
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Usuário não autenticado');
-        return;
-      }
-
-      const userRole = localStorage.getItem('userRole');
-      setIsAdmin(userRole === 'admin');
-
-      const response = await api.get('/custom-lists', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      setLists(response.data);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Erro ao carregar listas');
+      setError(null);
+      const data = await getCustomLists();
+      setLists(data);
+    } catch (err) {
+      setError('Erro ao carregar listas. Tente novamente.');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    loadLists();
-  }, []);
-
   const handleDelete = async (listId: string) => {
-    if (!window.confirm('Tem certeza que deseja excluir esta lista?')) {
-      return;
-    }
-
-    try {
-      await api.delete(`/custom-lists/${listId}`);
-      setLists(lists.filter(list => list._id !== listId));
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Erro ao excluir lista');
+    if (window.confirm('Tem certeza que deseja excluir esta lista?')) {
+      try {
+        await deleteCustomList(listId);
+        setLists(lists.filter(list => list._id !== listId));
+      } catch (err) {
+        setError('Erro ao excluir lista. Tente novamente.');
+      }
     }
   };
 
@@ -94,268 +87,395 @@ const CustomLists: React.FC = () => {
 
   const handleShareClose = () => {
     setShareModalOpen(false);
-    setSelectedListId(null);
+    setSelectedListId('');
   };
 
   const handleShareSuccess = () => {
-    loadLists();
     handleShareClose();
+    loadLists();
   };
 
-  return (
-    <Box sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(price);
+  };
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  if (loading) {
+    return (
       <Box sx={{ 
-        mb: { xs: 2, sm: 3, md: 4 },
-        p: { xs: 2, sm: 3, md: 4 },
-        backgroundColor: '#383A29',
-        borderRadius: 2,
-        color: 'white'
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '50vh' 
       }}>
-        <Typography variant="h4" component="h1" sx={{ 
-          fontWeight: 'bold',
-          fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem', lg: '2.25rem' },
-        }}>
-          Minhas Listas Personalizadas
-        </Typography>
+        <CircularProgress size={60} sx={{ color: theme.customColors.text.primary }} />
       </Box>
+    );
+  }
 
-      {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress sx={{ color: '#383A29' }} />
-        </Box>
-      )}
-
-      {error && (
-        <Alert severity="error" sx={{ 
-          mb: 3, 
-          backgroundColor: '#ffebee', 
-          borderLeft: '4px solid #383A29',
-          fontSize: { xs: '0.875rem', sm: '1rem' },
-        }}>
-          {error}
-        </Alert>
-      )}
-
-      {!loading && lists.length === 0 && (
-        <Paper sx={{ 
-          p: { xs: 3, sm: 4, md: 5 }, 
-          textAlign: 'center', 
-          backgroundColor: '#d9d9d9',
-          borderRadius: 3,
-        }}>
-          <Typography variant="h6" color="#383A29" sx={{
-            fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.375rem' },
+  return (
+    <Box sx={{ 
+      minHeight: '100vh',
+      background: 'transparent',
+      py: { xs: 2, sm: 3, md: 4 },
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+    }}>
+      <Container maxWidth="xl" sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        minHeight: '100vh',
+        px: { xs: 1, sm: 2, md: 3 },
+      }}>
+        {/* Header */}
+        <Fade in>
+          <Box sx={{ 
+            textAlign: 'center', 
+            mb: 4,
+            maxWidth: { xs: 340, sm: 400, md: 700, xl: 900 },
+            width: '100%',
+            mx: 'auto',
           }}>
-            Você ainda não criou nenhuma lista personalizada.
-          </Typography>
-        </Paper>
-      )}
+            <Typography
+              variant="h3"
+              component="h1"
+              sx={{
+                fontWeight: 700,
+                color: theme.customColors.text.primary,
+                mb: 1.5,
+                fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem', lg: '2.25rem', xl: '2.5rem' },
+                lineHeight: 1.2,
+                '@media (min-width: 1600px)': {
+                  fontSize: '2.75rem',
+                },
+                '@media (min-width: 1920px)': {
+                  fontSize: '3rem',
+                },
+              }}
+            >
+              Listas Personalizadas
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                color: theme.customColors.text.secondary,
+                mb: 2,
+                fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem', lg: '1.125rem', xl: '1.25rem' },
+                lineHeight: 1.4,
+                '@media (min-width: 1600px)': {
+                  fontSize: '1.375rem',
+                },
+                '@media (min-width: 1920px)': {
+                  fontSize: '1.5rem',
+                },
+              }}
+            >
+              Gerencie suas listas de produtos personalizadas
+            </Typography>
+          </Box>
+        </Fade>
 
-      <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
-        {lists.map((list) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={list._id}>
-            <Card sx={{
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              transition: 'all 0.3s ease',
-              border: '2px solid transparent',
-              borderRadius: 3,
-              overflow: 'hidden',
-              '&:hover': {
-                transform: 'translateY(-4px)',
-                boxShadow: '0 8px 25px rgba(56, 58, 41, 0.15)',
-                border: '2px solid #383A29'
+        {error && (
+          <Alert 
+            severity="error" 
+            sx={{ 
+              mb: 4,
+              borderRadius: 2,
+              fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+              maxWidth: 900,
+              mx: 'auto',
+              boxShadow: theme.customColors.shadow.secondary,
+              background: alpha(theme.customColors.status.error, 0.1),
+              border: `1px solid ${alpha(theme.customColors.status.error, 0.3)}`,
+              color: theme.customColors.status.error,
+              '& .MuiAlert-icon': {
+                fontSize: { xs: '1.25rem', sm: '1.5rem' }
               }
-            }}>
-              <CardContent sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2, md: 3 } }}>
-                <Typography variant="h6" component="h2" sx={{
-                  fontWeight: 'bold',
-                  color: '#383A29',
-                  mb: 2,
-                  lineHeight: 1.3,
-                  minHeight: '2.6em',
+            }}
+          >
+            {error}
+          </Alert>
+        )}
+
+        <Box sx={{ mb: 4, width: '100%', display: 'flex', justifyContent: 'center' }}>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => navigate('/custom-lists/create')}
+            sx={{
+              py: { xs: 1.5, sm: 2 },
+              px: { xs: 3, sm: 4 },
+              borderRadius: 3,
+              fontWeight: 700,
+              fontSize: { xs: '1rem', sm: '1.125rem' },
+              background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
+              color: theme.customColors.text.inverse,
+              boxShadow: theme.customColors.shadow.secondary,
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                transform: 'translateY(-2px) scale(1.02)',
+                boxShadow: theme.customColors.shadow.primary,
+                background: `linear-gradient(135deg, ${theme.customColors.primary.light} 0%, ${theme.customColors.primary.main} 100%)`,
+              },
+            }}
+          >
+            Nova Lista
+          </Button>
+        </Box>
+
+        {lists.length === 0 ? (
+          <Alert 
+            severity="info" 
+            sx={{ 
+              mb: 4,
+              borderRadius: 2,
+              fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+              maxWidth: 900,
+              mx: 'auto',
+              boxShadow: theme.customColors.shadow.secondary,
+              background: alpha(theme.customColors.status.info, 0.1),
+              border: `1px solid ${alpha(theme.customColors.status.info, 0.3)}`,
+              color: theme.customColors.status.info,
+              '& .MuiAlert-icon': {
+                fontSize: { xs: '1.25rem', sm: '1.5rem' }
+              }
+            }}
+          >
+            Nenhuma lista encontrada. Crie sua primeira lista personalizada!
+          </Alert>
+        ) : (
+          <Box sx={{ 
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(3, 1fr)',
+              lg: 'repeat(4, 1fr)'
+            },
+            gap: 3,
+            width: '100%',
+            maxWidth: 1400,
+            mx: 'auto'
+          }}>
+            {lists.map((list) => (
+              <Fade in key={list._id} timeout={400}>
+                <Card sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  background: theme.customColors.surface.card,
+                  border: `1.5px solid ${theme.customColors.border.primary}`,
+                  borderRadius: 4,
                   overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' },
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: theme.customColors.shadow.secondary,
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: theme.customColors.shadow.primary,
+                    border: `2px solid ${theme.customColors.primary.main}`
+                  }
                 }}>
-                  {list.name}
-                </Typography>
-                
-                {list.description && (
-                  <Typography variant="body2" color="text.secondary" sx={{ 
-                    mb: 2,
-                    fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
-                    lineHeight: 1.4,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                  }}>
-                    {list.description}
-                  </Typography>
-                )}
-
-                <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                  <Chip
-                    icon={<PersonIcon />}
-                    label={list.createdBy?.name || 'Usuário'}
-                    size="small"
-                    sx={{
-                      backgroundColor: '#d9d9d9',
-                      color: '#383A29',
-                      fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' },
-                      height: { xs: 20, sm: 24, md: 28 },
-                    }}
-                  />
-                  <Chip
-                    label={list.isPublic ? 'Pública' : 'Privada'}
-                    size="small"
-                    sx={{
-                      backgroundColor: list.isPublic ? '#383A29' : '#d9d9d9',
-                      color: list.isPublic ? 'white' : '#383A29',
-                      fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' },
-                      height: { xs: 20, sm: 24, md: 28 },
-                    }}
-                  />
-                </Box>
-
-                <Accordion sx={{ 
-                  boxShadow: 'none', 
-                  border: '1px solid #d9d9d9',
-                  borderRadius: 2,
-                  '&:before': {
-                    display: 'none',
-                  },
-                }}>
-                  <AccordionSummary 
-                    expandIcon={<ExpandMoreIcon sx={{ color: '#383A29' }} />}
-                    sx={{ 
-                      backgroundColor: '#f5f5f5',
-                      minHeight: { xs: '40px', sm: '48px', md: '56px' },
-                    }}
-                  >
-                    <Typography sx={{ 
-                      color: '#383A29', 
+                  <CardContent sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2, md: 3 } }}>
+                    <Typography variant="h6" component="h2" sx={{
                       fontWeight: 'bold',
-                      fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
+                      color: theme.customColors.text.primary,
+                      mb: 2,
+                      lineHeight: 1.3,
+                      minHeight: '2.6em',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' },
                     }}>
-                      Produtos ({list.products?.length || 0})
+                      {list.name}
                     </Typography>
-                  </AccordionSummary>
-                  <AccordionDetails sx={{ p: { xs: 1, sm: 1.5, md: 2 } }}>
-                    <List dense>
-                      {list.products?.map((product, index) => (
-                        <React.Fragment key={product._id || index}>
-                          <ListItem sx={{ px: 0, py: { xs: 0.5, sm: 1 } }}>
-                            <ListItemAvatar>
-                              <Avatar
-                                src={product.image || DEFAULT_IMAGE}
-                                alt={product.name}
-                                sx={{ 
-                                  width: { xs: 32, sm: 36, md: 40 }, 
-                                  height: { xs: 32, sm: 36, md: 40 },
-                                  border: '2px solid #d9d9d9'
-                                }}
-                              />
-                            </ListItemAvatar>
-                            <ListItemText
-                              primary={
-                                <Typography sx={{ 
-                                  color: '#383A29', 
-                                  fontWeight: 'bold',
-                                  fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
-                                }}>
-                                  {product.name}
-                                </Typography>
-                              }
-                              secondary={
-                                <Box>
-                                  <Typography variant="body2" color="text.secondary" sx={{
-                                    fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.85rem' },
-                                  }}>
-                                    {formatPrice(product.finalPrice)}
-                                  </Typography>
-                                  {product.quantity && (
-                                    <Typography variant="body2" sx={{ 
-                                      color: '#383A29',
-                                      fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.85rem' },
-                                    }}>
-                                      Qtd: {product.quantity}
-                                    </Typography>
-                                  )}
-                                </Box>
-                              }
-                            />
-                          </ListItem>
-                          {index < (list.products?.length || 0) - 1 && <Divider />}
-                        </React.Fragment>
-                      )) || (
-                        <Typography variant="body2" color="text.secondary" sx={{ 
-                          textAlign: 'center', 
-                          py: 2,
+                    
+                    {list.description && (
+                      <Typography variant="body2" sx={{ 
+                        mb: 2,
+                        fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
+                        lineHeight: 1.4,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        color: theme.customColors.text.secondary,
+                      }}>
+                        {list.description}
+                      </Typography>
+                    )}
+
+                    <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                      <Chip
+                        icon={<PersonIcon />}
+                        label={list.createdBy?.name || 'Usuário'}
+                        size="small"
+                        sx={{
+                          backgroundColor: alpha(theme.customColors.text.primary, 0.1),
+                          color: theme.customColors.text.primary,
+                          fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' },
+                          height: { xs: 20, sm: 24, md: 28 },
+                        }}
+                      />
+                      <Chip
+                        label={list.isPublic ? 'Pública' : 'Privada'}
+                        size="small"
+                        sx={{
+                          backgroundColor: list.isPublic ? theme.customColors.primary.main : alpha(theme.customColors.text.primary, 0.1),
+                          color: list.isPublic ? theme.customColors.text.inverse : theme.customColors.text.primary,
+                          fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' },
+                          height: { xs: 20, sm: 24, md: 28 },
+                        }}
+                      />
+                    </Box>
+
+                    <Accordion sx={{ 
+                      boxShadow: 'none', 
+                      border: `1px solid ${theme.customColors.border.primary}`,
+                      borderRadius: 2,
+                      '&:before': {
+                        display: 'none',
+                      },
+                    }}>
+                      <AccordionSummary 
+                        expandIcon={<ExpandMoreIcon sx={{ color: theme.customColors.text.primary }} />}
+                        sx={{ 
+                          backgroundColor: alpha(theme.customColors.text.primary, 0.05),
+                          minHeight: { xs: '40px', sm: '48px', md: '56px' },
+                        }}
+                      >
+                        <Typography sx={{ 
+                          color: theme.customColors.text.primary, 
+                          fontWeight: 'bold',
                           fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
                         }}>
-                          Nenhum produto nesta lista
+                          Produtos ({list.products?.length || 0})
                         </Typography>
-                      )}
-                    </List>
-                  </AccordionDetails>
-                </Accordion>
-              </CardContent>
-              <CardActions sx={{ 
-                p: { xs: 1, sm: 1.5, md: 2 }, 
-                pt: 0,
-                gap: { xs: 0.5, sm: 1 },
-              }}>
-                <Button
-                  size="small"
-                  startIcon={<ShareIcon />}
-                  onClick={() => handleShare(list._id)}
-                  sx={{
-                    color: '#383A29',
-                    fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' },
-                    minHeight: { xs: '32px', sm: '36px', md: '40px' },
-                    '&:hover': {
-                      backgroundColor: 'rgba(56, 58, 41, 0.1)',
-                    }
-                  }}
-                >
-                  Compartilhar
-                </Button>
-                {isAdmin && (
-                  <Button
-                    size="small"
-                    startIcon={<DeleteIcon />}
-                    onClick={() => handleDelete(list._id)}
-                    sx={{
-                      color: '#e53e3e',
-                      fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' },
-                      minHeight: { xs: '32px', sm: '36px', md: '40px' },
-                      '&:hover': {
-                        backgroundColor: 'rgba(229, 62, 62, 0.1)',
-                      }
-                    }}
-                  >
-                    Excluir
-                  </Button>
-                )}
-              </CardActions>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+                      </AccordionSummary>
+                      <AccordionDetails sx={{ p: { xs: 1, sm: 1.5, md: 2 } }}>
+                        <List dense>
+                          {list.products?.map((product, index) => (
+                            <React.Fragment key={product._id || index}>
+                              <ListItem sx={{ px: 0, py: { xs: 0.5, sm: 1 } }}>
+                                <ListItemAvatar>
+                                  <Avatar
+                                    src={product.image || DEFAULT_IMAGE}
+                                    alt={product.name}
+                                    sx={{ 
+                                      width: { xs: 32, sm: 36, md: 40 }, 
+                                      height: { xs: 32, sm: 36, md: 40 },
+                                      border: `2px solid ${theme.customColors.border.primary}`
+                                    }}
+                                  />
+                                </ListItemAvatar>
+                                <ListItemText
+                                  primary={
+                                    <Typography sx={{ 
+                                      color: theme.customColors.text.primary, 
+                                      fontWeight: 'bold',
+                                      fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
+                                    }}>
+                                      {product.name}
+                                    </Typography>
+                                  }
+                                  secondary={
+                                    <Box>
+                                      <Typography variant="body2" sx={{
+                                        fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.85rem' },
+                                        color: theme.customColors.text.secondary,
+                                      }}>
+                                        {formatPrice(product.finalPrice)}
+                                      </Typography>
+                                      {product.quantity && (
+                                        <Typography variant="body2" sx={{ 
+                                          color: theme.customColors.text.primary,
+                                          fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.85rem' },
+                                        }}>
+                                          Qtd: {product.quantity}
+                                        </Typography>
+                                      )}
+                                    </Box>
+                                  }
+                                />
+                              </ListItem>
+                              {index < (list.products?.length || 0) - 1 && <Divider />}
+                            </React.Fragment>
+                          )) || (
+                            <Typography variant="body2" sx={{ 
+                              textAlign: 'center', 
+                              py: 2,
+                              fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
+                              color: theme.customColors.text.secondary,
+                            }}>
+                              Nenhum produto nesta lista
+                            </Typography>
+                          )}
+                        </List>
+                      </AccordionDetails>
+                    </Accordion>
+                  </CardContent>
+                  <CardActions sx={{ 
+                    p: { xs: 1, sm: 1.5, md: 2 }, 
+                    pt: 0,
+                    gap: { xs: 0.5, sm: 1 },
+                  }}>
+                    <Button
+                      size="small"
+                      startIcon={<ShareIcon />}
+                      onClick={() => handleShare(list._id)}
+                      sx={{
+                        color: theme.customColors.text.primary,
+                        fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' },
+                        minHeight: { xs: '32px', sm: '36px', md: '40px' },
+                        '&:hover': {
+                          backgroundColor: alpha(theme.customColors.text.primary, 0.1),
+                        }
+                      }}
+                    >
+                      Compartilhar
+                    </Button>
+                    {isAdmin && (
+                      <Button
+                        size="small"
+                        startIcon={<DeleteIcon />}
+                        onClick={() => handleDelete(list._id)}
+                        sx={{
+                          color: theme.customColors.status.error,
+                          fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' },
+                          minHeight: { xs: '32px', sm: '36px', md: '40px' },
+                          '&:hover': {
+                            backgroundColor: alpha(theme.customColors.status.error, 0.1),
+                          }
+                        }}
+                      >
+                        Excluir
+                      </Button>
+                    )}
+                  </CardActions>
+                </Card>
+              </Fade>
+            ))}
+          </Box>
+        )}
 
-      <ShareListDialog
-        open={shareModalOpen}
-        onClose={handleShareClose}
-        onSuccess={handleShareSuccess}
-        listId={selectedListId}
-      />
+        <ShareListDialog
+          open={shareModalOpen}
+          onClose={handleShareClose}
+          onSuccess={handleShareSuccess}
+          listId={selectedListId}
+        />
+      </Container>
     </Box>
   );
 };

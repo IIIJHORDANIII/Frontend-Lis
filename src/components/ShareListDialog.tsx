@@ -12,7 +12,9 @@ import {
   ListItemSecondaryAction,
   IconButton,
   Alert,
-  CircularProgress
+  CircularProgress,
+  useTheme,
+  alpha
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { api } from '../services/api';
@@ -30,6 +32,7 @@ const ShareListDialog: React.FC<ShareListDialogProps> = ({
   onSuccess,
   listId
 }) => {
+  const theme = useTheme();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -69,9 +72,18 @@ const ShareListDialog: React.FC<ShareListDialogProps> = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth
+    <Dialog 
+      open={open} 
+      onClose={onClose} 
+      maxWidth="sm" 
+      fullWidth
       PaperProps={{
         sx: {
+          borderRadius: 4,
+          background: theme.customColors.surface.card,
+          backdropFilter: 'blur(20px)',
+          border: `1.5px solid ${theme.customColors.border.primary}`,
+          boxShadow: theme.customColors.shadow.primary,
           '@media (min-width: 1920px)': {
             maxWidth: 700,
             minWidth: 500,
@@ -80,15 +92,33 @@ const ShareListDialog: React.FC<ShareListDialogProps> = ({
         }
       }}
     >
-      <DialogTitle>Compartilhar Lista</DialogTitle>
+      <DialogTitle sx={{ 
+        color: theme.customColors.text.primary, 
+        fontWeight: 600,
+        fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.375rem' },
+      }}>
+        Compartilhar Lista
+      </DialogTitle>
       <DialogContent>
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert 
+            severity="error" 
+            sx={{ 
+              mb: 3,
+              borderRadius: 2,
+              background: alpha(theme.customColors.status.error, 0.1),
+              border: `1px solid ${alpha(theme.customColors.status.error, 0.3)}`,
+              color: theme.customColors.status.error,
+              '& .MuiAlert-icon': {
+                fontSize: '1.25rem'
+              }
+            }}
+          >
             {error}
           </Alert>
         )}
 
-              <TextField
+        <TextField
           autoFocus
           margin="dense"
           label="Email do usuário"
@@ -97,19 +127,65 @@ const ShareListDialog: React.FC<ShareListDialogProps> = ({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={loading}
+          sx={{
+            mb: 3,
+            '& .MuiOutlinedInput-root': {
+              borderRadius: 3,
+              backgroundColor: alpha(theme.customColors.text.primary, 0.02),
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: theme.customColors.primary.main,
+              },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                borderColor: theme.customColors.primary.main,
+                borderWidth: 2,
+              },
+            },
+            '& .MuiInputLabel-root': {
+              color: theme.customColors.text.secondary,
+              '&.Mui-focused': {
+                color: theme.customColors.primary.main,
+              },
+            },
+            '& .MuiInputBase-input': {
+              color: theme.customColors.text.primary,
+            },
+          }}
         />
 
         {sharedUsers.length > 0 && (
           <List>
             {sharedUsers.map((userEmail) => (
-              <ListItem key={userEmail}>
-                <ListItemText primary={userEmail} />
+              <ListItem 
+                key={userEmail}
+                sx={{
+                  backgroundColor: alpha(theme.customColors.text.primary, 0.02),
+                  borderRadius: 2,
+                  mb: 1,
+                  border: `1px solid ${theme.customColors.border.primary}`,
+                }}
+              >
+                <ListItemText 
+                  primary={userEmail} 
+                  sx={{
+                    '& .MuiListItemText-primary': {
+                      color: theme.customColors.text.primary,
+                      fontWeight: 500,
+                    }
+                  }}
+                />
                 <ListItemSecondaryAction>
                   <IconButton
                     edge="end"
                     aria-label="delete"
                     onClick={() => handleRemoveShare(userEmail)}
                     disabled={loading}
+                    sx={{
+                      color: theme.customColors.status.error,
+                      backgroundColor: alpha(theme.customColors.status.error, 0.1),
+                      '&:hover': {
+                        backgroundColor: alpha(theme.customColors.status.error, 0.2),
+                      },
+                    }}
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -119,16 +195,45 @@ const ShareListDialog: React.FC<ShareListDialogProps> = ({
           </List>
         )}
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} disabled={loading}>
+      <DialogActions sx={{ p: 3 }}>
+        <Button 
+          onClick={onClose} 
+          disabled={loading}
+          sx={{
+            borderRadius: 3,
+            fontWeight: 600,
+            color: theme.customColors.text.primary,
+            '&:hover': {
+              backgroundColor: alpha(theme.customColors.text.primary, 0.05),
+            },
+          }}
+        >
           Cancelar
         </Button>
         <Button
           onClick={handleShare}
-          color="primary"
           disabled={loading || !email}
+          sx={{
+            borderRadius: 3,
+            fontWeight: 700,
+            background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
+            color: theme.customColors.text.inverse,
+            boxShadow: theme.customColors.shadow.secondary,
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            '&:hover': {
+              transform: 'translateY(-2px) scale(1.02)',
+              boxShadow: theme.customColors.shadow.primary,
+              background: `linear-gradient(135deg, ${theme.customColors.primary.light} 0%, ${theme.customColors.primary.main} 100%)`,
+            },
+            '&:disabled': {
+              background: alpha(theme.customColors.text.primary, 0.12),
+              color: alpha(theme.customColors.text.primary, 0.38),
+              transform: 'none',
+              boxShadow: 'none',
+            },
+          }}
         >
-          {loading ? <CircularProgress size={24} /> : 'Compartilhar'}
+          {loading ? <CircularProgress size={24} sx={{ color: theme.customColors.text.inverse }} /> : 'Compartilhar'}
         </Button>
       </DialogActions>
     </Dialog>

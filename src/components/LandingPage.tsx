@@ -1,22 +1,23 @@
 import React from "react";
-import { Box, Button, Typography, Stack, Card, CardContent, Avatar, Grid, Fade, Fab, useTheme, useMediaQuery } from "@mui/material";
+import { Box, Button, Typography, Stack, Card, CardContent, Avatar, Grid, Fade, Fab, useTheme, useMediaQuery, alpha } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { useNavigate } from "react-router-dom";
+import { useTheme as useAppTheme } from '../contexts/ThemeContext';
 
 // SVG Illustration Placeholder
-const DashboardMockup = () => (
+const DashboardMockup = ({ isDark }: { isDark: boolean }) => (
   <Box sx={{ width: '100%', maxWidth: { xs: 300, sm: 420 }, mx: 'auto' }}>
     <svg width="100%" height="220" viewBox="0 0 420 220" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="10" y="20" width="400" height="180" rx="24" fill="url(#paint0_linear)" opacity="0.9"/>
-      <rect x="40" y="60" width="340" height="40" rx="10" fill="#fff" opacity="0.7"/>
-      <rect x="40" y="110" width="220" height="20" rx="6" fill="#fff" opacity="0.5"/>
-      <rect x="40" y="140" width="120" height="20" rx="6" fill="#fff" opacity="0.3"/>
-      <rect x="180" y="140" width="100" height="20" rx="6" fill="#fff" opacity="0.3"/>
+      <rect x="40" y="60" width="340" height="40" rx="10" fill={isDark ? "#4a5568" : "#fff"} opacity="0.7"/>
+      <rect x="40" y="110" width="220" height="20" rx="6" fill={isDark ? "#4a5568" : "#fff"} opacity="0.5"/>
+      <rect x="40" y="140" width="120" height="20" rx="6" fill={isDark ? "#4a5568" : "#fff"} opacity="0.3"/>
+      <rect x="180" y="140" width="100" height="20" rx="6" fill={isDark ? "#4a5568" : "#fff"} opacity="0.3"/>
       <defs>
         <linearGradient id="paint0_linear" x1="10" y1="20" x2="410" y2="200" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#1a1a1a"/>
-          <stop offset="1" stopColor="#2d3748"/>
+          <stop stopColor={isDark ? "#1a202c" : "#1a1a1a"}/>
+          <stop offset="1" stopColor={isDark ? "#2d3748" : "#2d3748"}/>
         </linearGradient>
       </defs>
     </svg>
@@ -25,29 +26,41 @@ const DashboardMockup = () => (
 
 const features = [
   {
-    icon: (
-      <svg width="36" height="36" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#4a5568"/><path d="M8 12l2 2 4-4" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    icon: (isDark: boolean) => (
+      <svg width="36" height="36" fill="none" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" fill={isDark ? "#667eea" : "#4a5568"}/>
+        <path d="M8 12l2 2 4-4" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
     ),
     title: "Gestão Inteligente",
     desc: "Automatize processos e otimize o controle de estoque com tecnologia de ponta."
   },
   {
-    icon: (
-      <svg width="36" height="36" fill="none" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4" fill="#2d3748"/><path d="M8 12h8" stroke="#fff" strokeWidth="2" strokeLinecap="round"/></svg>
+    icon: (isDark: boolean) => (
+      <svg width="36" height="36" fill="none" viewBox="0 0 24 24">
+        <rect x="4" y="4" width="16" height="16" rx="4" fill={isDark ? "#667eea" : "#2d3748"}/>
+        <path d="M8 12h8" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
+      </svg>
     ),
     title: "Interface Intuitiva",
     desc: "Design pensado para facilitar o uso, com navegação simples e eficiente."
   },
   {
-    icon: (
-      <svg width="36" height="36" fill="none" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="10" rx="5" fill="#718096"/><path d="M7 12h10" stroke="#fff" strokeWidth="2" strokeLinecap="round"/></svg>
+    icon: (isDark: boolean) => (
+      <svg width="36" height="36" fill="none" viewBox="0 0 24 24">
+        <rect x="2" y="7" width="20" height="10" rx="5" fill={isDark ? "#a0aec0" : "#718096"}/>
+        <path d="M7 12h10" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
+      </svg>
     ),
     title: "Segurança Avançada",
     desc: "Seus dados protegidos com criptografia e autenticação robusta."
   },
   {
-    icon: (
-      <svg width="36" height="36" fill="none" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="8" fill="#a0aec0"/><path d="M12 8v4l3 3" stroke="#fff" strokeWidth="2" strokeLinecap="round"/></svg>
+    icon: (isDark: boolean) => (
+      <svg width="36" height="36" fill="none" viewBox="0 0 24 24">
+        <rect x="4" y="4" width="16" height="16" rx="8" fill={isDark ? "#a0aec0" : "#a0aec0"}/>
+        <path d="M12 8v4l3 3" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
+      </svg>
     ),
     title: "Relatórios Dinâmicos",
     desc: "Visualize resultados em tempo real com dashboards interativos."
@@ -78,6 +91,7 @@ const testimonials = [
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
+  const { isDark } = useAppTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [testimonialIdx, setTestimonialIdx] = React.useState(0);
@@ -104,7 +118,7 @@ const LandingPage: React.FC = () => {
       fontFamily: 'Poppins, Inter, Montserrat, Arial',
       display: 'flex',
       justifyContent: 'center',
-      background: 'linear-gradient(135deg, #f7fafc 0%, #edf2f7 50%, #e2e8f0 100%)',
+      background: theme.customColors.background.gradient,
       backgroundSize: '200% 200%',
       animation: 'gradientMove 12s ease-in-out infinite',
       '@keyframes gradientMove': {
@@ -164,7 +178,7 @@ const LandingPage: React.FC = () => {
       }}>
         <Box sx={{ 
           flex: 1, 
-          color: '#2d3748', 
+          color: theme.customColors.text.primary, 
           pr: { md: 8, lg: 10, xl: 12 }, 
           mb: { xs: 6, md: 0 },
           textAlign: { xs: 'center', md: 'left' },
@@ -182,13 +196,13 @@ const LandingPage: React.FC = () => {
               },
             }}
           >
-            Gestão de Estoque <span style={{ color: '#4a5568' }}>Profissional</span> para Empresas Modernas
+            Gestão de Estoque <span style={{ color: theme.customColors.text.secondary }}>Profissional</span> para Empresas Modernas
           </Typography>
           <Typography 
             variant="h5" 
             sx={{ 
               fontWeight: 400, 
-              color: '#718096', 
+              color: theme.customColors.text.secondary, 
               mb: 6, 
               maxWidth: 600,
               fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.375rem', lg: '1.5rem', xl: '1.625rem' },
@@ -207,13 +221,14 @@ const LandingPage: React.FC = () => {
               fontWeight: 700,
               fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.375rem', lg: '1.5rem', xl: '1.625rem' },
               borderRadius: 4,
-              background: 'linear-gradient(90deg, #2d3748 0%, #4a5568 100%)',
-              color: '#fff',
-              boxShadow: '0 8px 32px 0 rgba(45,55,72,0.20)',
+              background: `linear-gradient(90deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
+              color: theme.customColors.text.inverse,
+              boxShadow: theme.customColors.shadow.secondary,
               transition: 'transform 0.2s',
               '&:hover': {
                 transform: 'scale(1.05)',
-                background: 'linear-gradient(90deg, #4a5568 0%, #2d3748 100%)',
+                background: `linear-gradient(90deg, ${theme.customColors.primary.light} 0%, ${theme.customColors.primary.main} 100%)`,
+                boxShadow: theme.customColors.shadow.primary,
               },
             }}
             onClick={() => navigate('/login')}
@@ -231,15 +246,15 @@ const LandingPage: React.FC = () => {
           <Box sx={{
             p: { xs: 3, sm: 4, md: 5, lg: 6 },
             borderRadius: 6,
-            boxShadow: '0 16px 60px 0 rgba(0,0,0,0.12)',
-            background: 'rgba(255,255,255,0.9)',
+            boxShadow: theme.customColors.shadow.primary,
+            background: theme.customColors.surface.card,
             backdropFilter: 'blur(16px)',
-            border: '1px solid rgba(255,255,255,0.4)',
+            border: `1px solid ${theme.customColors.border.primary}`,
             maxWidth: { xs: 350, sm: 450, md: 500, lg: 550, xl: 600 },
             mx: 'auto',
             width: '100%',
           }}>
-            <DashboardMockup />
+            <DashboardMockup isDark={isDark} />
           </Box>
         </Box>
       </Box>
@@ -256,7 +271,7 @@ const LandingPage: React.FC = () => {
             variant="h2" 
             sx={{ 
               fontWeight: 700, 
-              color: '#2d3748', 
+              color: theme.customColors.text.primary, 
               mb: 3,
               fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem', lg: '3.5rem', xl: '4rem' },
             }}
@@ -266,7 +281,7 @@ const LandingPage: React.FC = () => {
           <Typography 
             variant="h5" 
             sx={{ 
-              color: '#718096', 
+              color: theme.customColors.text.secondary, 
               maxWidth: 700,
               mx: 'auto',
               fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.375rem', lg: '1.5rem' },
@@ -289,26 +304,26 @@ const LandingPage: React.FC = () => {
                 p: { xs: 3, sm: 4, md: 5 },
                 height: '100%',
                 textAlign: 'center',
-                background: 'rgba(255,255,255,0.9)',
+                background: theme.customColors.surface.card,
                 backdropFilter: 'blur(12px)',
-                border: '1px solid rgba(255,255,255,0.3)',
+                border: `1px solid ${theme.customColors.border.primary}`,
                 borderRadius: 4,
-                boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+                boxShadow: theme.customColors.shadow.secondary,
                 transition: 'all 0.3s ease',
                 '&:hover': {
                   transform: 'translateY(-8px)',
-                  boxShadow: '0 16px 48px rgba(0,0,0,0.12)',
+                  boxShadow: theme.customColors.shadow.primary,
                 }
               }}>
                 <Box sx={{ mb: 3, display: 'flex', justifyContent: 'center' }}>
-                  {feature.icon}
+                  {feature.icon(isDark)}
                 </Box>
                 <Typography 
                   variant="h6" 
                   sx={{ 
                     fontWeight: 600, 
                     mb: 2, 
-                    color: '#2d3748',
+                    color: theme.customColors.text.primary,
                     fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.375rem' },
                   }}
                 >
@@ -317,16 +332,16 @@ const LandingPage: React.FC = () => {
                 <Typography 
                   variant="body2" 
                   sx={{ 
-                    color: '#718096',
+                    color: theme.customColors.text.secondary,
                     fontSize: { xs: '0.875rem', sm: '0.9375rem', md: '1rem' },
                   }}
                 >
                   {feature.desc}
-                                 </Typography>
-               </Card>
-             </Box>
-           ))}
-         </Box>
+                </Typography>
+              </Card>
+            </Box>
+          ))}
+        </Box>
       </Box>
 
       {/* Testimonials Section */}
@@ -344,7 +359,7 @@ const LandingPage: React.FC = () => {
         <Typography 
           variant="h5" 
           sx={{ 
-            color: '#2d3748', 
+            color: theme.customColors.text.primary, 
             fontWeight: 700, 
             mb: 4, 
             letterSpacing: 0.5,
@@ -356,12 +371,12 @@ const LandingPage: React.FC = () => {
         </Typography>
         <Fade in timeout={800} key={testimonialIdx}>
           <Card elevation={0} sx={{
-            background: 'rgba(255,255,255,0.9)',
+            background: theme.customColors.surface.card,
             backdropFilter: 'blur(10px)',
             borderRadius: 5,
-            boxShadow: '0 2px 16px 0 rgba(0,0,0,0.05)',
-            border: '1px solid rgba(255,255,255,0.3)',
-            color: '#2d3748',
+            boxShadow: theme.customColors.shadow.secondary,
+            border: `1px solid ${theme.customColors.border.primary}`,
+            color: theme.customColors.text.primary,
             minWidth: { xs: '280px', sm: '400px', md: '480px' },
             minHeight: { xs: 120, sm: 140 },
             display: 'flex',
@@ -378,7 +393,7 @@ const LandingPage: React.FC = () => {
                 width: { xs: 48, sm: 56 }, 
                 height: { xs: 48, sm: 56 }, 
                 mb: 2, 
-                boxShadow: '0 2px 8px 0 rgba(0,0,0,0.1)' 
+                boxShadow: theme.customColors.shadow.secondary
               }} 
             />
             <Typography 
@@ -386,7 +401,7 @@ const LandingPage: React.FC = () => {
               sx={{ 
                 fontWeight: 500, 
                 mb: 1, 
-                color: '#2d3748',
+                color: theme.customColors.text.primary,
                 fontSize: { xs: '0.875rem', sm: '1rem' },
               }}
             >
@@ -395,7 +410,7 @@ const LandingPage: React.FC = () => {
             <Typography 
               variant="subtitle2" 
               sx={{ 
-                color: '#4a5568', 
+                color: theme.customColors.text.secondary, 
                 fontWeight: 700,
                 fontSize: { xs: '0.8125rem', sm: '0.875rem' },
               }}
@@ -405,7 +420,7 @@ const LandingPage: React.FC = () => {
             <Typography 
               variant="caption" 
               sx={{ 
-                color: '#718096',
+                color: theme.customColors.text.secondary,
                 fontSize: { xs: '0.75rem', sm: '0.8125rem' },
               }}
             >
@@ -426,15 +441,15 @@ const LandingPage: React.FC = () => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        background: 'linear-gradient(90deg, #2d3748 0%, #4a5568 100%)',
+        background: `linear-gradient(90deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
         borderRadius: 6,
-        boxShadow: '0 4px 32px 0 rgba(45,55,72,0.1)',
+        boxShadow: theme.customColors.shadow.primary,
         mt: { xs: 6, sm: 8 },
       }}>
         <Typography 
           variant="h4" 
           sx={{ 
-            color: '#fff', 
+            color: theme.customColors.text.inverse, 
             fontWeight: 800, 
             mb: 2, 
             textAlign: 'center',
@@ -446,7 +461,7 @@ const LandingPage: React.FC = () => {
         <Typography 
           variant="h6" 
           sx={{ 
-            color: '#e2e8f0', 
+            color: alpha(theme.customColors.text.inverse, 0.9), 
             fontWeight: 400, 
             mb: 4, 
             textAlign: 'center',
@@ -465,14 +480,14 @@ const LandingPage: React.FC = () => {
             fontWeight: 700,
             fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
             borderRadius: 3,
-            background: '#fff',
-            color: '#2d3748',
-            boxShadow: '0 4px 24px 0 rgba(45,55,72,0.15)',
+            background: theme.customColors.surface.primary,
+            color: theme.customColors.text.primary,
+            boxShadow: theme.customColors.shadow.secondary,
             transition: 'transform 0.2s',
             '&:hover': {
               transform: 'scale(1.05)',
-              background: '#f7fafc',
-              color: '#2d3748',
+              background: alpha(theme.customColors.surface.primary, 0.9),
+              color: theme.customColors.text.primary,
             },
           }}
           onClick={() => navigate('/login')}
@@ -489,7 +504,7 @@ const LandingPage: React.FC = () => {
         py: { xs: 3, sm: 4 },
         px: 2,
         textAlign: 'center',
-        color: '#718096',
+        color: theme.customColors.text.secondary,
         fontSize: { xs: 14, sm: 16 },
         letterSpacing: 0.2,
       }}>
@@ -498,12 +513,12 @@ const LandingPage: React.FC = () => {
             component="a"
             href="/privacy"
             sx={{
-              color: '#718096',
+              color: theme.customColors.text.secondary,
               textDecoration: 'none',
               fontSize: { xs: 12, sm: 14 },
               fontWeight: 500,
               '&:hover': {
-                color: '#2d3748',
+                color: theme.customColors.text.primary,
                 textDecoration: 'underline',
               },
             }}

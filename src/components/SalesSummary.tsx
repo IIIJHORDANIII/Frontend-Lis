@@ -1,5 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Accordion, AccordionSummary, AccordionDetails, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress, Button } from '@mui/material';
+import { 
+  Box, 
+  Typography, 
+  Paper, 
+  Accordion, 
+  AccordionSummary, 
+  AccordionDetails, 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableContainer, 
+  TableHead, 
+  TableRow, 
+  CircularProgress, 
+  Button,
+  useTheme,
+  alpha,
+  Alert
+} from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useAuth } from '../contexts/AuthContext';
 import { api, deleteUserSales } from '../services/api';
@@ -31,6 +49,7 @@ interface GroupedSales {
 }
 
 const SalesSummary: React.FC = () => {
+  const theme = useTheme();
   const { user } = useAuth();
   const [sales, setSales] = useState<Sale[]>([]);
   const [loading, setLoading] = useState(true);
@@ -176,7 +195,7 @@ const SalesSummary: React.FC = () => {
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
-        <CircularProgress />
+        <CircularProgress sx={{ color: theme.customColors.text.primary }} />
       </Box>
     );
   }
@@ -184,7 +203,17 @@ const SalesSummary: React.FC = () => {
   if (error) {
     return (
       <Box p={3}>
-        <Typography color="error">{error}</Typography>
+        <Alert 
+          severity="error" 
+          sx={{ 
+            borderRadius: 2,
+            background: alpha(theme.customColors.status.error, 0.1),
+            border: `1px solid ${alpha(theme.customColors.status.error, 0.3)}`,
+            color: theme.customColors.status.error,
+          }}
+        >
+          {error}
+        </Alert>
       </Box>
     );
   }
@@ -192,251 +221,236 @@ const SalesSummary: React.FC = () => {
   if (!sales || sales.length === 0) {
     return (
       <Box p={3}>
-        <Typography>Nenhuma venda encontrada</Typography>
+        <Alert 
+          severity="info" 
+          sx={{ 
+            borderRadius: 2,
+            background: alpha(theme.customColors.status.info, 0.1),
+            border: `1px solid ${alpha(theme.customColors.status.info, 0.3)}`,
+            color: theme.customColors.status.info,
+          }}
+        >
+          Nenhuma venda encontrada
+        </Alert>
       </Box>
     );
   }
 
   return (
-    <Paper sx={{ 
-      p: { xs: 2, sm: 3, md: 4 }, 
-      border: '2px solid #white',
-      borderRadius: 3,
-    }}>
-      <Typography variant="h5" sx={{ 
-        color: '#2d3748', 
-        fontWeight: 'bold', 
+    <Box sx={{ p: 3 }}>
+      {/* Resumo Geral */}
+      <Paper sx={{
+        p: 3,
         mb: 3,
-        fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem', lg: '2rem' },
+        background: theme.customColors.surface.card,
+        border: `1px solid ${theme.customColors.border.primary}`,
+        borderRadius: 3,
+        boxShadow: theme.customColors.shadow.secondary,
       }}>
-        Resumo de Vendas por Vendedora
-      </Typography>
-      
-      {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress sx={{ color: '#2d3748' }} />
-        </Box>
-      )}
-      
-      {error && (
-        <Typography color="error" sx={{ 
-          textAlign: 'center', 
-          py: 2,
-          fontSize: { xs: '0.875rem', sm: '1rem' },
+        <Typography variant="h5" sx={{ 
+          color: theme.customColors.text.primary, 
+          fontWeight: 700, 
+          mb: 2,
+          fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem' },
         }}>
-          {error}
+          Resumo Geral
         </Typography>
-      )}
-      
-      {!loading && !error && (
-        <>
-          <Box sx={{ 
-            display: 'grid', 
-            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)' }, 
-            gap: { xs: 2, sm: 3, md: 4 }, 
-            mb: 3 
-          }}>
-            <Paper sx={{ 
-              p: { xs: 2, sm: 3, md: 4 }, 
-              backgroundColor: '#2d3748', 
-              color: 'white',
-              borderRadius: 3,
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' }, gap: 2 }}>
+          <Box sx={{ textAlign: 'center', p: 2 }}>
+            <Typography variant="h6" sx={{ 
+              color: theme.customColors.text.secondary, 
+              fontSize: { xs: '0.875rem', sm: '1rem' },
             }}>
-              <Typography variant="h6" sx={{ 
-                fontWeight: 'bold',
-                fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
-              }}>
-                Total de Vendas
-              </Typography>
-              <Typography variant="h4" sx={{ 
-                fontWeight: 'bold',
-                fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem', lg: '2.25rem' },
-              }}>
-                {formatCurrency(totalVendas)}
-              </Typography>
-            </Paper>
-            <Paper sx={{ 
-              p: { xs: 2, sm: 3, md: 4 }, 
-              backgroundColor: '#d9d9d9', 
-              color: '#2d3748',
-              borderRadius: 3,
+              Total de Vendas
+            </Typography>
+            <Typography variant="h4" sx={{ 
+              color: theme.customColors.status.success, 
+              fontWeight: 700,
+              fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
             }}>
-              <Typography variant="h6" sx={{ 
-                fontWeight: 'bold',
-                fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
-              }}>
-                Total de Comissões
-              </Typography>
-              <Typography variant="h4" sx={{ 
-                fontWeight: 'bold',
-                fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem', lg: '2.25rem' },
-              }}>
-                {formatCurrency(totalComissoes)}
-              </Typography>
-            </Paper>
+              {formatCurrency(totalVendas)}
+            </Typography>
           </Box>
-          
-          {groupedSalesArray.map((userGroup) => (
-            <Accordion key={userGroup.userId} sx={{ 
-              mb: 2, 
-              border: '1px solid #d9d9d9',
-              borderRadius: 2,
-              '&:before': {
-                display: 'none',
-              },
+          <Box sx={{ textAlign: 'center', p: 2 }}>
+            <Typography variant="h6" sx={{ 
+              color: theme.customColors.text.secondary, 
+              fontSize: { xs: '0.875rem', sm: '1rem' },
             }}>
-              <AccordionSummary 
-                expandIcon={<ExpandMoreIcon sx={{ color: '#383A29' }} />}
-                sx={{ 
-                  backgroundColor: '#f5f5f5',
-                  minHeight: { xs: '48px', sm: '56px', md: '64px' },
-                }}
-              >
-                <Box sx={{ 
-                  display: 'flex', 
-                  flexDirection: { xs: 'column', sm: 'row' },
-                  justifyContent: 'space-between', 
-                  width: '100%', 
-                  mr: 2,
-                  gap: { xs: 1, sm: 0 },
+              Total de Comissões
+            </Typography>
+            <Typography variant="h4" sx={{ 
+              color: theme.customColors.status.warning, 
+              fontWeight: 700,
+              fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+            }}>
+              {formatCurrency(totalComissoes)}
+            </Typography>
+          </Box>
+          <Box sx={{ textAlign: 'center', p: 2 }}>
+            <Typography variant="h6" sx={{ 
+              color: theme.customColors.text.secondary, 
+              fontSize: { xs: '0.875rem', sm: '1rem' },
+            }}>
+              Número de Vendedores
+            </Typography>
+            <Typography variant="h4" sx={{ 
+              color: theme.customColors.primary.main, 
+              fontWeight: 700,
+              fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+            }}>
+              {groupedSalesArray.length}
+            </Typography>
+          </Box>
+        </Box>
+      </Paper>
+
+      {/* Vendas por Vendedor */}
+      <Typography variant="h5" sx={{ 
+        color: theme.customColors.text.primary, 
+        fontWeight: 700, 
+        mb: 2,
+        fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem' },
+      }}>
+        Vendas por Vendedor
+      </Typography>
+
+      {groupedSalesArray.map((group, index) => (
+        <Accordion key={group.userId} sx={{
+          mb: 2,
+          background: theme.customColors.surface.card,
+          border: `1px solid ${theme.customColors.border.primary}`,
+          borderRadius: 3,
+          boxShadow: theme.customColors.shadow.secondary,
+          '&:before': {
+            display: 'none',
+          },
+        }}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon sx={{ color: theme.customColors.text.primary }} />}
+            sx={{
+              backgroundColor: alpha(theme.customColors.text.primary, 0.05),
+              borderRadius: 3,
+            }}
+          >
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+              <Typography sx={{ 
+                color: theme.customColors.text.primary, 
+                fontWeight: 600,
+                fontSize: { xs: '1rem', sm: '1.125rem' },
+              }}>
+                {group.userName}
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                <Typography sx={{ 
+                  color: theme.customColors.status.success, 
+                  fontWeight: 700,
+                  fontSize: { xs: '0.875rem', sm: '1rem' },
                 }}>
-                  <Box>
-                    <Typography variant="h6" sx={{ 
-                      color: '#383A29', 
-                      fontWeight: 'bold',
-                      fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
+                  {formatCurrency(group.totalValue)}
+                </Typography>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteUserSales(group.userId);
+                  }}
+                  disabled={deletingUserId === group.userId}
+                  sx={{
+                    borderColor: theme.customColors.status.error,
+                    color: theme.customColors.status.error,
+                    '&:hover': {
+                      backgroundColor: alpha(theme.customColors.status.error, 0.1),
+                      borderColor: theme.customColors.status.error,
+                    },
+                  }}
+                >
+                  {deletingUserId === group.userId ? 'Zerando...' : 'Zerar Vendas'}
+                </Button>
+              </Box>
+            </Box>
+          </AccordionSummary>
+          <AccordionDetails>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ 
+                      color: theme.customColors.text.primary, 
+                      fontWeight: 600,
+                      fontSize: { xs: '0.875rem', sm: '1rem' },
                     }}>
-                      {userGroup.userName}
-                    </Typography>
-                    <Typography variant="body2" sx={{ 
-                      color: '#718096',
-                      fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem' },
+                      Produto
+                    </TableCell>
+                    <TableCell sx={{ 
+                      color: theme.customColors.text.primary, 
+                      fontWeight: 600,
+                      fontSize: { xs: '0.875rem', sm: '1rem' },
                     }}>
-                      {userGroup.sales.length} venda{userGroup.sales.length > 1 ? 's' : ''}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ 
-                    display: 'flex', 
-                    flexDirection: { xs: 'column', sm: 'row' },
-                    gap: { xs: 0.5, sm: 2, md: 3 },
-                    alignItems: { xs: 'flex-start', sm: 'center' },
-                  }}>
-                    <Typography variant="body1" sx={{ 
-                      color: '#2d3748', 
-                      fontWeight: 'bold',
-                      fontSize: { xs: '0.9rem', sm: '1rem', md: '1.125rem' },
+                      Quantidade
+                    </TableCell>
+                    <TableCell sx={{ 
+                      color: theme.customColors.text.primary, 
+                      fontWeight: 600,
+                      fontSize: { xs: '0.875rem', sm: '1rem' },
                     }}>
-                      Total: {formatCurrency(userGroup.totalValue)}
-                    </Typography>
-                    <Typography variant="body1" sx={{ 
-                      color: '#718096',
-                      fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' },
+                      Preço Unit.
+                    </TableCell>
+                    <TableCell sx={{ 
+                      color: theme.customColors.text.primary, 
+                      fontWeight: 600,
+                      fontSize: { xs: '0.875rem', sm: '1rem' },
                     }}>
-                      Comissão: {formatCurrency(userGroup.totalCommission)}
-                    </Typography>
-                  </Box>
-                </Box>
-              </AccordionSummary>
-              <AccordionDetails sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
-                <TableContainer sx={{ 
-                  borderRadius: 2,
-                  border: '1px solid #e2e8f0',
-                }}>
-                  <Table size="small">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell sx={{ 
-                          fontWeight: 'bold', 
-                          color: '#2d3748',
-                          fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
-                        }}>
-                          Produto
-                        </TableCell>
-                        <TableCell sx={{ 
-                          fontWeight: 'bold', 
-                          color: '#2d3748',
-                          fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
-                        }}>
-                          Qtd
-                        </TableCell>
-                        <TableCell sx={{ 
-                          fontWeight: 'bold', 
-                          color: '#2d3748',
-                          fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
-                        }}>
-                          Preço
-                        </TableCell>
-                        <TableCell sx={{ 
-                          fontWeight: 'bold', 
-                          color: '#2d3748',
-                          fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
-                        }}>
-                          Subtotal
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {userGroup.sales.flatMap(sale => 
-                        sale.products.map((product, index) => (
-                          <TableRow key={`${sale._id}-${index}`}>
-                            <TableCell sx={{ 
-                              fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
-                            }}>
-                              {product.name}
-                            </TableCell>
-                            <TableCell sx={{ 
-                              fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
-                            }}>
-                              {product.quantity}
-                            </TableCell>
-                            <TableCell sx={{ 
-                              fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
-                            }}>
-                              {formatCurrency(product.price)}
-                            </TableCell>
-                            <TableCell sx={{ 
-                              fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
-                            }}>
-                              {formatCurrency(product.subtotal)}
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      )}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-                
-                <Box sx={{ 
-                  display: 'flex', 
-                  justifyContent: 'flex-end', 
-                  mt: 2,
-                  gap: { xs: 1, sm: 2 },
-                }}>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={() => handleDeleteUserSales(userGroup.userId)}
-                    disabled={deletingUserId === userGroup.userId}
-                    sx={{
-                      borderColor: '#e53e3e',
-                      color: '#e53e3e',
-                      fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
-                      minHeight: { xs: '32px', sm: '36px', md: '40px' },
-                      '&:hover': {
-                        backgroundColor: 'rgba(229, 62, 62, 0.1)',
-                        borderColor: '#c53030',
-                      },
-                    }}
-                  >
-                    {deletingUserId === userGroup.userId ? 'Zerando...' : 'Zerar Vendas'}
-                  </Button>
-                </Box>
-              </AccordionDetails>
-            </Accordion>
-          ))}
-        </>
-      )}
-    </Paper>
+                      Subtotal
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {group.sales.flatMap(sale => sale.products).map((product, productIndex) => (
+                    <TableRow key={productIndex}>
+                      <TableCell sx={{ 
+                        color: theme.customColors.text.primary,
+                        fontSize: { xs: '0.875rem', sm: '1rem' },
+                      }}>
+                        {product.name}
+                      </TableCell>
+                      <TableCell sx={{ 
+                        color: theme.customColors.text.secondary,
+                        fontSize: { xs: '0.875rem', sm: '1rem' },
+                      }}>
+                        {product.quantity}
+                      </TableCell>
+                      <TableCell sx={{ 
+                        color: theme.customColors.text.secondary,
+                        fontSize: { xs: '0.875rem', sm: '1rem' },
+                      }}>
+                        {formatCurrency(product.price)}
+                      </TableCell>
+                      <TableCell sx={{ 
+                        color: theme.customColors.status.success,
+                        fontWeight: 600,
+                        fontSize: { xs: '0.875rem', sm: '1rem' },
+                      }}>
+                        {formatCurrency(product.subtotal)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <Box sx={{ mt: 2, p: 2, backgroundColor: alpha(theme.customColors.text.primary, 0.02), borderRadius: 2 }}>
+              <Typography sx={{ 
+                color: theme.customColors.text.secondary,
+                fontSize: { xs: '0.875rem', sm: '1rem' },
+              }}>
+                <strong>Total de Vendas:</strong> {formatCurrency(group.totalValue)} | 
+                <strong> Comissões:</strong> {formatCurrency(group.totalCommission)}
+              </Typography>
+            </Box>
+          </AccordionDetails>
+        </Accordion>
+      ))}
+    </Box>
   );
 };
 

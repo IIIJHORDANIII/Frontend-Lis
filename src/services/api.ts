@@ -217,6 +217,24 @@ export const updateCustomList = async (id: string, listData: any) => {
   return response.data;
 };
 
+export const deleteCustomList = async (listId: string): Promise<void> => {
+  try {
+    const response = await api.delete(`/custom-lists/${listId}`);
+    if (response.status !== 200) {
+      throw new Error(response.data?.message || 'Falha ao excluir lista');
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        throw new Error(error.response.data?.message || 'Falha ao excluir lista');
+      } else if (error.request) {
+        throw new Error('Sem resposta do servidor. Verifique se o servidor está rodando.');
+      }
+    }
+    throw error;
+  }
+};
+
 export const deleteUserSales = async (userId: string): Promise<{ deletedCount: number; message: string }> => {
   try {
     const response = await api.delete(`/sales/user/${userId}`);

@@ -195,14 +195,14 @@ const ProductList: React.FC = () => {
             maxWidth: { xs: '100%', sm: 500, md: 800, xl: 1000 },
             width: '100%',
             mx: 'auto',
-            mt: { xs: 0, sm: 1, md: 2, lg: 3, xl: 4 }, // Reduced top margin
+            mt: 0, // No top margin since AppLayout already provides padding
             mb: { xs: 2, sm: 3, md: 4, lg: 5, xl: 6 },
             p: { xs: 3, sm: 4, md: 5, lg: 6, xl: 7 }, // Increased padding
             borderRadius: 4,
-            boxShadow: '0 12px 40px 0 rgba(45,55,72,0.12)',
-            background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
+            boxShadow: theme.customColors.shadow.primary,
+            background: theme.customColors.surface.header,
             backdropFilter: 'blur(12px)',
-            border: '1.5px solid rgba(255,255,255,0.22)',
+            border: `1.5px solid ${theme.customColors.border.secondary}`,
             '@media (min-width: 1600px)': {
               maxWidth: 1200,
               p: 8,
@@ -225,16 +225,17 @@ const ProductList: React.FC = () => {
                 variant="h3"
                 component="h1"
                 sx={{
-                  fontWeight: 700,
-                  color: 'white',
+                  fontWeight: 800,
+                  color: theme.palette.mode === 'dark' ? '#ffffff' : '#1a202c',
                   mb: 1.5,
-                  fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem', lg: '2.25rem', xl: '2.5rem' }, // Reduced font sizes
-                  lineHeight: 1.2, // Added line height control
+                  fontSize: { xs: '1.75rem', sm: '2rem', md: '2.25rem', lg: '2.5rem', xl: '2.75rem' },
+                  lineHeight: 1.1,
+                  letterSpacing: '-0.02em',
                   '@media (min-width: 1600px)': {
-                    fontSize: '2.75rem',
+                    fontSize: '3rem',
                   },
                   '@media (min-width: 1920px)': {
-                    fontSize: '3rem',
+                    fontSize: '3.25rem',
                   },
                 }}
               >
@@ -243,15 +244,17 @@ const ProductList: React.FC = () => {
               <Typography
                 variant="body1"
                 sx={{
-                  color:'white',
+                  color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748',
                   mb: 2,
-                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem', lg: '1.125rem', xl: '1.25rem' }, // Reduced font sizes
-                  lineHeight: 1.4, // Added line height control
+                  fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem', lg: '1.25rem', xl: '1.375rem' },
+                  lineHeight: 1.3,
+                  fontWeight: 500,
+                  letterSpacing: '0.01em',
                   '@media (min-width: 1600px)': {
-                    fontSize: '1.375rem',
+                    fontSize: '1.5rem',
                   },
                   '@media (min-width: 1920px)': {
-                    fontSize: '1.5rem',
+                    fontSize: '1.625rem',
                   },
                 }}
               >
@@ -265,19 +268,21 @@ const ProductList: React.FC = () => {
                 onClick={() => navigate('/admin/products/new')}
                 sx={{
                   background: 'linear-gradient(135deg,rgb(24, 30, 56) 0%,rgb(31, 41, 55) 100%)',
-                  color: 'white',
+                  color: '#ffffff',
                   fontWeight: 700,
-                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem', lg: '1.125rem', xl: '1.25rem' }, // Reduced font sizes
-                  px: { xs: 2, sm: 2.5, md: 3, lg: 3.5, xl: 4 }, // Reduced padding
-                  py: { xs: 1, sm: 1.25, md: 1.5, lg: 1.75, xl: 2 }, // Reduced padding
+                  fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem', lg: '1.25rem', xl: '1.375rem' },
+                  px: { xs: 2.5, sm: 3, md: 3.5, lg: 4, xl: 4.5 },
+                  py: { xs: 1.25, sm: 1.5, md: 1.75, lg: 2, xl: 2.25 },
                   borderRadius: 3,
                   boxShadow: '0 6px 20px 0 rgba(102,126,234,0.15)',
                   border: '1.5px solid rgba(255,255,255,0.25)',
-                  transition: 'background 0.3s, box-shadow 0.3s',
-                  minHeight: { xs: '40px', sm: '44px', md: '48px', lg: '52px', xl: '56px' }, // Reduced heights
+                  transition: 'all 0.3s ease',
+                  minHeight: { xs: '44px', sm: '48px', md: '52px', lg: '56px', xl: '60px' },
+                  letterSpacing: '0.02em',
                   '&:hover': {
                     background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
                     boxShadow: '0 10px 40px 0 rgba(102,126,234,0.25)',
+                    transform: 'translateY(-2px)',
                   }
                 }}
               >
@@ -297,7 +302,7 @@ const ProductList: React.FC = () => {
             fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
             maxWidth: 900,
             mx: 'auto',
-            boxShadow: '0 2px 8px rgba(45,55,72,0.10)',
+            boxShadow: theme.customColors.shadow.secondary,
             '& .MuiAlert-icon': {
               fontSize: { xs: '1.25rem', sm: '1.5rem' }
             }
@@ -315,7 +320,7 @@ const ProductList: React.FC = () => {
           alignItems: 'center', 
           minHeight: '500px' 
         }}>
-          <CircularProgress size={80} sx={{ color: 'white' }} />
+          <CircularProgress size={80} sx={{ color: theme.customColors.text.primary }} />
         </Box>
       ) : (
         <Box sx={{
@@ -337,18 +342,18 @@ const ProductList: React.FC = () => {
             <Fade in key={product._id} timeout={400}>
               <Card
                 sx={{
-                  background: 'rgba(255,255,255,0.97)',
-                  border: '1.5px solid rgba(102,126,234,0.10)',
+                  background: theme.customColors.surface.card,
+                  border: `1.5px solid ${theme.customColors.border.primary}`,
                   borderRadius: 4,
                   overflow: 'hidden',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   boxShadow: hoveredCard === product._id 
-                    ? '0 24px 48px rgba(102,126,234,0.20)' 
-                    : '0 12px 40px rgba(102,126,234,0.12)',
+                    ? theme.customColors.shadow.primary
+                    : theme.customColors.shadow.secondary,
                   transform: hoveredCard === product._id ? 'translateY(-8px) scale(1.02)' : 'translateY(0) scale(1)',
                   '&:hover': {
-                    boxShadow: '0 24px 48px rgba(102,126,234,0.20)',
-                    border: '2px solid #764ba2',
+                    boxShadow: theme.customColors.shadow.primary,
+                    border: `2px solid ${theme.customColors.primary.main}`,
                     transform: 'translateY(-8px) scale(1.03)',
                   },
                   p: { xs: 2, sm: 2.5, md: 3, lg: 3.5, xl: 4 },
@@ -361,10 +366,12 @@ const ProductList: React.FC = () => {
                   <CardMedia
                     component="img"
                     height={isExtraSmallMobile ? 140 : isSmallMobile ? 160 : isMobile ? 180 : 200}
+                    width="100%"
                     image={product.image}
                     alt={product.name}
                     sx={{
                       objectFit: 'cover',
+                      aspectRatio: '9/16',
                       transition: 'transform 0.3s ease',
                       transform: hoveredCard === product._id ? 'scale(1.05)' : 'scale(1)',
                       borderRadius: 3,
@@ -377,7 +384,7 @@ const ProductList: React.FC = () => {
                     component="h3"
                     sx={{
                       fontWeight: 700,
-                      color: theme.palette.text.primary,
+                      color: theme.customColors.text.primary,
                       mb: 1.5,
                       fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.375rem', lg: '1.5rem' },
                       lineHeight: 1.3,
@@ -415,7 +422,7 @@ const ProductList: React.FC = () => {
                         <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' } }}>
                           Custo:
                         </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600, color: theme.palette.error.main, fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' } }}>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: theme.customColors.status.error, fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' } }}>
                           R$ {product.costPrice?.toFixed(2) || '0.00'}
                         </Typography>
                       </Box>
@@ -423,7 +430,7 @@ const ProductList: React.FC = () => {
                         <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' } }}>
                           Venda:
                         </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600, color: theme.palette.success.main, fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' } }}>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: theme.customColors.status.success, fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' } }}>
                           R$ {product.finalPrice?.toFixed(2) || '0.00'}
                         </Typography>
                       </Box>
@@ -431,7 +438,7 @@ const ProductList: React.FC = () => {
                         <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' } }}>
                           Comissão:
                         </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600, color: theme.palette.warning.main, fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' } }}>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: theme.customColors.status.warning, fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' } }}>
                           R$ {((product.finalPrice || 0) * 0.30).toFixed(2)}
                         </Typography>
                       </Box>
@@ -439,7 +446,7 @@ const ProductList: React.FC = () => {
                         <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' } }}>
                           Lucro:
                         </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600, color: theme.palette.info.main, fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' } }}>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: theme.customColors.status.info, fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' } }}>
                           R$ {product.profit?.toFixed(2) || '0.00'}
                         </Typography>
                       </Box>
@@ -451,7 +458,7 @@ const ProductList: React.FC = () => {
                         <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' } }}>
                           Comissão (30%):
                         </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600, color: theme.palette.warning.main, fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' } }}>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: theme.customColors.status.warning, fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' } }}>
                           R$ {((product.finalPrice || 0) * 0.30).toFixed(2)}
                         </Typography>
                       </Box>
@@ -459,7 +466,7 @@ const ProductList: React.FC = () => {
                         <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' } }}>
                           Preço Final:
                         </Typography>
-                        <Typography variant="h6" sx={{ fontWeight: 700, color: theme.palette.success.main, fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' } }}>
+                        <Typography variant="h6" sx={{ fontWeight: 700, color: theme.customColors.status.success, fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' } }}>
                           R$ {product.finalPrice?.toFixed(2) || '0.00'}
                         </Typography>
                       </Box>
@@ -470,14 +477,14 @@ const ProductList: React.FC = () => {
                       label={product.category}
                       size="small"
                       sx={{
-                        background: alpha(theme.palette.primary.main, 0.1),
-                        color: theme.palette.primary.main,
+                        background: alpha(theme.customColors.primary.main, 0.1),
+                        color: theme.customColors.primary.main,
                         fontWeight: 600,
                         fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem', lg: '0.9rem' }
                       }}
                     />
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <StockIcon sx={{ fontSize: { xs: 16, sm: 18, md: 20 }, color: theme.palette.text.secondary }} />
+                      <StockIcon sx={{ fontSize: { xs: 16, sm: 18, md: 20 }, color: theme.customColors.text.secondary }} />
                       <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem', lg: '1rem' } }}>
                         {product.quantity || 0}
                       </Typography>
@@ -490,18 +497,18 @@ const ProductList: React.FC = () => {
                       gap: 1, 
                       mt: 2,
                       pt: 2,
-                      borderTop: '1px solid rgba(0,0,0,0.1)'
+                      borderTop: `1px solid ${alpha(theme.customColors.text.primary, 0.1)}`
                     }}>
                       <Tooltip title="Editar">
                         <IconButton
                           size="small"
                           onClick={() => handleEditClick(product)}
                           sx={{
-                            background: 'rgba(102,126,234,0.1)',
-                            color: theme.palette.primary.main,
+                            background: alpha(theme.customColors.primary.main, 0.1),
+                            color: theme.customColors.primary.main,
                             '&:hover': {
-                              background: theme.palette.primary.main,
-                              color: 'white',
+                              background: theme.customColors.primary.main,
+                              color: theme.customColors.text.inverse,
                             },
                             width: { xs: 32, sm: 36, md: 40 },
                             height: { xs: 32, sm: 36, md: 40 },
@@ -515,11 +522,11 @@ const ProductList: React.FC = () => {
                           size="small"
                           onClick={() => handleDeleteClick(product)}
                           sx={{
-                            background: 'rgba(229, 62, 62, 0.1)',
-                            color: theme.palette.error.main,
+                            background: alpha(theme.customColors.status.error, 0.1),
+                            color: theme.customColors.status.error,
                             '&:hover': {
-                              background: theme.palette.error.main,
-                              color: 'white',
+                              background: theme.customColors.status.error,
+                              color: theme.customColors.text.inverse,
                             },
                             width: { xs: 32, sm: 36, md: 40 },
                             height: { xs: 32, sm: 36, md: 40 },

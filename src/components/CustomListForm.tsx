@@ -20,7 +20,9 @@ import {
   Avatar,
   InputAdornment,
   CircularProgress,
-  Fade
+  Fade,
+  useTheme,
+  alpha
 } from '@mui/material';
 import {
   List as ListIcon,
@@ -43,6 +45,7 @@ type User = {
 
 const CustomListForm: React.FC = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
   const { isAuthenticated } = useAuth();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -151,7 +154,7 @@ const CustomListForm: React.FC = () => {
           alignItems: 'center', 
           minHeight: '50vh' 
         }}>
-          <CircularProgress size={60} />
+          <CircularProgress size={60} sx={{ color: theme.customColors.text.primary }} />
         </Box>
       </Container>
     );
@@ -160,432 +163,437 @@ const CustomListForm: React.FC = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        flex: 1,
         width: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: { xs: 2, sm: 3, md: 4 },
         position: 'relative',
         fontFamily: 'Poppins, Inter, Montserrat, Arial',
-        background: 'transparent',
-        backgroundSize: '200% 200%',
-        animation: 'gradientMove 15s ease-in-out infinite',
-        '@keyframes gradientMove': {
-          '0%': { backgroundPosition: '0% 50%' },
-          '50%': { backgroundPosition: '100% 50%' },
-          '100%': { backgroundPosition: '0% 50%' },
-        },
+        background: theme.customColors.background.gradient,
       }}
     >
-      <Box sx={{ 
-        width: '100%', 
-        maxWidth: { xs: '100%', sm: 600, md: 700, lg: 800 }, 
-      }}>
+      <Container maxWidth="md" sx={{ zIndex: 1 }}>
         <Paper
           elevation={0}
           sx={{
-            background: 'rgba(45, 55, 72, 0.95)',
-            backdropFilter: 'blur(20px)',
+            p: { xs: 3, sm: 4, md: 5 },
             borderRadius: 4,
-            p: { xs: 3, sm: 4, md: 5, lg: 6 },
-            mb: 4,
-            color: 'white',
-            position: 'relative',
-            overflow: 'hidden',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '4px',
-              background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)'
-            }
+            background: theme.customColors.surface.card,
+            backdropFilter: 'blur(20px)',
+            border: `1.5px solid ${theme.customColors.border.primary}`,
+            boxShadow: theme.customColors.shadow.primary,
+            maxWidth: 800,
+            mx: 'auto',
           }}
         >
-            <Box sx={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Avatar
-                sx={{
-                  bgcolor: 'rgba(217,217,217,0.2)',
-                  width: 64,
-                  height: 64
-                }}
-              >
-                <ListIcon sx={{ fontSize: 32 }} />
-              </Avatar>
-              <Box>
-                <Typography variant="h4" color="white" fontWeight="bold" gutterBottom>
-                  Criar Nova Lista
-                </Typography>
-                <Typography variant="body1" sx={{ opacity: 0.9 }}>
-                  Organize seus produtos em listas personalizadas
-                </Typography>
-              </Box>
-            </Box>
-          </Paper>
+          {/* Header */}
+          <Box sx={{ textAlign: 'center', mb: 4 }}>
+            <Avatar
+              sx={{
+                width: { xs: 60, sm: 70, md: 80 },
+                height: { xs: 60, sm: 70, md: 80 },
+                margin: '0 auto 16px',
+                background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
+                color: theme.customColors.text.inverse,
+                boxShadow: theme.customColors.shadow.secondary
+              }}
+            >
+              <ListIcon sx={{ fontSize: { xs: 30, sm: 35, md: 40 } }} />
+            </Avatar>
+            <Typography
+              variant="h3"
+              component="h1"
+              sx={{
+                fontWeight: 700,
+                color: theme.customColors.text.primary,
+                mb: 1,
+                fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem', lg: '2.25rem', xl: '2.5rem' },
+                lineHeight: 1.2,
+                '@media (min-width: 1600px)': {
+                  fontSize: '2.75rem',
+                },
+                '@media (min-width: 1920px)': {
+                  fontSize: '3rem',
+                },
+              }}
+            >
+              Nova Lista
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                color: theme.customColors.text.secondary,
+                mb: 2,
+                fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem', lg: '1.25rem', xl: '1.375rem' },
+                lineHeight: 1.4,
+                '@media (min-width: 1600px)': {
+                  fontSize: '1.5rem',
+                },
+                '@media (min-width: 1920px)': {
+                  fontSize: '1.625rem',
+                },
+              }}
+            >
+              Crie uma lista personalizada com produtos selecionados
+            </Typography>
+          </Box>
 
-          <Paper
-            elevation={0}
-            sx={{
-              borderRadius: 4,
-              p: 4,
-              background: 'white',
-              backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(217,217,217,0.2)',
-              boxShadow: '0 8px 32px rgba(56,58,41,0.1)'
-            }}
-          >
-            {error && (
-              <Alert 
-                severity="error" 
-                sx={{ 
-                  mb: 3,
-                  borderRadius: 2,
-                  '& .MuiAlert-icon': {
-                    fontSize: '1.5rem'
-                  }
-                }}
-              >
-                {error}
-              </Alert>
-            )}
+          {error && (
+            <Alert
+              severity="error"
+              sx={{
+                mb: 4,
+                borderRadius: 2,
+                background: alpha(theme.customColors.status.error, 0.1),
+                border: `1px solid ${alpha(theme.customColors.status.error, 0.3)}`,
+                color: theme.customColors.status.error,
+                '& .MuiAlert-icon': {
+                  fontSize: '1.5rem'
+                }
+              }}
+            >
+              {error}
+            </Alert>
+          )}
 
-            {success && (
-              <Alert 
-                severity="success" 
-                sx={{ 
-                  mb: 3,
-                  borderRadius: 2,
-                  '& .MuiAlert-icon': {
-                    fontSize: '1.5rem'
-                  }
-                }}
-              >
-                {success}
-              </Alert>
-            )}
+          {success && (
+            <Alert
+              severity="success"
+              sx={{
+                mb: 4,
+                borderRadius: 2,
+                background: alpha(theme.customColors.status.success, 0.1),
+                border: `1px solid ${alpha(theme.customColors.status.success, 0.3)}`,
+                color: theme.customColors.status.success,
+                '& .MuiAlert-icon': {
+                  fontSize: '1.5rem'
+                }
+              }}
+            >
+              {success}
+            </Alert>
+          )}
 
-            <Box component="form" onSubmit={handleSubmit}>
-              <Box
-                sx={{
-                  display: 'grid',
-                  gap: 3
-                }}
-              >
+          <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            {/* Nome da Lista */}
+            <TextField
+              fullWidth
+              label="Nome da Lista"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              variant="outlined"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <ListIcon sx={{ color: theme.customColors.text.secondary }} />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 3,
+                  backgroundColor: alpha(theme.customColors.text.primary, 0.02),
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: theme.customColors.primary.main,
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: theme.customColors.primary.main,
+                    borderWidth: 2,
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: theme.customColors.text.secondary,
+                  '&.Mui-focused': {
+                    color: theme.customColors.primary.main,
+                  },
+                },
+                '& .MuiInputBase-input': {
+                  color: theme.customColors.text.primary,
+                },
+              }}
+            />
+
+            {/* Descrição */}
+            <TextField
+              fullWidth
+              label="Descrição (opcional)"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              variant="outlined"
+              multiline
+              rows={3}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <DescriptionIcon sx={{ color: theme.customColors.text.secondary }} />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 3,
+                  backgroundColor: alpha(theme.customColors.text.primary, 0.02),
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: theme.customColors.primary.main,
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: theme.customColors.primary.main,
+                    borderWidth: 2,
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: theme.customColors.text.secondary,
+                  '&.Mui-focused': {
+                    color: theme.customColors.primary.main,
+                  },
+                },
+                '& .MuiInputBase-input': {
+                  color: theme.customColors.text.primary,
+                },
+              }}
+            />
+
+            {/* Seleção de Produtos */}
+            <Autocomplete
+              multiple
+              options={products}
+              getOptionLabel={(option) => `${option.name} - ${formatPrice(option.finalPrice || 0)}`}
+              value={products.filter(product => selectedProducts.includes(product._id))}
+              onChange={(_, newValue) => {
+                setSelectedProducts(newValue.map(product => product._id));
+              }}
+              renderInput={(params) => (
                 <TextField
-                  fullWidth
-                  label="Nome da Lista"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
+                  {...params}
+                  label="Selecionar Produtos"
+                  variant="outlined"
                   InputProps={{
+                    ...params.InputProps,
                     startAdornment: (
                       <InputAdornment position="start">
-                        <ListIcon sx={{ color: '#383A29' }} />
+                        <InventoryIcon sx={{ color: theme.customColors.text.secondary }} />
                       </InputAdornment>
                     ),
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 2,
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 4px 12px rgba(56,58,41,0.1)'
-                      },
-                      '&.Mui-focused': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 4px 12px rgba(56,58,41,0.3)'
-                      }
-                    },
-                    '& .MuiInputLabel-root.Mui-focused': {
-                      color: '#383A29'
-                    },
-                    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#383A29'
-                    }
-                  }}
-                />
-
-                <TextField
-                  fullWidth
-                  label="Descrição"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  multiline
-                  rows={3}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1 }}>
-                        <DescriptionIcon sx={{ color: '#383A29' }} />
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      borderRadius: 2,
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 4px 12px rgba(56,58,41,0.1)'
-                      },
-                      '&.Mui-focused': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 4px 12px rgba(56,58,41,0.3)'
-                      }
-                    },
-                    '& .MuiInputLabel-root.Mui-focused': {
-                      color: '#383A29'
-                    },
-                    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#383A29'
-                    }
-                  }}
-                />
-
-                <FormControl fullWidth>
-                  <InputLabel sx={{ '&.Mui-focused': { color: '#383A29' } }}>Produtos</InputLabel>
-                  <Select
-                    multiple
-                    value={selectedProducts}
-                    onChange={(e) => setSelectedProducts(e.target.value as string[])}
-                    renderValue={(selected) => (
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {selected.map((value) => {
-                          const product = products.find(p => p._id === value);
-                          return (
-                            <Chip
-                              key={value}
-                              label={product ? `${product.name} - ${formatPrice(product.finalPrice)}` : value}
-                              size="small"
-                              sx={{
-                                background: 'linear-gradient(45deg, #383A29, #4a4d35)',
-                                color: '#d9d9d9',
-                                '& .MuiChip-deleteIcon': {
-                                  color: 'rgba(217,217,217,0.8)'
-                                }
-                              }}
-                            />
-                          );
-                        })}
-                      </Box>
-                    )}
-                    sx={{
-                      borderRadius: 2,
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderRadius: 2
+                      borderRadius: 3,
+                      backgroundColor: alpha(theme.customColors.text.primary, 0.02),
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: theme.customColors.primary.main,
                       },
                       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#383A29'
-                      }
-                    }}
-                  >
-                    {products.map((product) => (
-                      <MenuItem key={product._id} value={product._id}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
-                          <Box
-                            sx={{
-                              width: 32,
-                              height: 32,
-                              borderRadius: 1,
-                              overflow: 'hidden',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              bgcolor: '#f5f5f5',
-                              border: '1px solid #e0e0e0'
-                            }}
-                          >
-                            {product.image ? (
-                              <img
-                                src={product.image}
-                                alt={product.name}
-                                style={{
-                                  width: '100%',
-                                  height: '100%',
-                                  objectFit: 'cover'
-                                }}
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = 'none';
-                                  const parent = target.parentElement;
-                                  if (parent) {
-                                    const icon = document.createElement('div');
-                                    icon.innerHTML = '🖼️';
-                                    icon.style.fontSize = '16px';
-                                    parent.appendChild(icon);
-                                  }
-                                }}
-                              />
-                            ) : (
-                              <ImageIcon sx={{ fontSize: 16, color: '#999' }} />
-                            )}
-                          </Box>
-                          <Box sx={{ flex: 1 }}>
-                            <Typography variant="body2" fontWeight="medium">
-                              {product.name}
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              {formatPrice(product.finalPrice)}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                <Autocomplete
-                  multiple
-                  options={users}
-                  getOptionLabel={(option) => option.email}
-                  value={selectedUsers}
-                  onChange={(_, newValue) => setSelectedUsers(newValue)}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Compartilhar com usuários"
-                      fullWidth
-                      InputProps={{
-                        ...params.InputProps,
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <PeopleIcon sx={{ color: '#383A29' }} />
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{
-                        '& .MuiOutlinedInput-root': {
-                          borderRadius: 2,
-                          transition: 'all 0.3s ease',
-                          '&:hover': {
-                            transform: 'translateY(-2px)',
-                            boxShadow: '0 4px 12px rgba(56,58,41,0.1)'
-                          },
-                          '&.Mui-focused': {
-                            transform: 'translateY(-2px)',
-                            boxShadow: '0 4px 12px rgba(56,58,41,0.3)'
-                          }
-                        },
-                        '& .MuiInputLabel-root.Mui-focused': {
-                          color: '#383A29'
-                        },
-                        '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                          borderColor: '#383A29'
-                        }
-                      }}
-                    />
-                  )}
-                  renderTags={(value, getTagProps) =>
-                    value.map((option, index) => (
-                      <Chip
-                        label={option.email}
-                        {...getTagProps({ index })}
-                        key={option._id}
-                        sx={{
-                          background: 'linear-gradient(45deg, #383A29, #4a4d35)',
-                          color: '#d9d9d9',
-                          '& .MuiChip-deleteIcon': {
-                            color: 'rgba(217,217,217,0.8)'
-                          }
-                        }}
-                      />
-                    ))
-                  }
-                />
-
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 2,
-                    p: 2,
-                    borderRadius: 2,
-                    background: 'linear-gradient(45deg, rgba(56,58,41, 0.1), rgba(74,77,53, 0.1))',
-                    border: '1px solid rgba(56,58,41, 0.2)'
+                        borderColor: theme.customColors.primary.main,
+                        borderWidth: 2,
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: theme.customColors.text.secondary,
+                      '&.Mui-focused': {
+                        color: theme.customColors.primary.main,
+                      },
+                    },
+                    '& .MuiInputBase-input': {
+                      color: theme.customColors.text.primary,
+                    },
                   }}
-                >
-                  <PublicIcon sx={{ color: '#383A29' }} />
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={isPublic}
-                        onChange={(e) => setIsPublic(e.target.checked)}
-                        sx={{
-                          '& .MuiSwitch-switchBase.Mui-checked': {
-                            color: '#383A29'
-                          },
-                          '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                            backgroundColor: '#383A29'
-                          }
-                        }}
+                />
+              )}
+              renderOption={(props, option) => (
+                <Box component="li" {...props}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
+                    {option.image && (
+                      <Avatar
+                        src={option.image}
+                        sx={{ width: 40, height: 40 }}
                       />
-                    }
-                    label="Tornar lista pública"
-                    sx={{ 
-                      margin: 0,
-                      '& .MuiFormControlLabel-label': {
-                        fontWeight: 500,
-                        color: '#383A29'
-                      }
+                    )}
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="body2" sx={{ color: theme.customColors.text.primary, fontWeight: 600 }}>
+                        {option.name}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: theme.customColors.text.secondary }}>
+                        {formatPrice(option.finalPrice || 0)} - {option.category}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              )}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip
+                    {...getTagProps({ index })}
+                    key={option._id}
+                    label={option.name}
+                    size="small"
+                    sx={{
+                      backgroundColor: alpha(theme.customColors.primary.main, 0.1),
+                      color: theme.customColors.primary.main,
+                      '& .MuiChip-deleteIcon': {
+                        color: theme.customColors.primary.main,
+                        '&:hover': {
+                          color: theme.customColors.status.error,
+                        },
+                      },
                     }}
                   />
-                </Box>
-              </Box>
+                ))
+              }
+            />
 
-              <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-                <Button
+            {/* Compartilhamento com Usuários */}
+            <Autocomplete
+              multiple
+              options={users}
+              getOptionLabel={(option) => option.email}
+              value={selectedUsers}
+              onChange={(_, newValue) => setSelectedUsers(newValue)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Compartilhar com Usuários (opcional)"
                   variant="outlined"
-                  onClick={() => navigate('/custom-lists')}
-                  startIcon={<CancelIcon />}
-                  sx={{
-                    borderRadius: 2,
-                    px: 3,
-                    py: 1.5,
-                    borderColor: '#383A29',
-                    color: '#383A29',
-                    '&:hover': {
-                      borderColor: '#4a4d35',
-                      backgroundColor: 'rgba(56,58,41, 0.1)',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 4px 12px rgba(56,58,41, 0.3)'
-                    },
-                    transition: 'all 0.3s ease'
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <PeopleIcon sx={{ color: theme.customColors.text.secondary }} />
+                      </InputAdornment>
+                    ),
                   }}
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  disabled={!name.trim() || selectedProducts.length === 0 || loading}
-                  startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <SaveIcon />}
                   sx={{
-                    borderRadius: 2,
-                    px: 3,
-                    py: 1.5,
-                    background: 'linear-gradient(45deg, #383A29, #4a4d35)',
-                    color: '#d9d9d9',
-                    '&:hover': {
-                      background: 'linear-gradient(45deg, #4a4d35, #5a5f42)',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 8px 25px rgba(56,58,41, 0.4)'
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 3,
+                      backgroundColor: alpha(theme.customColors.text.primary, 0.02),
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: theme.customColors.primary.main,
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: theme.customColors.primary.main,
+                        borderWidth: 2,
+                      },
                     },
-                    '&:disabled': {
-                      background: 'rgba(0,0,0,0.12)'
+                    '& .MuiInputLabel-root': {
+                      color: theme.customColors.text.secondary,
+                      '&.Mui-focused': {
+                        color: theme.customColors.primary.main,
+                      },
                     },
-                    transition: 'all 0.3s ease'
+                    '& .MuiInputBase-input': {
+                      color: theme.customColors.text.primary,
+                    },
                   }}
-                >
-                  {loading ? 'Criando...' : 'Criar Lista'}
-                </Button>
-              </Box>
+                />
+              )}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip
+                    {...getTagProps({ index })}
+                    key={option._id}
+                    label={option.email}
+                    size="small"
+                    sx={{
+                      backgroundColor: alpha(theme.customColors.primary.main, 0.1),
+                      color: theme.customColors.primary.main,
+                      '& .MuiChip-deleteIcon': {
+                        color: theme.customColors.primary.main,
+                        '&:hover': {
+                          color: theme.customColors.status.error,
+                        },
+                      },
+                    }}
+                  />
+                ))
+              }
+            />
+
+            {/* Visibilidade */}
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isPublic}
+                  onChange={(e) => setIsPublic(e.target.checked)}
+                  sx={{
+                    '& .MuiSwitch-switchBase.Mui-checked': {
+                      color: theme.customColors.primary.main,
+                      '&:hover': {
+                        backgroundColor: alpha(theme.customColors.primary.main, 0.08),
+                      },
+                    },
+                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                      backgroundColor: theme.customColors.primary.main,
+                    },
+                  }}
+                />
+              }
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <PublicIcon sx={{ fontSize: 20, color: theme.customColors.text.secondary }} />
+                  <Typography sx={{ color: theme.customColors.text.primary }}>
+                    Lista Pública
+                  </Typography>
+                </Box>
+              }
+            />
+
+            {/* Botões */}
+            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
+              <Button
+                type="button"
+                variant="outlined"
+                onClick={() => navigate('/custom-lists')}
+                sx={{
+                  py: { xs: 1.5, sm: 2 },
+                  px: { xs: 3, sm: 4 },
+                  borderRadius: 3,
+                  fontWeight: 600,
+                  fontSize: { xs: '1rem', sm: '1.125rem' },
+                  borderColor: theme.customColors.text.primary,
+                  color: theme.customColors.text.primary,
+                  '&:hover': {
+                    borderColor: theme.customColors.primary.main,
+                    color: theme.customColors.primary.main,
+                    backgroundColor: alpha(theme.customColors.primary.main, 0.05),
+                  },
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={loading}
+                sx={{
+                  py: { xs: 1.5, sm: 2 },
+                  px: { xs: 3, sm: 4 },
+                  borderRadius: 3,
+                  fontWeight: 700,
+                  fontSize: { xs: '1rem', sm: '1.125rem' },
+                  background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
+                  color: theme.customColors.text.inverse,
+                  boxShadow: theme.customColors.shadow.secondary,
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&:hover': {
+                    transform: 'translateY(-2px) scale(1.02)',
+                    boxShadow: theme.customColors.shadow.primary,
+                    background: `linear-gradient(135deg, ${theme.customColors.primary.light} 0%, ${theme.customColors.primary.main} 100%)`,
+                  },
+                  '&:disabled': {
+                    background: alpha(theme.customColors.text.primary, 0.12),
+                    color: alpha(theme.customColors.text.primary, 0.38),
+                    transform: 'none',
+                    boxShadow: 'none',
+                  },
+                }}
+              >
+                {loading ? 'Criando...' : 'Criar Lista'}
+              </Button>
             </Box>
-          </Paper>
-        </Box>
+          </Box>
+        </Paper>
+      </Container>
     </Box>
   );
 };

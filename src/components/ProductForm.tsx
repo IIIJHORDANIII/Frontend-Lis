@@ -149,15 +149,14 @@ const ProductForm: React.FC = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        flex: 1,
         width: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: { xs: 2, sm: 3, md: 4 },
         position: 'relative',
         fontFamily: 'Poppins, Inter, Montserrat, Arial',
-        background: 'transparent',
+        background: theme.customColors.background.gradient,
         backgroundSize: '200% 200%',
         animation: 'gradientMove 15s ease-in-out infinite',
         '@keyframes gradientMove': {
@@ -175,10 +174,10 @@ const ProductForm: React.FC = () => {
             width: '100%',
             p: { xs: 3, sm: 4, md: 5, lg: 6 },
             borderRadius: 4,
-            boxShadow: '0 20px 60px rgba(0,0,0,0.12)',
-            background: 'rgba(255, 255, 255, 0.95)',
+            boxShadow: theme.customColors.shadow.primary,
+            background: theme.customColors.surface.card,
             backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.4)',
+            border: `1px solid ${theme.customColors.border.primary}`,
             position: 'relative',
             overflow: 'hidden',
             '&::before': {
@@ -188,7 +187,7 @@ const ProductForm: React.FC = () => {
               left: 0,
               right: 0,
               height: '4px',
-              background: 'linear-gradient(90deg, #2d3748 0%, #4a5568 100%)'
+              background: `linear-gradient(90deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`
             }
           }}
         >
@@ -198,9 +197,9 @@ const ProductForm: React.FC = () => {
                   width: 80,
                   height: 80,
                   margin: '0 auto 20px',
-                  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
-                  color: theme.palette.primary.contrastText,
-                  boxShadow: '0 8px 32px rgba(56, 58, 41, 0.3)'
+                  background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
+                  color: theme.customColors.text.inverse,
+                  boxShadow: theme.customColors.shadow.secondary
                 }}
               >
                 <ShoppingCart sx={{ fontSize: 40 }} />
@@ -210,7 +209,7 @@ const ProductForm: React.FC = () => {
                 component="h1" 
                 sx={{
                   fontWeight: 700,
-                  color: theme.palette.primary.main,
+                  color: theme.customColors.text.primary,
                   mb: 1,
                   fontSize: { xs: '1.3rem', sm: '1.7rem', md: '2.5rem' },
                   '@media (min-width: 1600px)': {
@@ -223,7 +222,8 @@ const ProductForm: React.FC = () => {
               >
                 Novo Produto
               </Typography>
-              <Typography variant="body1" sx={{ color: theme.palette.text.secondary,
+              <Typography variant="body1" sx={{ 
+                color: theme.customColors.text.secondary,
                 mb: 2,
                 fontSize: { xs: '0.9rem', sm: '1.05rem', md: '1.15rem' },
                 '@media (min-width: 1600px)': {
@@ -233,10 +233,8 @@ const ProductForm: React.FC = () => {
                   fontSize: '1.35rem',
                 },
               }}>
-                Adicione um novo produto ao estoque
+                Adicione um novo produto ao catálogo
               </Typography>
-              
-
             </Box>
 
             {error && (
@@ -245,6 +243,9 @@ const ProductForm: React.FC = () => {
                 sx={{ 
                   mb: 4,
                   borderRadius: 2,
+                  background: alpha(theme.customColors.status.error, 0.1),
+                  border: `1px solid ${alpha(theme.customColors.status.error, 0.3)}`,
+                  color: theme.customColors.status.error,
                   '& .MuiAlert-icon': {
                     fontSize: '1.5rem'
                   }
@@ -257,6 +258,7 @@ const ProductForm: React.FC = () => {
             <Box component="form" onSubmit={handleSubmit}>
               <Stack spacing={3}>
                 <TextField
+                  fullWidth
                   label="Nome do Produto"
                   name="name"
                   value={formData.name}
@@ -265,126 +267,189 @@ const ProductForm: React.FC = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <ShoppingCart sx={{ color: theme.palette.primary.main }} />
+                        <ShoppingCart sx={{ color: alpha(theme.customColors.text.primary, 0.7) }} />
                       </InputAdornment>
                     ),
                   }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 3,
+                      backgroundColor: alpha(theme.customColors.text.primary, 0.02),
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: alpha(theme.customColors.primary.main, 0.5),
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: theme.customColors.primary.main,
+                        borderWidth: 2,
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: theme.customColors.text.secondary,
+                      '&.Mui-focused': {
+                        color: theme.customColors.primary.main,
+                      },
+                    },
+                    '& .MuiInputBase-input': {
+                      color: theme.customColors.text.primary,
+                    },
+                  }}
                 />
-                
+
                 <TextField
+                  fullWidth
                   label="Descrição"
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
+                  required
                   multiline
                   rows={3}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Description sx={{ color: theme.palette.primary.main }} />
+                        <Description sx={{ color: alpha(theme.customColors.text.primary, 0.7) }} />
                       </InputAdornment>
                     ),
                   }}
-                />
-                
-                <TextField
-                  label="Preço de Custo (R$)"
-                  name="costPrice"
-                  type="number"
-                  value={formData.costPrice}
-                  onChange={handleChange}
-                  required
-                  inputProps={{ step: "0.01" }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <AttachMoney sx={{ color: theme.palette.primary.main }} />
-                      </InputAdornment>
-                    ),
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 3,
+                      backgroundColor: alpha(theme.customColors.text.primary, 0.02),
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: alpha(theme.customColors.primary.main, 0.5),
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: theme.customColors.primary.main,
+                        borderWidth: 2,
+                      },
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: theme.customColors.text.secondary,
+                      '&.Mui-focused': {
+                        color: theme.customColors.primary.main,
+                      },
+                    },
+                    '& .MuiInputBase-input': {
+                      color: theme.customColors.text.primary,
+                    },
                   }}
                 />
 
-                {/* Card de exibição dos valores calculados */}
-                {calculatedValues && (
-                  <Card sx={{ 
-                    background: alpha(theme.palette.primary.main, 0.05),
-                    border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
-                    borderRadius: 2
-                  }}>
-                    <CardContent>
-                      <Typography variant="h6" sx={{ 
-                        color: theme.palette.primary.main, 
-                        fontWeight: 600, 
-                        mb: 2,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1
-                      }}>
-                        <TrendingUp />
-                        Valores Calculados Automaticamente
-                      </Typography>
-                      <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
-                        <Box sx={{ flex: 1, textAlign: 'center', p: 2, bgcolor: 'white', borderRadius: 1 }}>
-                          <Typography variant="body2" color="text.secondary">
-                            Preço de Venda
-                          </Typography>
-                          <Typography variant="h6" sx={{ color: theme.palette.success.main, fontWeight: 600 }}>
-                            R$ {calculatedValues.finalPrice}
-                          </Typography>
-                        </Box>
-                        <Box sx={{ flex: 1, textAlign: 'center', p: 2, bgcolor: 'white', borderRadius: 1 }}>
-                          <Typography variant="body2" color="text.secondary">
-                            Comissão (30%)
-                          </Typography>
-                          <Typography variant="h6" sx={{ color: theme.palette.warning.main, fontWeight: 600 }}>
-                            R$ {calculatedValues.commissionAmount}
-                          </Typography>
-                        </Box>
-                        <Box sx={{ flex: 1, textAlign: 'center', p: 2, bgcolor: 'white', borderRadius: 1 }}>
-                          <Typography variant="body2" color="text.secondary">
-                            Lucro Líquido
-                          </Typography>
-                          <Typography variant="h6" sx={{ color: theme.palette.info.main, fontWeight: 600 }}>
-                            R$ {calculatedValues.profit}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                )}
-                
                 <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', sm: 'row' } }}>
                   <TextField
-                    label="Quantidade"
+                    fullWidth
+                    label="Preço de Custo"
+                    name="costPrice"
+                    type="number"
+                    value={formData.costPrice}
+                    onChange={handleChange}
+                    required
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <AttachMoney sx={{ color: alpha(theme.customColors.text.primary, 0.7) }} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 3,
+                        backgroundColor: alpha(theme.customColors.text.primary, 0.02),
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: alpha(theme.customColors.primary.main, 0.5),
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: theme.customColors.primary.main,
+                          borderWidth: 2,
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        color: theme.customColors.text.secondary,
+                        '&.Mui-focused': {
+                          color: theme.customColors.primary.main,
+                        },
+                      },
+                      '& .MuiInputBase-input': {
+                        color: theme.customColors.text.primary,
+                      },
+                    }}
+                  />
+
+                  <TextField
+                    fullWidth
+                    label="Quantidade em Estoque"
                     name="quantity"
                     type="number"
                     value={formData.quantity}
                     onChange={handleChange}
                     required
-                    sx={{ flex: 1 }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <ShoppingCart sx={{ color: theme.palette.primary.main }} />
+                          <TrendingUp sx={{ color: alpha(theme.customColors.text.primary, 0.7) }} />
                         </InputAdornment>
                       ),
                     }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 3,
+                        backgroundColor: alpha(theme.customColors.text.primary, 0.02),
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: alpha(theme.customColors.primary.main, 0.5),
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: theme.customColors.primary.main,
+                          borderWidth: 2,
+                        },
+                      },
+                      '& .MuiInputLabel-root': {
+                        color: theme.customColors.text.secondary,
+                        '&.Mui-focused': {
+                          color: theme.customColors.primary.main,
+                        },
+                      },
+                      '& .MuiInputBase-input': {
+                        color: theme.customColors.text.primary,
+                      },
+                    }}
                   />
-                  <FormControl component="fieldset" sx={{ flex: 1 }} required>
-                    <FormLabel component="legend">Categoria</FormLabel>
+                </Box>
+
+                <FormControl component="fieldset">
+                  <FormLabel component="legend" sx={{ 
+                    color: theme.customColors.text.primary,
+                    fontWeight: 600,
+                    mb: 1
+                  }}>
+                    Categoria
+                  </FormLabel>
                   <RadioGroup
                     row
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
+                    sx={{
+                      '& .MuiFormControlLabel-root': {
+                        marginRight: 3,
+                        '& .MuiRadio-root': {
+                          color: alpha(theme.customColors.text.primary, 0.5),
+                          '&.Mui-checked': {
+                            color: theme.customColors.primary.main,
+                          },
+                        },
+                        '& .MuiFormControlLabel-label': {
+                          color: theme.customColors.text.primary,
+                          fontWeight: 500,
+                        },
+                      },
+                    }}
                   >
-                    <FormControlLabel value="masculino" control={<Radio />} label="Masculino" />
                     <FormControlLabel value="feminino" control={<Radio />} label="Feminino" />
-                    <FormControlLabel value="infantil" control={<Radio />} label="Infantil" />
+                    <FormControlLabel value="masculino" control={<Radio />} label="Masculino" />
+                    <FormControlLabel value="unissex" control={<Radio />} label="Unissex" />
                   </RadioGroup>
                 </FormControl>
-                </Box>
-                
+
                 <Box>
                   <input
                     accept="image/*"
@@ -394,95 +459,155 @@ const ProductForm: React.FC = () => {
                     onChange={handleImageChange}
                   />
                   <label htmlFor="image-upload">
-                  <Button
-                    variant="outlined"
+                    <Button
+                      variant="outlined"
                       component="span"
-                    startIcon={<CloudUpload />}
-                    sx={{
-                        width: '100%',
+                      startIcon={<CloudUpload />}
+                      fullWidth
+                      sx={{
                         py: 2,
-                        border: '2px dashed',
-                        borderColor: theme.palette.primary.main,
-                        color: theme.palette.primary.main,
-                      '&:hover': {
-                          borderColor: theme.palette.primary.dark,
-                          backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                      }
-                    }}
-                  >
-                      {image ? 'Imagem Selecionada' : 'Selecionar Imagem'}
-                  </Button>
-                  <Typography 
-                    variant="caption" 
-                    sx={{ 
-                      display: 'block', 
-                      mt: 1, 
-                      textAlign: 'center',
-                      color: theme.palette.text.secondary,
-                      fontSize: '0.75rem'
-                    }}
-                  >
-                    Formatos aceitos: JPG, PNG, GIF • Máximo: 5MB • Será redimensionada para 9:16
-                  </Typography>
+                        borderRadius: 3,
+                        border: `2px dashed ${alpha(theme.customColors.primary.main, 0.3)}`,
+                        color: theme.customColors.primary.main,
+                        backgroundColor: alpha(theme.customColors.primary.main, 0.05),
+                        '&:hover': {
+                          borderColor: theme.customColors.primary.main,
+                          backgroundColor: alpha(theme.customColors.primary.main, 0.1),
+                        },
+                      }}
+                    >
+                      {image ? 'Imagem Selecionada' : 'Upload de Imagem'}
+                    </Button>
                   </label>
-                  
                   {imagePreview && (
                     <Box sx={{ mt: 2, textAlign: 'center' }}>
                       <img
                         src={imagePreview}
                         alt="Preview"
                         style={{
-                          maxWidth: '200px',
-                          maxHeight: '200px',
-                          borderRadius: '8px',
-                          border: '2px solid',
-                          borderColor: theme.palette.primary.main
+                          maxWidth: '100%',
+                          maxHeight: 200,
+                          borderRadius: 8,
+                          border: `2px solid ${theme.customColors.border.primary}`
                         }}
                       />
-                      <Typography 
-                        variant="caption" 
-                        sx={{ 
-                          display: 'block', 
-                          mt: 1, 
-                          color: theme.palette.info.main,
-                          fontStyle: 'italic'
-                        }}
-                      >
-                        A imagem será automaticamente redimensionada para o formato 9:16
-                      </Typography>
                     </Box>
                   )}
-              </Box>
-              
-              <Button
-                type="submit"
-                variant="contained"
-                  size="large"
-                disabled={loading}
-                sx={{
-                    py: 2,
-                  fontSize: '1.1rem',
-                  fontWeight: 600,
-                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
-                  '&:hover': {
-                      background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
-                  },
-                  '&:disabled': {
-                      background: theme.palette.grey[300],
-                      color: theme.palette.grey[500]
-                  }
-                }}
-              >
-                  {loading ? (
-                    <CircularProgress size={24} color="inherit" />
-                  ) : (
-                    'Criar Produto'
-                  )}
-              </Button>
+                </Box>
+
+                {calculatedValues && (
+                  <Card sx={{ 
+                    background: alpha(theme.customColors.primary.main, 0.05),
+                    border: `1px solid ${alpha(theme.customColors.primary.main, 0.2)}`,
+                    borderRadius: 3
+                  }}>
+                    <CardContent>
+                      <Typography variant="h6" sx={{ 
+                        color: theme.customColors.text.primary,
+                        fontWeight: 700,
+                        mb: 2
+                      }}>
+                        Valores Calculados
+                      </Typography>
+                      <Stack spacing={1}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <Typography sx={{ color: theme.customColors.text.secondary }}>
+                            Preço de Venda:
+                          </Typography>
+                          <Typography sx={{ 
+                            color: theme.customColors.status.success,
+                            fontWeight: 700
+                          }}>
+                            R$ {calculatedValues.finalPrice}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <Typography sx={{ color: theme.customColors.text.secondary }}>
+                            Comissão (30%):
+                          </Typography>
+                          <Typography sx={{ 
+                            color: theme.customColors.status.warning,
+                            fontWeight: 700
+                          }}>
+                            R$ {calculatedValues.commissionAmount}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <Typography sx={{ color: theme.customColors.text.secondary }}>
+                            Lucro:
+                          </Typography>
+                          <Typography sx={{ 
+                            color: theme.customColors.status.info,
+                            fontWeight: 700
+                          }}>
+                            R$ {calculatedValues.profit}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                )}
+
+                <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    disabled={loading}
+                    startIcon={loading ? <CircularProgress size={20} /> : <ShoppingCart />}
+                    sx={{
+                      py: { xs: 1.5, sm: 2 },
+                      px: { xs: 3, sm: 4 },
+                      borderRadius: 3,
+                      fontWeight: 700,
+                      fontSize: { xs: '1rem', sm: '1.125rem' },
+                      background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
+                      color: theme.customColors.text.inverse,
+                      boxShadow: theme.customColors.shadow.secondary,
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      '&:hover': {
+                        transform: 'translateY(-2px) scale(1.02)',
+                        boxShadow: theme.customColors.shadow.primary,
+                        background: `linear-gradient(135deg, ${theme.customColors.primary.light} 0%, ${theme.customColors.primary.main} 100%)`,
+                      },
+                      '&:disabled': {
+                        background: alpha(theme.customColors.primary.main, 0.12),
+                        color: alpha(theme.customColors.primary.main, 0.38),
+                        transform: 'none',
+                        boxShadow: 'none',
+                      },
+                    }}
+                  >
+                    {loading ? 'Criando...' : 'Criar Produto'}
+                  </Button>
+                  
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    onClick={() => navigate('/admin/products')}
+                    sx={{
+                      py: { xs: 1.5, sm: 2 },
+                      px: { xs: 3, sm: 4 },
+                      borderRadius: 3,
+                      fontWeight: 700,
+                      fontSize: { xs: '1rem', sm: '1.125rem' },
+                      border: `2px solid ${alpha(theme.customColors.primary.main, 0.3)}`,
+                      color: theme.customColors.primary.main,
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      '&:hover': {
+                        borderColor: theme.customColors.primary.main,
+                        backgroundColor: alpha(theme.customColors.primary.main, 0.1),
+                        transform: 'translateY(-2px)',
+                      },
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                </Box>
               </Stack>
             </Box>
-          </Paper>
-        </Fade>
+        </Paper>
+      </Fade>
     </Box>
   );
 };

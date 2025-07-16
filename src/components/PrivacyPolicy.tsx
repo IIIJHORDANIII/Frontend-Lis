@@ -12,7 +12,9 @@ import {
   ListItemText,
   Chip,
   Paper,
-  Fade
+  Fade,
+  useTheme,
+  alpha
 } from '@mui/material';
 import {
   Security,
@@ -26,6 +28,8 @@ import {
 } from '@mui/icons-material';
 
 const PrivacyPolicy: React.FC = () => {
+  const theme = useTheme();
+  
   const sections = [
     {
       title: "Coleta de Informações",
@@ -101,22 +105,8 @@ const PrivacyPolicy: React.FC = () => {
       overflowX: 'hidden',
       position: 'relative',
       fontFamily: 'Poppins, Inter, Montserrat, Arial',
+      background: theme.customColors.background.gradient,
     }}>
-      {/* Subtle Gradient Background */}
-      <Box sx={{
-        position: 'absolute',
-        inset: 0,
-        zIndex: 0,
-        background: 'linear-gradient(135deg, #f7fafc 0%, #edf2f7 50%, #e2e8f0 100%)',
-        backgroundSize: '200% 200%',
-        animation: 'gradientMove 12s ease-in-out infinite',
-        '@keyframes gradientMove': {
-          '0%': { backgroundPosition: '0% 50%' },
-          '50%': { backgroundPosition: '100% 50%' },
-          '100%': { backgroundPosition: '0% 50%' },
-        },
-      }} />
-
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2, py: 6 }}>
         <Fade in timeout={800}>
           <Box>
@@ -124,16 +114,17 @@ const PrivacyPolicy: React.FC = () => {
             <Box sx={{ 
               mb: 6,
               p: 4,
-              background: 'linear-gradient(135deg, #2d3748 0%, #4a5568 100%)',
+              background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
               borderRadius: 4,
-              color: 'white',
+              color: theme.customColors.text.inverse,
               textAlign: 'center',
-              boxShadow: '0 8px 32px rgba(45, 55, 72, 0.15)',
+              boxShadow: theme.customColors.shadow.primary,
             }}>
               <Typography variant="h3" component="h1" sx={{ 
                 fontWeight: 800, 
                 mb: 2,
                 letterSpacing: '-0.02em',
+                fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem', lg: '3rem' },
               }}>
                 Política de Privacidade
               </Typography>
@@ -141,7 +132,8 @@ const PrivacyPolicy: React.FC = () => {
                 opacity: 0.9,
                 fontWeight: 400,
                 maxWidth: 600,
-                mx: 'auto'
+                mx: 'auto',
+                fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
               }}>
                 Protegemos seus dados com transparência e responsabilidade
               </Typography>
@@ -150,10 +142,10 @@ const PrivacyPolicy: React.FC = () => {
                 label="Última atualização: Janeiro 2024"
                 sx={{
                   mt: 3,
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  color: '#fff',
+                  backgroundColor: alpha(theme.customColors.text.inverse, 0.2),
+                  color: theme.customColors.text.inverse,
                   fontWeight: 600,
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  border: `1px solid ${alpha(theme.customColors.text.inverse, 0.3)}`,
                 }}
               />
             </Box>
@@ -161,36 +153,39 @@ const PrivacyPolicy: React.FC = () => {
             {/* Introduction */}
             <Card sx={{
               mb: 6,
-              background: 'rgba(255, 255, 255, 0.9)',
+              background: theme.customColors.surface.card,
               backdropFilter: 'blur(10px)',
               borderRadius: 4,
-              border: '1px solid rgba(255, 255, 255, 0.3)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+              border: `1px solid ${theme.customColors.border.primary}`,
+              boxShadow: theme.customColors.shadow.secondary,
             }}>
               <CardContent sx={{ p: 4 }}>
                 <Typography variant="h5" sx={{ 
-                  color: '#2d3748', 
+                  color: theme.customColors.text.primary, 
                   fontWeight: 700, 
                   mb: 3,
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 2
+                  gap: 2,
+                  fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem' },
                 }}>
-                  <Security sx={{ color: '#4a5568' }} />
+                  <Security sx={{ color: theme.customColors.text.secondary }} />
                   Nossa Compromisso com a Privacidade
                 </Typography>
                 <Typography variant="body1" sx={{ 
-                  color: '#718096', 
+                  color: theme.customColors.text.secondary, 
                   lineHeight: 1.8,
-                  mb: 3
+                  mb: 3,
+                  fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' },
                 }}>
                   Sua privacidade é fundamental para nós. Esta política descreve como coletamos, 
                   usamos e protegemos suas informações pessoais quando você utiliza nossa 
                   plataforma de gestão de estoque.
                 </Typography>
                 <Typography variant="body1" sx={{ 
-                  color: '#718096', 
-                  lineHeight: 1.8
+                  color: theme.customColors.text.secondary, 
+                  lineHeight: 1.8,
+                  fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' },
                 }}>
                   Ao usar nossos serviços, você concorda com a coleta e uso de informações 
                   de acordo com esta política. Seus dados são tratados com total transparência 
@@ -200,47 +195,52 @@ const PrivacyPolicy: React.FC = () => {
             </Card>
 
             {/* Sections */}
-            <Box sx={{ mb: 6 }}>
+            <Box sx={{ display: 'grid', gap: 4, gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' } }}>
               {sections.map((section, index) => (
-                <Fade in timeout={800 + index * 200} key={section.title}>
+                <Fade in timeout={800 + index * 100} key={section.title}>
                   <Card sx={{
-                    mb: 3,
-                    background: 'rgba(255, 255, 255, 0.9)',
+                    background: theme.customColors.surface.card,
                     backdropFilter: 'blur(10px)',
                     borderRadius: 4,
-                    border: '1px solid rgba(255, 255, 255, 0.3)',
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                    transition: 'transform 0.3s ease',
+                    border: `1px solid ${theme.customColors.border.primary}`,
+                    boxShadow: theme.customColors.shadow.secondary,
+                    transition: 'all 0.3s ease',
                     '&:hover': {
                       transform: 'translateY(-4px)',
-                      boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-                    }
+                      boxShadow: theme.customColors.shadow.primary,
+                    },
                   }}>
                     <CardContent sx={{ p: 4 }}>
-                      <Typography variant="h5" sx={{ 
-                        color: '#2d3748', 
+                      <Typography variant="h6" sx={{ 
+                        color: theme.customColors.text.primary, 
                         fontWeight: 700, 
                         mb: 3,
                         display: 'flex',
                         alignItems: 'center',
-                        gap: 2
+                        gap: 2,
+                        fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.375rem' },
                       }}>
-                        {section.icon}
+                        {React.cloneElement(section.icon, { 
+                          sx: { color: theme.customColors.primary.main } 
+                        })}
                         {section.title}
                       </Typography>
-                      <List sx={{ py: 0 }}>
+                      <List dense>
                         {section.content.map((item, itemIndex) => (
-                          <ListItem key={itemIndex} sx={{ px: 0, py: 1 }}>
-                            <ListItemIcon sx={{ minWidth: 40 }}>
-                              <CheckCircle sx={{ color: '#2d3748', fontSize: 20 }} />
+                          <ListItem key={itemIndex} sx={{ px: 0, py: 0.5 }}>
+                            <ListItemIcon sx={{ minWidth: 32 }}>
+                              <CheckCircle sx={{ 
+                                fontSize: 16, 
+                                color: theme.customColors.status.success 
+                              }} />
                             </ListItemIcon>
                             <ListItemText 
                               primary={item}
                               sx={{
                                 '& .MuiListItemText-primary': {
-                                  color: '#718096',
+                                  color: theme.customColors.text.secondary,
+                                  fontSize: { xs: '0.875rem', sm: '1rem' },
                                   lineHeight: 1.6,
-                                  fontSize: '0.95rem'
                                 }
                               }}
                             />
@@ -254,82 +254,80 @@ const PrivacyPolicy: React.FC = () => {
             </Box>
 
             {/* Contact Information */}
-            <Card sx={{
-              background: 'rgba(255, 255, 255, 0.9)',
-              backdropFilter: 'blur(10px)',
-              borderRadius: 4,
-              border: '1px solid rgba(255, 255, 255, 0.3)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-            }}>
-              <CardContent sx={{ p: 4 }}>
-                <Typography variant="h5" sx={{ 
-                  color: '#2d3748', 
-                  fontWeight: 700, 
-                  mb: 3,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 2
-                }}>
-                  <Info sx={{ color: '#4a5568' }} />
-                  Entre em Contato
-                </Typography>
-                <Typography variant="body1" sx={{ 
-                  color: '#718096', 
-                  mb: 3,
-                  lineHeight: 1.6
-                }}>
-                  Se você tiver dúvidas sobre esta política de privacidade ou sobre como 
-                  tratamos seus dados, entre em contato conosco:
-                </Typography>
-                
-                <Box sx={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
-                  gap: 3
-                }}>
-                  <Box sx={{ textAlign: 'center', p: 2 }}>
-                    <Typography variant="h6" sx={{ color: '#2d3748', fontWeight: 600, mb: 1 }}>
-                      Email
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#718096' }}>
-                      {contactInfo.email}
-                    </Typography>
+            <Fade in timeout={1200}>
+              <Card sx={{
+                mt: 6,
+                background: theme.customColors.surface.card,
+                backdropFilter: 'blur(10px)',
+                borderRadius: 4,
+                border: `1px solid ${theme.customColors.border.primary}`,
+                boxShadow: theme.customColors.shadow.secondary,
+              }}>
+                <CardContent sx={{ p: 4, textAlign: 'center' }}>
+                  <Typography variant="h5" sx={{ 
+                    color: theme.customColors.text.primary, 
+                    fontWeight: 700, 
+                    mb: 3,
+                    fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem' },
+                  }}>
+                    Entre em Contato
+                  </Typography>
+                  <Typography variant="body1" sx={{ 
+                    color: theme.customColors.text.secondary, 
+                    mb: 4,
+                    fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' },
+                  }}>
+                    Se você tiver dúvidas sobre esta política de privacidade, entre em contato conosco:
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 3, justifyContent: 'center' }}>
+                    <Chip
+                      label={`Email: ${contactInfo.email}`}
+                      sx={{
+                        backgroundColor: alpha(theme.customColors.primary.main, 0.1),
+                        color: theme.customColors.primary.main,
+                        fontWeight: 600,
+                      }}
+                    />
+                    <Chip
+                      label={`Telefone: ${contactInfo.phone}`}
+                      sx={{
+                        backgroundColor: alpha(theme.customColors.primary.main, 0.1),
+                        color: theme.customColors.primary.main,
+                        fontWeight: 600,
+                      }}
+                    />
+                    <Chip
+                      label={`Endereço: ${contactInfo.address}`}
+                      sx={{
+                        backgroundColor: alpha(theme.customColors.primary.main, 0.1),
+                        color: theme.customColors.primary.main,
+                        fontWeight: 600,
+                      }}
+                    />
                   </Box>
-                  <Box sx={{ textAlign: 'center', p: 2 }}>
-                    <Typography variant="h6" sx={{ color: '#2d3748', fontWeight: 600, mb: 1 }}>
-                      Telefone
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#718096' }}>
-                      {contactInfo.phone}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ textAlign: 'center', p: 2 }}>
-                    <Typography variant="h6" sx={{ color: '#2d3748', fontWeight: 600, mb: 1 }}>
-                      Endereço
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#718096' }}>
-                      {contactInfo.address}
-                    </Typography>
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Fade>
 
             {/* Footer Note */}
-            <Paper sx={{
-              mt: 4,
-              p: 3,
-              background: 'rgba(45, 55, 72, 0.05)',
-              borderRadius: 3,
-              border: '1px solid rgba(45, 55, 72, 0.1)',
-              textAlign: 'center'
-            }}>
-              <Typography variant="body2" sx={{ color: '#718096' }}>
-                Esta política de privacidade pode ser atualizada periodicamente. 
-                Recomendamos que você revise esta página regularmente para se manter 
-                informado sobre como protegemos suas informações.
-              </Typography>
-            </Paper>
+            <Fade in timeout={1400}>
+              <Box sx={{ 
+                mt: 4, 
+                p: 3, 
+                textAlign: 'center',
+                background: alpha(theme.customColors.text.primary, 0.02),
+                borderRadius: 3,
+                border: `1px solid ${theme.customColors.border.primary}`,
+              }}>
+                <Typography variant="body2" sx={{ 
+                  color: theme.customColors.text.secondary,
+                  fontSize: { xs: '0.875rem', sm: '1rem' },
+                }}>
+                  Esta política de privacidade pode ser atualizada periodicamente. 
+                  Recomendamos que você revise regularmente para se manter informado sobre como protegemos suas informações.
+                </Typography>
+              </Box>
+            </Fade>
           </Box>
         </Fade>
       </Container>

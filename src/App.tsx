@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, CssBaseline, Box, CircularProgress, Container, alpha, useTheme } from '@mui/material';
-import theme from './theme';
+import { Box, CircularProgress, Container, useTheme } from '@mui/material';
 import Header from './components/Header';
 import LandingPage from './components/LandingPage';
 import Login from './components/Login';
@@ -14,6 +13,7 @@ import CustomLists from './components/CustomLists';
 import Sales from './components/Sales';
 import SalesSummary from './components/SalesSummary';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import AdminStockLists from './components/AdminStockLists';
 import UserStockLists from './components/UserStockLists';
 import PrivacyPolicy from './components/PrivacyPolicy';
@@ -110,19 +110,19 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <Box sx={{ 
       minHeight: '100vh',
-      width: '100vw',
+      width: '100%',
       overflowX: 'hidden',
       display: 'flex',
       flexDirection: 'column',
       position: 'relative',
       fontFamily: 'Poppins, Inter, Montserrat, Arial',
     }}>
-      {/* Subtle Gradient Background */}
+      {/* Dynamic Gradient Background */}
       <Box sx={{
         position: 'fixed',
         inset: 0,
         zIndex: 0,
-        background: 'linear-gradient(135deg, #f7fafc 0%, #edf2f7 50%, #e2e8f0 100%)',
+        background: theme.customColors.background.gradient,
         backgroundSize: '200% 200%',
         animation: 'gradientMove 15s ease-in-out infinite',
         '@keyframes gradientMove': {
@@ -135,8 +135,7 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       {/* Content */}
       <Box sx={{ position: 'relative', zIndex: 2, flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Header />
-        <Container 
-          maxWidth="xl"
+        <Box 
           component="main" 
           sx={{ 
             flexGrow: 1,
@@ -161,10 +160,12 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               py: 8,
               pt: 28, // Increased for large screens
             },
+            width: '100%',
+            maxWidth: '100%',
           }}
         >
           {children}
-        </Container>
+        </Box>
       </Box>
     </Box>
   );
@@ -172,8 +173,7 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 const App: React.FC = () => {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+    <ThemeProvider>
       <AuthProvider>
         <Router>
           <AppContent />
