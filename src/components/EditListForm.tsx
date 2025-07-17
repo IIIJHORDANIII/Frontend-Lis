@@ -33,6 +33,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { getProducts, getAllUsers, getCustomListById, updateCustomList, addProductToList } from '../services/api';
 import { Product, CustomList, ProductWithQuantity } from '../types';
 import { useAuth } from '../contexts/AuthContext';
+import { useModalOpacity } from '../hooks/useModalOpacity';
 
 type User = {
   _id: string;
@@ -215,6 +216,9 @@ const EditListForm: React.FC = () => {
   const [selectedProductForAdd, setSelectedProductForAdd] = useState<Product | null>(null);
   const [addQuantity, setAddQuantity] = useState(1);
   const [addQuantityDialogOpen, setAddQuantityDialogOpen] = useState(false);
+
+  // Aplicar correção de opacidade dos modais
+  useModalOpacity(addProductDialogOpen || addQuantityDialogOpen);
 
   const handleAddProduct = (productId: string) => {
     const product = products.find(p => p._id === productId);
@@ -732,14 +736,38 @@ const EditListForm: React.FC = () => {
         onClose={() => setAddProductDialogOpen(false)}
         maxWidth="md"
         fullWidth
+        BackdropProps={{
+          sx: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'none',
+          }
+        }}
         PaperProps={{
           sx: {
             borderRadius: 4,
-            background: theme.customColors.surface.card,
-            backdropFilter: 'blur(20px)',
+            background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
             border: `1.5px solid ${theme.customColors.border.primary}`,
             boxShadow: theme.customColors.shadow.primary,
+            opacity: 1,
+            '& .MuiDialogContent-root': {
+              background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+            },
+            '& .MuiDialogTitle-root': {
+              background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+            },
+            '& .MuiDialogActions-root': {
+              background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+            },
           },
+        }}
+        sx={{
+          '& .MuiDialog-paper': {
+            background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+            backdropFilter: 'none !important',
+          },
+          '& .MuiBackdrop-root': {
+            backdropFilter: 'none !important',
+          }
         }}
       >
         <DialogTitle sx={{ color: theme.customColors.text.primary, fontWeight: 600 }}>
@@ -855,14 +883,38 @@ const EditListForm: React.FC = () => {
         onClose={() => setAddQuantityDialogOpen(false)}
         maxWidth="sm"
         fullWidth
+        BackdropProps={{
+          sx: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'none',
+          }
+        }}
         PaperProps={{
           sx: {
             borderRadius: 4,
-            background: theme.customColors.surface.card,
-            backdropFilter: 'blur(20px)',
+            background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
             border: `1.5px solid ${theme.customColors.border.primary}`,
             boxShadow: theme.customColors.shadow.primary,
+            opacity: 1,
+            '& .MuiDialogContent-root': {
+              background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+            },
+            '& .MuiDialogTitle-root': {
+              background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+            },
+            '& .MuiDialogActions-root': {
+              background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+            },
           },
+        }}
+        sx={{
+          '& .MuiDialog-paper': {
+            background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+            backdropFilter: 'none !important',
+          },
+          '& .MuiBackdrop-root': {
+            backdropFilter: 'none !important',
+          }
         }}
       >
         <DialogTitle sx={{ color: theme.customColors.text.primary, fontWeight: 600 }}>

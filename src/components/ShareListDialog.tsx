@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { api } from '../services/api';
+import { useModalOpacity } from '../hooks/useModalOpacity';
 
 interface ShareListDialogProps {
   open: boolean;
@@ -37,6 +38,9 @@ const ShareListDialog: React.FC<ShareListDialogProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [sharedUsers, setSharedUsers] = useState<string[]>([]);
+
+  // Aplicar correção de opacidade do modal
+  useModalOpacity(open);
 
   const handleShare = async () => {
     if (!listId) return;
@@ -77,18 +81,42 @@ const ShareListDialog: React.FC<ShareListDialogProps> = ({
       onClose={onClose} 
       maxWidth="sm" 
       fullWidth
+      BackdropProps={{
+        sx: {
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          backdropFilter: 'none',
+        }
+      }}
       PaperProps={{
         sx: {
           borderRadius: 4,
-          background: theme.customColors.surface.card,
-          backdropFilter: 'blur(20px)',
+          background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
           border: `1.5px solid ${theme.customColors.border.primary}`,
           boxShadow: theme.customColors.shadow.primary,
+          opacity: 1,
+          '& .MuiDialogContent-root': {
+            background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+          },
+          '& .MuiDialogTitle-root': {
+            background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+          },
+          '& .MuiDialogActions-root': {
+            background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+          },
           '@media (min-width: 1920px)': {
             maxWidth: 700,
             minWidth: 500,
             margin: '32px auto',
           },
+        }
+      }}
+      sx={{
+        '& .MuiDialog-paper': {
+          background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+          backdropFilter: 'none !important',
+        },
+        '& .MuiBackdrop-root': {
+          backdropFilter: 'none !important',
         }
       }}
     >

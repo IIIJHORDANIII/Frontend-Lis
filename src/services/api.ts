@@ -181,10 +181,26 @@ export const deleteProduct = async (productId: string): Promise<void> => {
 
 export const updateProduct = async (
   productId: string,
-  productData: { name: string; description: string; costPrice: number; quantity: number }
+  productData: { name: string; description: string; costPrice: number; quantity: number; image?: string }
 ): Promise<Product> => {
   try {
     const response = await api.put<Product>(`/products/${productId}`, productData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateProductWithImage = async (
+  productId: string,
+  productData: FormData
+): Promise<Product> => {
+  try {
+    const response = await api.put<Product>(`/products/${productId}`, productData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     return response.data;
   } catch (error) {
     throw error;

@@ -183,6 +183,24 @@ const commonTheme = {
         },
       },
     },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          backdropFilter: 'none',
+          background: 'inherit',
+        },
+        root: {
+          backdropFilter: 'none',
+        },
+      },
+    },
+    MuiBackdrop: {
+      styleOverrides: {
+        root: {
+          backdropFilter: 'none',
+        },
+      },
+    },
   },
 };
 

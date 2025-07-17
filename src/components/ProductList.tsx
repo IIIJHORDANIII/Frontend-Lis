@@ -25,7 +25,9 @@ import {
   Stack,
   Divider,
   Paper,
-  useMediaQuery
+  useMediaQuery,
+  Input,
+  Snackbar
 } from '@mui/material';
 
 import {
@@ -36,12 +38,15 @@ import {
   Inventory as StockIcon,
   Visibility as ViewIcon,
   Add as AddIcon,
-  AccountBalance as ProfitIcon
+  AccountBalance as ProfitIcon,
+  CloudUpload as UploadIcon,
+  Delete as RemoveIcon
 } from '@mui/icons-material';
-import { getProducts, deleteProduct, updateProduct } from '../services/api';
+import { getProducts, deleteProduct, updateProduct, updateProductWithImage } from '../services/api';
 import { Product } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import { useModalOpacity } from '../hooks/useModalOpacity';
 
 const DEFAULT_IMAGE = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
 
@@ -68,6 +73,13 @@ const ProductList: React.FC = () => {
   });
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const [uploading, setUploading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+
+  // Aplicar correção de opacidade dos modais
+  useModalOpacity(deleteModalOpen || editModalOpen);
 
   const loadProducts = async () => {
     try {
@@ -147,26 +159,84 @@ const ProductList: React.FC = () => {
     });
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validar tamanho do arquivo (máximo 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setEditError('A imagem deve ter no máximo 5MB');
+        return;
+      }
+      
+      // Validar tipo do arquivo
+      if (!file.type.startsWith('image/')) {
+        setEditError('Por favor, selecione apenas arquivos de imagem');
+        return;
+      }
+      
+      setSelectedImage(file);
+      setEditError(''); // Limpar erro anterior
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setSelectedImage(null);
+    setImagePreview('');
+    setEditFormData({
+      ...editFormData,
+      image: ''
+    });
+  };
+
   const handleEditSubmit = async () => {
     if (!editingProductId) return;
 
     try {
-      const updatedProduct = {
-        name: editFormData.name,
-        description: editFormData.description,
-        costPrice: parseFloat(editFormData.costPrice),
-        quantity: selectedProduct?.quantity ?? 0
-      };
+      setUploading(true);
+      setEditError('');
 
-      await updateProduct(editingProductId, updatedProduct);
+      if (selectedImage) {
+        // Upload com imagem
+        const formData = new FormData();
+        formData.append('name', editFormData.name);
+        formData.append('description', editFormData.description);
+        formData.append('costPrice', editFormData.costPrice);
+        formData.append('quantity', (selectedProduct?.quantity ?? 0).toString());
+        formData.append('image', selectedImage);
+
+        await updateProductWithImage(editingProductId, formData);
+      } else {
+        // Upload sem imagem (apenas dados)
+        const updatedProduct = {
+          name: editFormData.name,
+          description: editFormData.description,
+          costPrice: parseFloat(editFormData.costPrice),
+          quantity: selectedProduct?.quantity ?? 0,
+          image: editFormData.image // Manter URL da imagem se não foi selecionada nova
+        };
+
+        await updateProduct(editingProductId, updatedProduct);
+      }
+
       await loadProducts();
       setEditModalOpen(false);
+      setSelectedImage(null);
+      setImagePreview('');
+      setSuccessMessage('Produto atualizado com sucesso!');
+      setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err) {
       if (axios.isAxiosError(err)) {
         setEditError(err.response?.data?.message || 'Failed to update product');
       } else {
         setEditError('Failed to update product');
       }
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -174,6 +244,8 @@ const ProductList: React.FC = () => {
     setEditModalOpen(false);
     setSelectedProduct(null);
     setEditError('');
+    setSelectedImage(null);
+    setImagePreview('');
   };
 
   // Cálculos dos totais
@@ -593,14 +665,39 @@ const ProductList: React.FC = () => {
       <Dialog
         open={deleteModalOpen}
         onClose={handleDeleteCancel}
+        BackdropProps={{
+          sx: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'none',
+          }
+        }}
         PaperProps={{
           sx: {
             borderRadius: { xs: 2, sm: 3 },
-            background: '#fff',
+            background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+            opacity: 1,
+            '& .MuiDialogContent-root': {
+              background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+            },
+            '& .MuiDialogTitle-root': {
+              background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+            },
+            '& .MuiDialogActions-root': {
+              background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+            },
             '@media (min-width: 1920px)': {
               maxWidth: 500,
               minWidth: 400,
             }
+          }
+        }}
+        sx={{
+          '& .MuiDialog-paper': {
+            background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+            backdropFilter: 'none !important',
+          },
+          '& .MuiBackdrop-root': {
+            backdropFilter: 'none !important',
           }
         }}
       >
@@ -647,14 +744,39 @@ const ProductList: React.FC = () => {
         onClose={handleEditCancel}
         maxWidth="sm"
         fullWidth
+        BackdropProps={{
+          sx: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'none',
+          }
+        }}
         PaperProps={{
           sx: {
             borderRadius: { xs: 2, sm: 3 },
-            background: '#fff',
+            background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+            opacity: 1,
+            '& .MuiDialogContent-root': {
+              background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+            },
+            '& .MuiDialogTitle-root': {
+              background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+            },
+            '& .MuiDialogActions-root': {
+              background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+            },
             '@media (min-width: 1920px)': {
               maxWidth: 600,
               minWidth: 500,
             }
+          }
+        }}
+        sx={{
+          '& .MuiDialog-paper': {
+            background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
+            backdropFilter: 'none !important',
+          },
+          '& .MuiBackdrop-root': {
+            backdropFilter: 'none !important',
           }
         }}
       >
@@ -687,13 +809,88 @@ const ProductList: React.FC = () => {
             inputProps={{ step: "0.01" }}
             sx={{ mb: 2 }}
           />
-          <TextField
-            name="image"
-            label="URL da Imagem"
-            value={editFormData.image}
-            onChange={handleEditChange}
-            sx={{ mb: 2 }}
-          />
+          
+          {/* Upload de Imagem */}
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="subtitle2" sx={{ mb: 1, color: theme.customColors.text.primary }}>
+              Imagem do Produto
+            </Typography>
+            
+            {/* Preview da imagem atual ou selecionada */}
+            {(imagePreview || editFormData.image) && (
+              <Box sx={{ mb: 2, textAlign: 'center' }}>
+                <img
+                  src={imagePreview || editFormData.image}
+                  alt="Preview"
+                  style={{
+                    maxWidth: '200px',
+                    maxHeight: '200px',
+                    objectFit: 'cover',
+                    borderRadius: '8px',
+                    border: `2px solid ${theme.customColors.border.primary}`
+                  }}
+                />
+              </Box>
+            )}
+            
+            {/* Botão de upload */}
+            <Button
+              variant="outlined"
+              component="label"
+              fullWidth
+              startIcon={<UploadIcon />}
+              sx={{
+                mb: 1,
+                borderRadius: 2,
+                borderColor: theme.customColors.border.primary,
+                color: theme.customColors.text.primary,
+                '&:hover': {
+                  borderColor: theme.customColors.primary.main,
+                  color: theme.customColors.primary.main,
+                }
+              }}
+            >
+              {selectedImage ? `${selectedImage.name}` : 'Selecionar Nova Imagem'}
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+            </Button>
+            
+            {/* Botão para remover imagem */}
+            {(selectedImage || editFormData.image) && (
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={handleRemoveImage}
+                fullWidth
+                startIcon={<RemoveIcon />}
+                sx={{
+                  borderRadius: 2,
+                  borderColor: theme.customColors.status.error,
+                  color: theme.customColors.status.error,
+                  '&:hover': {
+                    backgroundColor: alpha(theme.customColors.status.error, 0.1),
+                  }
+                }}
+              >
+                Remover Imagem
+              </Button>
+            )}
+            
+            {/* Campo para URL da imagem (fallback) */}
+            <TextField
+              name="image"
+              label="URL da Imagem (opcional)"
+              value={editFormData.image}
+              onChange={handleEditChange}
+              placeholder="Ou cole uma URL de imagem aqui"
+              sx={{ mt: 1 }}
+              helperText="Use o botão acima para fazer upload ou cole uma URL"
+            />
+          </Box>
           {editError && (
             <Alert severity="error" sx={{ mb: 2 }}>
               {editError}
@@ -713,15 +910,43 @@ const ProductList: React.FC = () => {
           <Button 
             onClick={handleEditSubmit} 
             variant="contained"
+            disabled={uploading}
             sx={{ 
               fontWeight: 600,
               fontSize: { xs: '0.75rem', sm: '0.8125rem', md: '0.875rem' },
             }}
           >
-            Salvar
+            {uploading ? (
+              <>
+                <CircularProgress size={16} sx={{ mr: 1, color: 'inherit' }} />
+                Salvando...
+              </>
+            ) : (
+              'Salvar'
+            )}
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Snackbar para mensagens de sucesso */}
+      <Snackbar
+        open={!!successMessage}
+        autoHideDuration={3000}
+        onClose={() => setSuccessMessage('')}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={() => setSuccessMessage('')} 
+          severity="success" 
+          sx={{ 
+            width: '100%',
+            borderRadius: 2,
+            fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+          }}
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
