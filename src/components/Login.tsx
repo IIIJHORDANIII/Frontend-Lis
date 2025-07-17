@@ -47,11 +47,13 @@ const Login: React.FC = () => {
 
     try {
       const response = await apiLogin(email, password);
+      console.log('Login response:', response);
       if (response.token && response.user) {
         const userWithId = {
           ...response.user,
           id: response.user._id
         };
+        console.log('User with ID:', userWithId);
         login(response.token, userWithId);
         if (userWithId.isAdmin) {
           navigate('/admin/products');

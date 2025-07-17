@@ -37,13 +37,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const token = localStorage.getItem('token');
     const userStr = localStorage.getItem('user');
     
+    console.log('AuthContext useEffect - token:', token);
+    console.log('AuthContext useEffect - userStr:', userStr);
+    
     if (token && userStr) {
       try {
         const userData = JSON.parse(userStr);
+        console.log('AuthContext useEffect - userData:', userData);
         setIsAuthenticated(true);
         setIsAdmin(userData.isAdmin);
         setUser(userData);
       } catch (error) {
+        console.error('AuthContext useEffect - error parsing user:', error);
         // Handle error silently
       }
     }
@@ -51,6 +56,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = (token: string, userData: User) => {
+    console.log('AuthContext login - token:', token);
+    console.log('AuthContext login - userData:', userData);
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(userData));
     setIsAuthenticated(true);

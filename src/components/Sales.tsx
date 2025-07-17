@@ -67,6 +67,9 @@ const Sales: React.FC = () => {
   const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
+    console.log('Sales useEffect - isAuthenticated:', isAuthenticated);
+    console.log('Sales useEffect - user:', user);
+    
     if (!isAuthenticated) {
       navigate('/login');
       return;
@@ -75,14 +78,51 @@ const Sales: React.FC = () => {
     const loadProducts = async () => {
       try {
         setLoading(true);
-        const response = await api.get('/products');
+        console.log('Carregando produtos...');
+        console.log('Token no localStorage:', localStorage.getItem('token'));
         
-        const productsWithCommission = response.data.map((product: Product) => ({
-          ...product,
-          commission: product.commission || 0
-        }));
-        
-        setProducts(productsWithCommission);
+        // Para usuários não-admin, carregar produtos das listas custom compartilhadas
+        if (!isAdmin) {
+          console.log('Usuário não é admin, carregando listas custom...');
+          const customListsResponse = await api.get('/custom-lists');
+          console.log('Listas custom do usuário:', customListsResponse.data);
+          
+          // Extrair todos os produtos das listas custom
+          const allProducts: Product[] = [];
+          customListsResponse.data.forEach((list: any) => {
+            if (list.products && Array.isArray(list.products)) {
+              list.products.forEach((item: any) => {
+                // Verificar se o item tem produto completo ou apenas ID
+                if (item.product && typeof item.product === 'object') {
+                  // Usar a quantidade da lista custom ao invés da quantidade original do produto
+                  const productWithCustomQuantity = {
+                    ...item.product,
+                    quantity: item.quantity, // Quantidade da lista custom
+                    commission: (item.product.finalPrice || 0) * 0.3
+                  };
+                  allProducts.push(productWithCustomQuantity);
+                }
+              });
+            }
+          });
+          
+          console.log('Produtos das listas custom:', allProducts);
+          setProducts(allProducts);
+        } else {
+          // Para admins, carregar todos os produtos
+          console.log('Usuário é admin, carregando todos os produtos...');
+          const response = await api.get('/products');
+          console.log('Resposta da API:', response.data);
+          console.log('Quantidade de produtos:', response.data.length);
+          
+          const productsWithCommission = response.data.map((product: Product) => ({
+            ...product,
+            commission: product.commission || 0
+          }));
+          
+          console.log('Produtos processados:', productsWithCommission);
+          setProducts(productsWithCommission);
+        }
         
         // Carregar vendas reais do backend ao invés do localStorage
         if (user?._id) {
@@ -282,6 +322,9 @@ const Sales: React.FC = () => {
   const filteredProducts = selectedCategory === 'all' 
     ? products 
     : products.filter(product => product.category === selectedCategory);
+  
+  console.log('Produtos filtrados:', filteredProducts);
+  console.log('Categoria selecionada:', selectedCategory);
 
   // New summary calculations
   const totalSales = Object.values(sales).reduce((sum, quantity) => sum + quantity, 0) * (products.find(p => p._id === Object.keys(sales)[0])?.finalPrice || 0);
