@@ -131,11 +131,11 @@ const CustomListDisplay: React.FC = () => {
                         }
                         secondary={
                           <Box>
-                            <Typography sx={{ 
-                              color: theme.customColors.status.success,
-                              fontWeight: 700,
-                              fontSize: { xs: '0.875rem', sm: '1rem' },
-                            }}>
+                          <Typography sx={{ 
+                            color: theme.customColors.status.success,
+                            fontWeight: 700,
+                            fontSize: { xs: '0.875rem', sm: '1rem' },
+                          }}>
                               R$ {(productItem.product?.finalPrice || 0).toFixed(2)}
                             </Typography>
                             <Typography sx={{ 
@@ -143,7 +143,7 @@ const CustomListDisplay: React.FC = () => {
                               fontSize: { xs: '0.75rem', sm: '0.875rem' },
                             }}>
                               Quantidade: {productItem.quantity}
-                            </Typography>
+                          </Typography>
                           </Box>
                         }
                       />

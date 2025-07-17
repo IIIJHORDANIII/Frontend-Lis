@@ -176,6 +176,11 @@ const ProductList: React.FC = () => {
     setEditError('');
   };
 
+  // Cálculos dos totais
+  const totalValorVenda = products.reduce((sum, p) => sum + (p.finalPrice || 0), 0);
+  const totalVendasEstoque = products.reduce((sum, p) => sum + ((p.finalPrice || 0) * (p.quantity || 0)), 0);
+  const totalLucroEstoque = products.reduce((sum, p) => sum + ((p.profit || 0) * (p.quantity || 0)), 0);
+
   if (!isAuthenticated) {
     return null;
   }
@@ -213,13 +218,7 @@ const ProductList: React.FC = () => {
             },
           }}
         >
-          <Box sx={{ 
-            display: 'flex', 
-            flexDirection: { xs: 'column', sm: 'row' }, 
-            justifyContent: 'space-between', 
-            alignItems: { xs: 'stretch', sm: 'center' }, 
-            gap: { xs: 3, sm: 0 } 
-          }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
             <Box>
               <Typography
                 variant="h3"
@@ -290,6 +289,53 @@ const ProductList: React.FC = () => {
               </Button>
             )}
           </Box>
+          {/* Card de totais - horizontal e centralizado */}
+          {isAdmin && (
+            <Box sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
+              gap: 4,
+              background: theme.palette.mode === 'dark' ? alpha(theme.palette.primary.main, 0.08) : alpha(theme.palette.primary.light, 0.12),
+              border: `1.5px solid ${theme.palette.primary.main}`,
+              borderRadius: 3,
+              boxShadow: theme.customColors.shadow.secondary,
+              p: 3,
+              mt: 2,
+              alignSelf: 'center',
+              width: 'fit-content',
+              mx: 'auto',
+              justifyContent: 'center',
+            }}>
+              <Box sx={{ textAlign: 'center', minWidth: { xs: 'auto', sm: 200 } }}>
+                <Typography variant="subtitle2" sx={{ color: theme.palette.primary.main, fontWeight: 700, fontSize: '0.875rem', mb: 0.5 }}>
+                  Valor total de venda
+                </Typography>
+                <Typography variant="h6" sx={{ color: theme.customColors.status.success, fontWeight: 800 }}>
+                  R$ {totalValorVenda.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                </Typography>
+              </Box>
+              <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', sm: 'block' } }} />
+              <Divider sx={{ display: { xs: 'block', sm: 'none' } }} />
+              <Box sx={{ textAlign: 'center', minWidth: { xs: 'auto', sm: 200 } }}>
+                <Typography variant="subtitle2" sx={{ color: theme.palette.primary.main, fontWeight: 700, fontSize: '0.875rem', mb: 0.5 }}>
+                  Valor total se vender todo o estoque
+                </Typography>
+                <Typography variant="h6" sx={{ color: theme.customColors.status.info, fontWeight: 800 }}>
+                  R$ {totalVendasEstoque.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                </Typography>
+              </Box>
+              <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', sm: 'block' } }} />
+              <Divider sx={{ display: { xs: 'block', sm: 'none' } }} />
+              <Box sx={{ textAlign: 'center', minWidth: { xs: 'auto', sm: 200 } }}>
+                <Typography variant="subtitle2" sx={{ color: theme.palette.primary.main, fontWeight: 700, fontSize: '0.875rem', mb: 0.5 }}>
+                  Lucro total se vender todo o estoque
+                </Typography>
+                <Typography variant="h6" sx={{ color: theme.customColors.status.warning, fontWeight: 800 }}>
+                  R$ {totalLucroEstoque.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                </Typography>
+              </Box>
+            </Box>
+          )}
         </Paper>
       </Fade>
       

@@ -397,12 +397,12 @@ const CustomLists: React.FC = () => {
                                       }}>
                                         {formatPrice(productItem.product?.finalPrice || 0)}
                                       </Typography>
-                                      <Typography variant="body2" sx={{ 
-                                        color: theme.customColors.text.primary,
-                                        fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.85rem' },
-                                      }}>
+                                        <Typography variant="body2" sx={{ 
+                                          color: theme.customColors.text.primary,
+                                          fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.85rem' },
+                                        }}>
                                         Qtd: {productItem.quantity}
-                                      </Typography>
+                                        </Typography>
                                     </Box>
                                   }
                                 />
