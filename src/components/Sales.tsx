@@ -29,7 +29,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  TextField
 } from '@mui/material';
 import { Add, Remove, Inventory as StockIcon, Description as PdfIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -68,6 +69,7 @@ const Sales: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [condicionalModalOpen, setCondicionalModalOpen] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<{[key: string]: number}>({});
+  const [recipientName, setRecipientName] = useState<string>("");
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isExtraSmallMobile = useMediaQuery(theme.breakpoints.down('xs'));
@@ -388,11 +390,13 @@ const Sales: React.FC = () => {
   const handleOpenCondicional = () => {
     setCondicionalModalOpen(true);
     setSelectedProducts({});
+    setRecipientName("");
   };
 
   const handleCloseCondicional = () => {
     setCondicionalModalOpen(false);
     setSelectedProducts({});
+    setRecipientName("");
   };
 
   const handleProductSelection = (productId: string, quantity: number) => {
@@ -408,7 +412,11 @@ const Sales: React.FC = () => {
     }
   };
 
-  const generateCondicionalPDF = () => {
+  const generateCondicionalPDF = async () => {
+    if (!recipientName.trim()) {
+      setError('Por favor, informe o nome do cliente.');
+      return;
+    }
     const selectedItems = Object.entries(selectedProducts)
       .map(([productId, quantity]) => {
         const product = products.find(p => p._id === productId);
@@ -421,11 +429,14 @@ const Sales: React.FC = () => {
       return;
     }
 
+    // Pega nome da vendedora
+    const sellerName = user?.name || user?.email || 'Vendedora';
+
     // Criar conteúdo do PDF
     const pdfContent = {
-      title: 'CONDICIONAL',
       date: new Date().toLocaleDateString('pt-BR'),
-      customer: user?.email || 'Cliente',
+      seller: sellerName,
+      client: recipientName,
       items: selectedItems.map((item: any) => ({
         name: item.name,
         quantity: item.selectedQuantity,
@@ -438,32 +449,80 @@ const Sales: React.FC = () => {
     // Gerar PDF usando jsPDF
     const doc = new jsPDF();
 
-    // Título
-    doc.setFontSize(20);
-    doc.text('CONDICIONAL', 105, 20, { align: 'center' });
+    // Adicionar logo centralizada como background
+    const logoUrl = '/logo10.png';
+    const getBase64FromUrl = async (url: string) => {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Logo não encontrada');
+        const blob = await response.blob();
+        return new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      } catch (err) {
+        throw new Error('Não foi possível carregar a logo para o PDF.');
+      }
+    };
+    let logoBase64 = '';
+    try {
+      logoBase64 = await getBase64FromUrl(logoUrl);
+    } catch (err) {
+      setError('Não foi possível carregar a logo para o PDF.');
+      return;
+    }
 
-    // Data e cliente
+    // Calcular proporção real da imagem
+    const getImageDimensions = (base64: string): Promise<{ width: number; height: number }> => {
+      return new Promise((resolve) => {
+        const img = new window.Image();
+        img.onload = () => {
+          resolve({ width: img.width, height: img.height });
+        };
+        img.src = base64;
+      });
+    };
+    const { width: imgWidth, height: imgHeight } = await getImageDimensions(logoBase64);
+    const aspectRatio = imgWidth / imgHeight;
+
+    // Dimensões da página
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    // Largura da logo: 70% da largura da página
+    const logoWidth = pageWidth * 0.7;
+    // Altura proporcional
+    const logoHeight = logoWidth / aspectRatio;
+    // Centralizar
+    const logoX = (pageWidth - logoWidth) / 2;
+    const logoY = (pageHeight - logoHeight) / 2;
+
+    // Desenhar logo sem distorção
+    doc.addImage(logoBase64, 'PNG', logoX, logoY, logoWidth, logoHeight);
+
+    // Conteúdo do PDF
     doc.setFontSize(12);
-    doc.text(`Data: ${pdfContent.date}`, 20, 40);
-    doc.text(`Cliente: ${pdfContent.customer}`, 20, 50);
+    doc.text(`Data: ${pdfContent.date}`, 20, 45);
+    doc.text(`Vendedora: ${pdfContent.seller}`, 20, 55);
+    doc.text(`Cliente: ${pdfContent.client}`, 20, 65);
 
     // Cabeçalho da tabela
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
-    doc.text('Produto', 20, 70);
-    doc.text('Qtd', 120, 70);
-    doc.text('Preço', 140, 70);
-    doc.text('Total', 170, 70);
+    doc.text('Produto', 20, 85);
+    doc.text('Qtd', 120, 85);
+    doc.text('Preço', 140, 85);
+    doc.text('Total', 170, 85);
 
     // Itens
     doc.setFont('helvetica', 'normal');
-    let yPosition = 80;
+    let yPosition = 95;
     pdfContent.items.forEach((item: any) => {
       if (yPosition > 250) {
         doc.addPage();
         yPosition = 20;
       }
-      
       doc.text(item.name.substring(0, 30), 20, yPosition);
       doc.text(item.quantity.toString(), 120, yPosition);
       doc.text(`R$ ${item.price.toFixed(2)}`, 140, yPosition);
@@ -476,10 +535,11 @@ const Sales: React.FC = () => {
     doc.text(`TOTAL: R$ ${pdfContent.total.toFixed(2)}`, 20, yPosition + 10);
 
     // Salvar PDF
-    doc.save(`condicional_${pdfContent.customer}_${pdfContent.date.replace(/\//g, '-')}.pdf`);
+    doc.save(`condicional_${pdfContent.client}_${pdfContent.date.replace(/\//g, '-')}.pdf`);
     
     setCondicionalModalOpen(false);
     setSelectedProducts({});
+    setRecipientName("");
     setSuccess('Condicional gerado com sucesso!');
   };
 
@@ -1240,6 +1300,18 @@ const Sales: React.FC = () => {
           p: { xs: 2, sm: 3, md: 4 },
           background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
         }}>
+          <Box sx={{ mb: 3 }}>
+            <TextField
+              label="Nome do cliente"
+              value={recipientName}
+              onChange={e => setRecipientName(e.target.value)}
+              fullWidth
+              required
+              variant="outlined"
+              autoFocus
+              sx={{ mb: 2 }}
+            />
+          </Box>
           <Box sx={{
             display: 'grid',
             gridTemplateColumns: {
@@ -1372,7 +1444,7 @@ const Sales: React.FC = () => {
             onClick={generateCondicionalPDF}
             variant="contained"
             startIcon={<PdfIcon />}
-            disabled={Object.keys(selectedProducts).length === 0}
+            disabled={Object.keys(selectedProducts).length === 0 || !recipientName.trim()}
             sx={{
               borderRadius: 2,
               px: 3,

@@ -215,34 +215,22 @@ const Header: React.FC = () => {
             alignItems: 'center',
             gap: { xs: 2, sm: 3, md: 4, lg: 6 },
           }}>
-            {/* Logo Section */}
-            <Box sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'flex-start',
-              minWidth: 0,
-              flexShrink: 0,
-            }}>
-              <Box
-                component="img"
-                src="/Logo Vector.png"
-                alt="Lis System Logo"
-                onClick={() => navigate('/')}
-                sx={{
-                  height: { xs: 32, sm: 36, md: 40, lg: 44, xl: 48 },
-                  width: 'auto',
-                  maxWidth: { xs: 80, sm: 90, md: 100, lg: 110, xl: 120 },
-                  objectFit: 'contain',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  filter: theme.palette.mode === 'dark' ? 'brightness(0) invert(1)' : 'brightness(0)',
-                  '&:hover': {
-                    transform: 'scale(1.05)',
-                    opacity: 0.8
-                  }
-                }}
-              />
-            </Box>
+            <img
+              src={theme.palette.mode === 'dark' ? '/Logo Vector.png' : '/Logo Vector.svg'}
+              alt="Logo"
+              style={{
+                height: 48,
+                width: 'auto',
+                marginLeft: 16,
+                padding: 0,
+                boxShadow: 'none',
+                objectFit: 'contain',
+                cursor: 'pointer',
+                background: 'transparent'
+              }}
+              onClick={() => navigate('/')}
+              onError={e => { e.currentTarget.style.display = 'none'; }}
+            />
 
             {/* Navigation Menu - Desktop */}
             {!isMobile && isAuthenticated && (
