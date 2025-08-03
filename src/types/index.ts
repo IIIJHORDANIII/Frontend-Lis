@@ -17,11 +17,16 @@ export interface Product {
   category: string;
   image: string;
   quantity?: number;
+  reservedStock?: number;
+  availableStock?: number;
+  isFullyReserved?: boolean;
 }
 
 export interface ProductWithQuantity {
   productId: string;
   quantity: number;
+  availableQuantity?: number;
+  displayAvailableQuantity?: number;
   product?: Product;
 }
 
@@ -34,6 +39,8 @@ export interface CustomList {
   isPublic: boolean;
   sharedWith: User[];
   createdBy?: User;
+  isOutOfStock?: boolean;
+  isOutOfStockForAdmin?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -57,4 +64,28 @@ export interface Sale {
   total: number;
   commission: number;
   createdAt: string;
+}
+
+export interface CondicionalProduct {
+  productId: string;
+  quantity: number;
+  price: number;
+  product?: Product;
+}
+
+export interface Condicional {
+  _id: string;
+  sellerId: string;
+  clientName: string;
+  products: CondicionalProduct[];
+  totalOriginal: number;
+  discount: number;
+  totalWithDiscount: number;
+  status: 'aberto' | 'fechado' | 'excluido';
+  notes: string;
+  closedAt?: string;
+  saleId?: string;
+  sale?: Sale;
+  createdAt: string;
+  updatedAt: string;
 }

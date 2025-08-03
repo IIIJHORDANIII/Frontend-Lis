@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { Product, AuthResponse, CustomList } from '../types';
+import { Product, AuthResponse, CustomList, Condicional } from '../types';
 
-const API_URL = 'https://backend-lis-production-fc50.up.railway.app/api';
+const API_URL = 'http://localhost:3001/api';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -294,6 +294,15 @@ export const deleteCustomList = async (listId: string): Promise<void> => {
   }
 };
 
+export const initializeCustomListStock = async (): Promise<{ message: string; updatedCount: number }> => {
+  try {
+    const response = await api.post('/custom-lists/initialize-stock');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const deleteUserSales = async (userId: string): Promise<{ deletedCount: number; message: string }> => {
   try {
     const response = await api.delete(`/sales/user/${userId}`);
@@ -309,6 +318,76 @@ export const deleteUserSales = async (userId: string): Promise<{ deletedCount: n
         throw new Error('Sem resposta do servidor. Verifique se o servidor está rodando.');
       }
     }
+    throw error;
+  }
+};
+
+// ===== FUNÇÕES DE CONDICIONAIS =====
+
+export const createCondicional = async (condicionalData: {
+  clientName: string;
+  products: Array<{ productId: string; quantity: number; price: number }>;
+  discount?: number;
+  notes?: string;
+}): Promise<Condicional> => {
+  try {
+    const response = await api.post<Condicional>('/condicionais', condicionalData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getCondicionais = async (status?: 'aberto' | 'fechado' | 'excluido'): Promise<Condicional[]> => {
+  try {
+    const params = status ? { status } : {};
+    const response = await api.get<Condicional[]>('/condicionais', { params });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getCondicionalById = async (id: string): Promise<Condicional> => {
+  try {
+    const response = await api.get<Condicional>(`/condicionais/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateCondicional = async (
+  id: string,
+  condicionalData: {
+    clientName?: string;
+    products?: Array<{ productId: string; quantity: number; price: number }>;
+    discount?: number;
+    notes?: string;
+  }
+): Promise<Condicional> => {
+  try {
+    const response = await api.put<Condicional>(`/condicionais/${id}`, condicionalData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const closeCondicional = async (id: string): Promise<{ message: string; condicional: Condicional; sale: any }> => {
+  try {
+    const response = await api.post(`/condicionais/${id}/close`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteCondicional = async (id: string): Promise<{ message: string }> => {
+  try {
+    const response = await api.delete(`/condicionais/${id}`);
+    return response.data;
+  } catch (error) {
     throw error;
   }
 };

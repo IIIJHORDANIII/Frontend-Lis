@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Box, CircularProgress, Container, useTheme } from '@mui/material';
+import { Box, Container, useTheme } from '@mui/material';
 import Header from './components/Header';
 import LandingPage from './components/LandingPage';
 import Login from './components/Login';
@@ -16,21 +16,15 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import AdminStockLists from './components/AdminStockLists';
 import PrivacyPolicy from './components/PrivacyPolicy';
+import Condicionais from './components/Condicionais';
+import LoadingSpinner from './components/LoadingSpinner';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
   
   if (isLoading) {
-    return (
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        minHeight: '50vh' 
-      }}>
-        <CircularProgress size={60} />
-      </Box>
-    );
+    return <LoadingSpinner message="Carregando..." size="large" />;
   }
   
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
@@ -40,16 +34,7 @@ const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isAdmin, isLoading } = useAuth();
   
   if (isLoading) {
-    return (
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        minHeight: '50vh' 
-      }}>
-        <CircularProgress size={60} />
-      </Box>
-    );
+    return <LoadingSpinner message="Carregando..." size="large" />;
   }
   
   return isAuthenticated && isAdmin ? <>{children}</> : <Navigate to="/sales" />;
@@ -72,14 +57,7 @@ const AppContent: React.FC = () => {
       {/* Protected Routes - Com Header */}
       <Route path="/dashboard" element={
         isLoading ? (
-          <Box sx={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center', 
-            minHeight: '50vh' 
-          }}>
-            <CircularProgress size={60} />
-          </Box>
+          <LoadingSpinner message="Carregando..." size="large" />
         ) : (
           <Navigate to={isAuthenticated ? (isAdmin ? "/admin/products" : "/sales") : "/login"} />
         )
@@ -97,6 +75,7 @@ const AppContent: React.FC = () => {
       <Route path="/custom-lists/new" element={<AdminRoute><AppLayout><CustomListForm /></AppLayout></AdminRoute>} />
       <Route path="/edit-list/:id" element={<AdminRoute><AppLayout><EditListForm /></AppLayout></AdminRoute>} />
       <Route path="/sales" element={<ProtectedRoute><AppLayout><Sales /></AppLayout></ProtectedRoute>} />
+      <Route path="/condicionais" element={<ProtectedRoute><AppLayout><Condicionais /></AppLayout></ProtectedRoute>} />
     </Routes>
   );
 };
@@ -120,9 +99,11 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         position: 'fixed',
         inset: 0,
         zIndex: 0,
-        background: theme.customColors.background.gradient,
-        backgroundSize: '200% 200%',
-        animation: 'gradientMove 15s ease-in-out infinite',
+        background: theme.palette.mode === 'dark'
+          ? 'linear-gradient(135deg, #1a202c 0%, #2d3748 25%, #4a5568 50%, #2d3748 75%, #1a202c 100%)'
+          : 'linear-gradient(135deg, #f7fafc 0%, #edf2f7 25%, #e2e8f0 50%, #edf2f7 75%, #f7fafc 100%)',
+        backgroundSize: '400% 400%',
+        animation: 'gradientMove 20s ease-in-out infinite',
         '@keyframes gradientMove': {
           '0%': { backgroundPosition: '0% 50%' },
           '50%': { backgroundPosition: '100% 50%' },
@@ -137,26 +118,26 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           component="main" 
           sx={{ 
             flexGrow: 1,
-            py: { xs: 2, sm: 3, md: 4, lg: 5, xl: 6 },
+            py: { xs: 3, sm: 4, md: 5, lg: 6, xl: 7 },
             px: { xs: 2, sm: 3, md: 4, lg: 5, xl: 6 },
             position: 'relative',
             zIndex: 1,
             pt: { 
-              xs: 18, // 56px header + 112px padding (increased significantly)
-              sm: 20, // 64px header + 112px padding (increased significantly)
-              md: 22, // 72px header + 112px padding (increased significantly)
-              lg: 24, // 80px header + 112px padding (increased significantly)
-              xl: 26  // 80px header + 120px padding (increased significantly)
+              xs: 20, // 64px header + 112px padding
+              sm: 22, // 72px header + 112px padding
+              md: 24, // 80px header + 112px padding
+              lg: 26, // 88px header + 112px padding
+              xl: 28  // 88px header + 120px padding
             },
             '@media (max-width: 600px)': {
-              px: 1.5,
-              py: 1.5,
-              pt: 16, // Increased significantly for mobile
+              px: 2,
+              py: 2,
+              pt: 18, // Adjusted for mobile
             },
             '@media (min-width: 1920px)': {
               px: 8,
               py: 8,
-              pt: 28, // Increased for large screens
+              pt: 30, // Adjusted for large screens
             },
             width: '100%',
             maxWidth: '100%',
@@ -174,7 +155,9 @@ const App: React.FC = () => {
     <ThemeProvider>
       <AuthProvider>
         <Router>
-          <AppContent />
+          <ErrorBoundary>
+            <AppContent />
+          </ErrorBoundary>
         </Router>
       </AuthProvider>
     </ThemeProvider>

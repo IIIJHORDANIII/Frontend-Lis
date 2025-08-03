@@ -20,15 +20,18 @@ import {
   Fade,
   useTheme,
   useMediaQuery,
-  alpha
+  alpha,
+  Button,
+  Snackbar
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PersonIcon from '@mui/icons-material/Person';
 import PublicIcon from '@mui/icons-material/Public';
 import LockIcon from '@mui/icons-material/Lock';
 import EditIcon from '@mui/icons-material/Edit';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import { useNavigate } from 'react-router-dom';
-import { getCustomLists } from '../services/api';
+import { getCustomLists, initializeCustomListStock } from '../services/api';
 import { Product, CustomList } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -41,6 +44,8 @@ const AdminStockLists: React.FC = () => {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [initializingStock, setInitializingStock] = useState<boolean>(false);
   const { isAdmin } = useAuth();
 
   useEffect(() => {
@@ -72,6 +77,24 @@ const AdminStockLists: React.FC = () => {
 
   const handleEditList = (listId: string) => {
     navigate(`/edit-list/${listId}`);
+  };
+
+  const handleInitializeStock = async () => {
+    try {
+      setInitializingStock(true);
+      setError(null);
+      
+      const result = await initializeCustomListStock();
+      setSuccess(result.message);
+      
+      // Recarregar listas após inicializar estoque
+      const data = await getCustomLists();
+      setLists(data);
+    } catch (err) {
+      setError('Erro ao inicializar estoque. Tente novamente.');
+    } finally {
+      setInitializingStock(false);
+    }
   };
 
   if (loading) {
@@ -163,6 +186,31 @@ const AdminStockLists: React.FC = () => {
               >
                 Gerencie todas as listas de produtos do sistema
               </Typography>
+              
+              {/* Botão para inicializar estoque */}
+              <Button
+                variant="contained"
+                startIcon={<InventoryIcon />}
+                onClick={handleInitializeStock}
+                disabled={initializingStock}
+                sx={{
+                  mt: 2,
+                  px: 3,
+                  py: 1.5,
+                  borderRadius: 2,
+                  background: theme.customColors.primary.main,
+                  color: theme.customColors.primary.contrastText,
+                  '&:hover': {
+                    background: theme.customColors.primary.dark,
+                  },
+                  '&:disabled': {
+                    background: alpha(theme.customColors.text.primary, 0.1),
+                    color: alpha(theme.customColors.text.primary, 0.5),
+                  }
+                }}
+              >
+                {initializingStock ? 'Inicializando...' : 'Inicializar Estoque'}
+              </Button>
             </Box>
           </Paper>
         </Fade>
@@ -281,6 +329,7 @@ const AdminStockLists: React.FC = () => {
                             fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem' },
                           }}
                         />
+
                       </Box>
                     </Box>
                     <Tooltip title="Editar Lista">
@@ -430,6 +479,17 @@ const AdminStockLists: React.FC = () => {
                                 >
                                   Quantidade na lista: {productItem.quantity}
                                 </Typography>
+                                <Typography
+                                  variant="caption"
+                                  sx={{
+                                    color: theme.customColors.text.secondary,
+                                    fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                                    display: 'block',
+                                    mt: 0.5,
+                                  }}
+                                >
+                                  Estoque disponível: {productItem.displayAvailableQuantity !== undefined ? productItem.displayAvailableQuantity : (productItem.availableQuantity || productItem.quantity)}
+                                </Typography>
                                 {productItem.product?.quantity !== undefined && (
                                   <Typography
                                     variant="caption"
@@ -440,7 +500,7 @@ const AdminStockLists: React.FC = () => {
                                       mt: 0.5,
                                     }}
                                   >
-                                    Estoque disponível: {productItem.product.quantity}
+                                    Estoque geral: {productItem.product.quantity}
                                   </Typography>
                                 )}
                               </CardContent>
@@ -468,6 +528,30 @@ const AdminStockLists: React.FC = () => {
           ))}
         </Box>
       </Container>
+      
+      {/* Snackbar para mensagens de sucesso */}
+      <Snackbar
+        open={!!success}
+        autoHideDuration={6000}
+        onClose={() => setSuccess(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert 
+          severity="success" 
+          onClose={() => setSuccess(null)}
+          sx={{ 
+            borderRadius: 2,
+            background: alpha(theme.customColors.status.success, 0.1),
+            border: `1px solid ${alpha(theme.customColors.status.success, 0.3)}`,
+            color: theme.customColors.status.success,
+            '& .MuiAlert-icon': {
+              fontSize: '1.5rem'
+            }
+          }}
+        >
+          {success}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

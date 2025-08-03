@@ -67,7 +67,7 @@ const CreateAdmin: React.FC = () => {
         justifyContent: 'center',
         position: 'relative',
         fontFamily: 'Poppins, Inter, Montserrat, Arial',
-        background: theme.customColors.background.gradient,
+
       }}
     >
       <Box sx={{

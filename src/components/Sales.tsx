@@ -35,9 +35,10 @@ import {
 import { Add, Remove, Inventory as StockIcon, Description as PdfIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { api } from '../services/api';
+import { api, createCondicional } from '../services/api';
 import SalesSummary from './SalesSummary';
 import { jsPDF } from 'jspdf';
+import QRCode from 'qrcode';
 
 interface Product {
   _id: string;
@@ -412,6 +413,69 @@ const Sales: React.FC = () => {
     }
   };
 
+  const generatePixPayload = (value: number, pixKey: string, beneficiaryName: string, city: string, description: string = '') => {
+    // Formatar valor com 2 casas decimais
+    const formattedValue = value.toFixed(2);
+    
+    // Campo 26 - Dados do PIX
+    const gui = '0014BR.GOV.BCB.PIX';
+    const key = `01${pixKey.length.toString().padStart(2, '0')}${pixKey}`;
+    const campo26 = `${gui}${key}`;
+    
+    // Montar payload
+    let payload = '';
+    payload += '000201'; // 00: Payload Format Indicator
+    payload += '010212'; // 01: Point of Initiation Method
+    payload += `26${campo26.length.toString().padStart(2, '0')}${campo26}`; // 26: Merchant Account Information
+    payload += '52040000'; // 52: Merchant Category Code
+    payload += '5303986'; // 53: Transaction Currency
+    payload += `54${formattedValue.length.toString().padStart(2, '0')}${formattedValue}`; // 54: Transaction Amount
+    payload += '5802BR'; // 58: Country Code
+    
+    // 59: Merchant Name (máximo 25 caracteres)
+    const merchantName = beneficiaryName.substring(0, 25);
+    payload += `59${merchantName.length.toString().padStart(2, '0')}${merchantName}`;
+    
+    // 60: Merchant City (removido)
+    // const merchantCity = city.substring(0, 15);
+    // payload += `60${merchantCity.length.toString().padStart(2, '0')}${merchantCity}`;
+    
+    // 62: Additional Data Field Template (opcional)
+    if (description && description.trim()) {
+      const txId = description.substring(0, 25);
+      const campo62 = `05${txId.length.toString().padStart(2, '0')}${txId}`;
+      payload += `62${campo62.length.toString().padStart(2, '0')}${campo62}`;
+    }
+    
+    // 63: CRC16
+    payload += '6304';
+    const crc = calculateCRC16(payload);
+    payload += crc;
+    
+    return payload;
+  };
+
+  const calculateCRC16 = (data: string): string => {
+    // Implementação CRC16-CCITT (padrão PIX)
+    const polynomial = 0x1021;
+    let crc = 0xFFFF;
+    
+    for (let i = 0; i < data.length; i++) {
+      crc ^= (data.charCodeAt(i) << 8);
+      
+      for (let j = 0; j < 8; j++) {
+        if (crc & 0x8000) {
+          crc = (crc << 1) ^ polynomial;
+        } else {
+          crc = crc << 1;
+        }
+        crc &= 0xFFFF;
+      }
+    }
+    
+    return crc.toString(16).toUpperCase().padStart(4, '0');
+  };
+
   const generateCondicionalPDF = async () => {
     if (!recipientName.trim()) {
       setError('Por favor, informe o nome do cliente.');
@@ -433,6 +497,10 @@ const Sales: React.FC = () => {
     const sellerName = user?.name || user?.email || 'Vendedora';
 
     // Criar conteúdo do PDF
+    const totalOriginal = selectedItems.reduce((sum: number, item: any) => sum + (item.finalPrice * item.selectedQuantity), 0);
+    const discount = totalOriginal * 0.05; // 5% de desconto
+    const totalWithDiscount = totalOriginal - discount;
+
     const pdfContent = {
       date: new Date().toLocaleDateString('pt-BR'),
       seller: sellerName,
@@ -443,7 +511,9 @@ const Sales: React.FC = () => {
         price: item.finalPrice,
         total: item.finalPrice * item.selectedQuantity
       })),
-      total: selectedItems.reduce((sum: number, item: any) => sum + (item.finalPrice * item.selectedQuantity), 0)
+      totalOriginal,
+      discount,
+      totalWithDiscount
     };
 
     // Gerar PDF usando jsPDF
@@ -519,7 +589,7 @@ const Sales: React.FC = () => {
     doc.setFont('helvetica', 'normal');
     let yPosition = 95;
     pdfContent.items.forEach((item: any) => {
-      if (yPosition > 250) {
+      if (yPosition > 220) { // Reduzido para dar espaço ao PIX
         doc.addPage();
         yPosition = 20;
       }
@@ -530,9 +600,77 @@ const Sales: React.FC = () => {
       yPosition += 10;
     });
 
-    // Total
+    // Totais
+    yPosition += 10;
     doc.setFont('helvetica', 'bold');
-    doc.text(`TOTAL: R$ ${pdfContent.total.toFixed(2)}`, 20, yPosition + 10);
+    doc.text(`SUBTOTAL: R$ ${pdfContent.totalOriginal.toFixed(2)}`, 20, yPosition);
+    yPosition += 10;
+    doc.setFont('helvetica', 'normal');
+    doc.text(`DESCONTO PIX (5%): R$ ${pdfContent.discount.toFixed(2)}`, 20, yPosition);
+    yPosition += 10;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text(`TOTAL COM DESCONTO: R$ ${pdfContent.totalWithDiscount.toFixed(2)}`, 20, yPosition);
+
+    // Gerar QR Code PIX
+    yPosition += 20;
+    const pixPayload = generatePixPayload(
+      pdfContent.totalWithDiscount,
+      'araujonuneslisandra@gmail.com',
+      'Lis Modas',
+      'Ampére',
+      `Condicional ${pdfContent.client}`
+    );
+
+    console.log('Payload PIX gerado:', pixPayload);
+
+    try {
+      const qrCodeDataUrl = await QRCode.toDataURL(pixPayload, {
+        width: 150,
+        margin: 1,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      });
+
+      // Adicionar QR Code centralizado
+      const qrSize = 50;
+      const qrX = (pageWidth - qrSize) / 2;
+      doc.addImage(qrCodeDataUrl, 'PNG', qrX, yPosition, qrSize, qrSize);
+
+      // Texto explicativo
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      const textY = yPosition + qrSize + 10;
+      doc.text('Pague via PIX e ganhe 5% de desconto!', pageWidth / 2, textY, { align: 'center' });
+      doc.text('Aponte a câmera do seu celular para o QR Code', pageWidth / 2, textY + 8, { align: 'center' });
+    } catch (error) {
+      console.error('Erro ao gerar QR Code:', error);
+      doc.setFont('helvetica', 'italic');
+      doc.setFontSize(10);
+      doc.text('QR Code PIX não pôde ser gerado', pageWidth / 2, yPosition, { align: 'center' });
+    }
+
+    // Salvar condicional no servidor
+    try {
+      const condicionalData = {
+        clientName: pdfContent.client,
+        products: selectedItems.map((item: any) => ({
+          productId: item._id,
+          quantity: item.selectedQuantity,
+          price: item.finalPrice
+        })),
+        discount: pdfContent.discount,
+        notes: `Condicional gerado em ${pdfContent.date}`
+      };
+
+      await createCondicional(condicionalData);
+    } catch (error) {
+      console.error('Erro ao salvar condicional no servidor:', error);
+      setError('Condicional gerado, mas houve erro ao salvar no servidor');
+      return;
+    }
 
     // Salvar PDF
     doc.save(`condicional_${pdfContent.client}_${pdfContent.date.replace(/\//g, '-')}.pdf`);
@@ -540,7 +678,7 @@ const Sales: React.FC = () => {
     setCondicionalModalOpen(false);
     setSelectedProducts({});
     setRecipientName("");
-    setSuccess('Condicional gerado com sucesso!');
+    setSuccess('Condicional gerado e salvo com sucesso!');
   };
 
   return (

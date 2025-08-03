@@ -52,20 +52,36 @@ const UserStockLists: React.FC = () => {
     fetchLists();
   }, []);
 
-  // Extrair todos os produtos de todas as listas
-  const allProducts = lists.reduce((products: Product[], list) => {
+  // Extrair todos os produtos de todas as listas com informações de estoque
+  const allProductsWithStock = lists.reduce((products: any[], list) => {
     if (list.products) {
-      // Converter ProductWithQuantity para Product
-      const productList = list.products.map(item => item.product).filter(Boolean) as Product[];
+      const productList = list.products.map(item => ({
+        ...item.product,
+        availableQuantity: item.availableQuantity || item.quantity,
+        listQuantity: item.quantity
+      })).filter(Boolean);
       return [...products, ...productList];
     }
     return products;
   }, []);
 
-  // Remover produtos duplicados baseado no _id
-  const uniqueProducts = allProducts.filter((product: Product, index: number, self: Product[]) => 
-    index === self.findIndex((p: Product) => p._id === product._id)
-  );
+  // Agrupar produtos por ID e somar estoque disponível
+  const productStockMap = new Map();
+  allProductsWithStock.forEach(product => {
+    if (productStockMap.has(product._id)) {
+      const existing = productStockMap.get(product._id);
+      existing.availableQuantity += product.availableQuantity || 0;
+      existing.listQuantity += product.listQuantity || 0;
+    } else {
+      productStockMap.set(product._id, {
+        ...product,
+        availableQuantity: product.availableQuantity || 0,
+        listQuantity: product.listQuantity || 0
+      });
+    }
+  });
+
+  const uniqueProducts = Array.from(productStockMap.values());
 
   // Filtrar produtos por categoria
   const filteredProducts = selectedCategory === 'all' 
@@ -365,15 +381,16 @@ const UserStockLists: React.FC = () => {
               <Card
                 sx={{
                   background: theme.customColors.surface.card,
-                  border: `1.5px solid ${theme.customColors.border.primary}`,
+                  border: `1.5px solid ${(product.availableQuantity || 0) === 0 ? theme.customColors.status.error : theme.customColors.border.primary}`,
                   borderRadius: 4,
                   overflow: 'hidden',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   boxShadow: theme.customColors.shadow.secondary,
+                  opacity: (product.availableQuantity || 0) === 0 ? 0.6 : 1,
                   '&:hover': {
                     boxShadow: theme.customColors.shadow.primary,
-                    border: `2px solid ${theme.customColors.primary.main}`,
-                    transform: 'translateY(-8px) scale(1.03)',
+                    border: `2px solid ${(product.availableQuantity || 0) === 0 ? theme.customColors.status.error : theme.customColors.primary.main}`,
+                    transform: (product.availableQuantity || 0) === 0 ? 'none' : 'translateY(-8px) scale(1.03)',
                   },
                   p: { xs: 2, sm: 2.5, md: 3, lg: 3.5, xl: 4 },
                   minHeight: { xs: '320px', sm: '360px', md: '400px', lg: '440px', xl: '480px' },
@@ -448,7 +465,7 @@ const UserStockLists: React.FC = () => {
                     </Typography>
                   </Box>
 
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
                     <Chip
                       label={product.category}
                       size="small"
@@ -459,11 +476,23 @@ const UserStockLists: React.FC = () => {
                         fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem', lg: '0.9rem' }
                       }}
                     />
+                    {(product.availableQuantity || 0) === 0 && (
+                      <Chip
+                        label="ESGOTADO"
+                        size="small"
+                        sx={{
+                          background: alpha(theme.customColors.status.error, 0.1),
+                          color: theme.customColors.status.error,
+                          fontWeight: 'bold',
+                          fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem', lg: '0.9rem' }
+                        }}
+                      />
+                    )}
                     <Typography variant="body2" color="text.secondary" sx={{ 
                       fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem', lg: '1rem' },
                       fontWeight: 600,
                     }}>
-                      Estoque: {product.quantity || 0}
+                      Disponível: {product.availableQuantity || 0}
                     </Typography>
                   </Box>
                 </CardContent>

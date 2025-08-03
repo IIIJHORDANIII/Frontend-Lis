@@ -102,14 +102,6 @@ const Register: React.FC = () => {
         justifyContent: 'center',
         position: 'relative',
         fontFamily: 'Poppins, Inter, Montserrat, Arial',
-        background: theme.customColors.background.gradient,
-        backgroundSize: '200% 200%',
-        animation: 'gradientMove 15s ease-in-out infinite',
-        '@keyframes gradientMove': {
-          '0%': { backgroundPosition: '0% 50%' },
-          '50%': { backgroundPosition: '100% 50%' },
-          '100%': { backgroundPosition: '0% 50%' },
-        },
       }}
     >
       <Box sx={{

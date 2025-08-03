@@ -179,7 +179,7 @@ const CustomListForm: React.FC = () => {
         justifyContent: 'center',
         position: 'relative',
         fontFamily: 'Poppins, Inter, Montserrat, Arial',
-        background: theme.customColors.background.gradient,
+
       }}
     >
       <Container maxWidth="md" sx={{ zIndex: 1 }}>

@@ -292,21 +292,8 @@ const EditListForm: React.FC = () => {
         justifyContent: 'center',
         position: 'relative',
         fontFamily: 'Poppins, Inter, Montserrat, Arial',
-        background: theme.customColors.background.gradient,
       }}
     >
-      {/* Subtle Gradient Background */}
-      <Box
-        sx={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: theme.customColors.background.gradient,
-          zIndex: -1,
-        }}
-      />
 
       <Container maxWidth="md" sx={{ zIndex: 1 }}>
         <Paper

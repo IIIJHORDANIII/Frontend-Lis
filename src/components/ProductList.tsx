@@ -456,12 +456,20 @@ const ProductList: React.FC = () => {
           mx: 'auto',
           width: '100%',
         }}>
-          {products.map((product) => (
-            <Fade in key={product._id} timeout={400}>
+          {products.map((product, index) => (
+            <Fade 
+              in 
+              key={product._id} 
+              timeout={400}
+              style={{ 
+                animationDelay: `${index * 100}ms`,
+                animationFillMode: 'both'
+              }}
+            >
               <Card
                 sx={{
                   background: theme.customColors.surface.card,
-                  border: `1.5px solid ${theme.customColors.border.primary}`,
+                  border: `1.5px solid ${isAdmin && product.isFullyReserved ? theme.customColors.status.error : theme.customColors.border.primary}`,
                   borderRadius: 4,
                   overflow: 'hidden',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -469,10 +477,11 @@ const ProductList: React.FC = () => {
                     ? theme.customColors.shadow.primary
                     : theme.customColors.shadow.secondary,
                   transform: hoveredCard === product._id ? 'translateY(-8px) scale(1.02)' : 'translateY(0) scale(1)',
+                  opacity: isAdmin && product.isFullyReserved ? 0.7 : 1,
                   '&:hover': {
                     boxShadow: theme.customColors.shadow.primary,
-                    border: `2px solid ${theme.customColors.primary.main}`,
-                    transform: 'translateY(-8px) scale(1.03)',
+                    border: `2px solid ${isAdmin && product.isFullyReserved ? theme.customColors.status.error : theme.customColors.primary.main}`,
+                    transform: isAdmin && product.isFullyReserved ? 'none' : 'translateY(-8px) scale(1.03)',
                   },
                   p: { xs: 2, sm: 2.5, md: 3, lg: 3.5, xl: 4 },
                   minHeight: { xs: '320px', sm: '360px', md: '400px', lg: '440px', xl: '480px' },
@@ -567,6 +576,16 @@ const ProductList: React.FC = () => {
                           R$ {product.profit?.toFixed(2) || '0.00'}
                         </Typography>
                       </Box>
+                      {product.reservedStock !== undefined && (
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' } }}>
+                            Reservado:
+                          </Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 600, color: theme.customColors.status.warning, fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' } }}>
+                            {product.reservedStock} un.
+                          </Typography>
+                        </Box>
+                      )}
                     </Stack>
                   ) : (
                     // Usuário padrão vê apenas comissão e preço final
@@ -589,7 +608,7 @@ const ProductList: React.FC = () => {
                       </Box>
                     </Stack>
                   )}
-                  <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
                     <Chip
                       label={product.category}
                       size="small"
@@ -600,10 +619,22 @@ const ProductList: React.FC = () => {
                         fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem', lg: '0.9rem' }
                       }}
                     />
+                    {isAdmin && product.isFullyReserved && (
+                      <Chip
+                        label="ESGOTADO"
+                        size="small"
+                        sx={{
+                          background: alpha(theme.customColors.status.error, 0.1),
+                          color: theme.customColors.status.error,
+                          fontWeight: 'bold',
+                          fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem', lg: '0.9rem' }
+                        }}
+                      />
+                    )}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                       <StockIcon sx={{ fontSize: { xs: 16, sm: 18, md: 20 }, color: theme.customColors.text.secondary }} />
                       <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem', lg: '1rem' } }}>
-                        {product.quantity || 0}
+                        {isAdmin && product.availableStock !== undefined ? product.availableStock : (product.quantity || 0)}
                       </Typography>
                     </Box>
                   </Box>

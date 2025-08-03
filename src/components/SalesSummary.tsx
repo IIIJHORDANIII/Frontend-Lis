@@ -66,6 +66,7 @@ const SalesSummary: React.FC = () => {
         
         // Garantir que os dados estejam no formato correto
         const formattedSales = response.data.map((sale: any) => {
+          
           // Agrupar produtos iguais
           const groupedProducts = sale.products.reduce((acc: any, product: any) => {
             const key = product.productId;
@@ -74,12 +75,12 @@ const SalesSummary: React.FC = () => {
                 productId: product.productId,
                 name: product.name,
                 quantity: 0,
-                price: product.finalPrice,
+                price: product.price, // Usar price da API
                 subtotal: 0
               };
             }
             acc[key].quantity += product.quantity;
-            acc[key].subtotal += product.quantity * product.finalPrice;
+            acc[key].subtotal += product.quantity * product.price; // Usar price da API
             return acc;
           }, {});
 
@@ -406,35 +407,66 @@ const SalesSummary: React.FC = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {group.sales.flatMap(sale => sale.products).map((product, productIndex) => (
-                    <TableRow key={productIndex}>
-                      <TableCell sx={{ 
-                        color: theme.customColors.text.primary,
-                        fontSize: { xs: '0.875rem', sm: '1rem' },
-                      }}>
-                        {product.name}
-                      </TableCell>
-                      <TableCell sx={{ 
-                        color: theme.customColors.text.secondary,
-                        fontSize: { xs: '0.875rem', sm: '1rem' },
-                      }}>
-                        {product.quantity}
-                      </TableCell>
-                      <TableCell sx={{ 
-                        color: theme.customColors.text.secondary,
-                        fontSize: { xs: '0.875rem', sm: '1rem' },
-                      }}>
-                        {formatCurrency(product.price)}
-                      </TableCell>
-                      <TableCell sx={{ 
-                        color: theme.customColors.status.success,
-                        fontWeight: 600,
-                        fontSize: { xs: '0.875rem', sm: '1rem' },
-                      }}>
-                        {formatCurrency(product.subtotal)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {(() => {
+                    // Agrupar produtos por nome e somar quantidades
+                    const groupedProducts = group.sales.reduce((acc: any, sale) => {
+                      sale.products.forEach((product: any) => {
+                        if (!acc[product.name]) {
+                          acc[product.name] = {
+                            name: product.name,
+                            quantity: 0,
+                            price: product.price || 0,
+                            subtotal: 0
+                          };
+                        }
+                        acc[product.name].quantity += product.quantity || 0;
+                        // Usar o preço do produto mais recente (último encontrado)
+                        if (product.price && product.price > 0) {
+                          acc[product.name].price = product.price;
+                        }
+                      });
+                      return acc;
+                    }, {});
+
+                    // Recalcular subtotais baseado na quantidade final e preço unitário
+                    Object.values(groupedProducts).forEach((product: any) => {
+                      product.subtotal = (product.quantity || 0) * (product.price || 0);
+                    });
+
+                    // Filtrar produtos com quantidade > 0 e ordenar por nome
+                    return Object.values(groupedProducts)
+                      .filter((product: any) => product.quantity > 0)
+                      .sort((a: any, b: any) => a.name.localeCompare(b.name))
+                      .map((product: any, productIndex: number) => (
+                        <TableRow key={productIndex}>
+                          <TableCell sx={{ 
+                            color: theme.customColors.text.primary,
+                            fontSize: { xs: '0.875rem', sm: '1rem' },
+                          }}>
+                            {product.name}
+                          </TableCell>
+                          <TableCell sx={{ 
+                            color: theme.customColors.text.secondary,
+                            fontSize: { xs: '0.875rem', sm: '1rem' },
+                          }}>
+                            {product.quantity}
+                          </TableCell>
+                          <TableCell sx={{ 
+                            color: theme.customColors.text.secondary,
+                            fontSize: { xs: '0.875rem', sm: '1rem' },
+                          }}>
+                            {formatCurrency(product.price)}
+                          </TableCell>
+                          <TableCell sx={{ 
+                            color: theme.customColors.status.success,
+                            fontWeight: 600,
+                            fontSize: { xs: '0.875rem', sm: '1rem' },
+                          }}>
+                            {formatCurrency(product.subtotal)}
+                          </TableCell>
+                        </TableRow>
+                      ));
+                  })()}
                 </TableBody>
               </Table>
             </TableContainer>

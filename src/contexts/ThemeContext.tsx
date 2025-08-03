@@ -1,15 +1,12 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import { lightTheme, darkTheme } from '../theme';
 
-type ThemeMode = 'light' | 'dark' | 'system';
-
 interface ThemeContextType {
-  themeMode: ThemeMode;
-  isDark: boolean;
+  isDarkMode: boolean;
   toggleTheme: () => void;
-  setThemeMode: (mode: ThemeMode) => void;
+  setTheme: (isDark: boolean) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -23,92 +20,69 @@ export const useTheme = () => {
 };
 
 interface ThemeProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [themeMode, setThemeMode] = useState<ThemeMode>('system');
-  const [isDark, setIsDark] = useState(false);
-
-  // Detect system preference
-  const getSystemPreference = (): boolean => {
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    // Verificar preferência salva
+    const saved = localStorage.getItem('theme');
+    if (saved) {
+      return saved === 'dark';
+    }
+    
+    // Detectar preferência do sistema
     if (typeof window !== 'undefined') {
       return window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
+    
     return false;
-  };
-
-  // Get effective theme (system preference or manual selection)
-  const getEffectiveTheme = (): boolean => {
-    if (themeMode === 'system') {
-      return getSystemPreference();
-    }
-    return themeMode === 'dark';
-  };
-
-  // Initialize theme
-  useEffect(() => {
-    // Load saved theme preference
-    const savedTheme = localStorage.getItem('theme-mode') as ThemeMode;
-    if (savedTheme && ['light', 'dark', 'system'].includes(savedTheme)) {
-      setThemeMode(savedTheme);
-    } else {
-      // Default to system preference
-      setThemeMode('system');
-    }
-  }, []);
-
-  // Update theme when mode changes
-  useEffect(() => {
-    const effectiveTheme = getEffectiveTheme();
-    setIsDark(effectiveTheme);
-    
-    // Update document attributes for CSS custom properties
-    document.documentElement.setAttribute('data-theme', effectiveTheme ? 'dark' : 'light');
-    
-    // Save preference
-    localStorage.setItem('theme-mode', themeMode);
-  }, [themeMode]);
-
-  // Listen for system preference changes
-  useEffect(() => {
-    if (themeMode === 'system') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      
-      const handleChange = () => {
-        setIsDark(getSystemPreference());
-      };
-
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    }
-  }, [themeMode]);
+  });
 
   const toggleTheme = () => {
-    setThemeMode(prev => {
-      if (prev === 'system') {
-        return getSystemPreference() ? 'light' : 'dark';
+    setIsDarkMode(prev => !prev);
+  };
+
+  const setTheme = (isDark: boolean) => {
+    setIsDarkMode(isDark);
+  };
+
+  useEffect(() => {
+    // Salvar preferência
+    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+    
+    // Aplicar classe ao body para transições suaves
+    document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+    document.body.classList.toggle('dark-mode', isDarkMode);
+    
+    // Limpar transição após aplicação
+    const timer = setTimeout(() => {
+      document.body.style.transition = '';
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [isDarkMode]);
+
+  // Escutar mudanças na preferência do sistema
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const handleChange = (e: MediaQueryListEvent) => {
+      // Só aplicar se não houver preferência salva
+      if (!localStorage.getItem('theme')) {
+        setIsDarkMode(e.matches);
       }
-      return prev === 'light' ? 'dark' : 'light';
-    });
-  };
+    };
 
-  const handleSetThemeMode = (mode: ThemeMode) => {
-    setThemeMode(mode);
-  };
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
-  const currentTheme = isDark ? darkTheme : lightTheme;
-
-  const contextValue: ThemeContextType = {
-    themeMode,
-    isDark,
-    toggleTheme,
-    setThemeMode: handleSetThemeMode,
-  };
+  const theme = isDarkMode ? darkTheme : lightTheme;
 
   return (
-    <ThemeContext.Provider value={contextValue}>
-      <MuiThemeProvider theme={currentTheme}>
+    <ThemeContext.Provider value={{ isDarkMode, toggleTheme, setTheme }}>
+      <MuiThemeProvider theme={theme}>
         <CssBaseline />
         {children}
       </MuiThemeProvider>

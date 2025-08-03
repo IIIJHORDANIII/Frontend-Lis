@@ -46,7 +46,7 @@ import { useTheme as useAppTheme } from '../contexts/ThemeContext';
 
 const Header: React.FC = () => {
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
-  const { themeMode, isDark, toggleTheme, setThemeMode } = useAppTheme();
+  const { isDarkMode, toggleTheme } = useAppTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
@@ -90,6 +90,7 @@ const Header: React.FC = () => {
 
   const userMenuItems = [
     { path: '/sales', label: 'Vendas', icon: <TrendingUp /> },
+    { path: '/condicionais', label: 'Condicionais', icon: <ListIcon /> },
   ];
 
   const adminMenuItemsExtended = [
@@ -107,30 +108,52 @@ const Header: React.FC = () => {
         startIcon={!isSmallMobile ? item.icon : undefined}
         sx={{
           borderRadius: 3,
-          px: { xs: 1.5, sm: 2, md: 3 },
-          py: { xs: 1, sm: 1.5, md: 2 },
+          px: { xs: 2, sm: 2.5, md: 3, lg: 3.5 },
+          py: { xs: 1.25, sm: 1.5, md: 1.75, lg: 2 },
           fontWeight: 600,
-          fontSize: { xs: '0.7rem', sm: '0.8rem', md: '0.9rem', lg: '1rem' },
+          fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem', lg: '0.9rem' },
+          letterSpacing: '0.02em',
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           backgroundColor: isActiveRoute(item.path) 
-            ? (theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(26, 32, 44, 0.1)')
+            ? (theme.palette.mode === 'dark' 
+                ? 'rgba(102, 126, 234, 0.2)' 
+                : 'rgba(102, 126, 234, 0.1)')
             : 'transparent',
           color: isActiveRoute(item.path) 
-            ? (theme.palette.mode === 'dark' ? '#fff' : '#1a202c')
-            : (theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(26, 32, 44, 0.8)'),
+            ? (theme.palette.mode === 'dark' ? '#fff' : '#2d3748')
+            : (theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.85)' : 'rgba(45, 55, 72, 0.8)'),
           backdropFilter: isActiveRoute(item.path) ? 'blur(10px)' : 'none',
-          border: isActiveRoute(item.path) ? '1px solid rgba(255, 255, 255, 0.3)' : '1px solid transparent',
-          minHeight: { xs: '36px', sm: '40px', md: '44px' },
+          border: isActiveRoute(item.path) 
+            ? (theme.palette.mode === 'dark' 
+                ? '1px solid rgba(102, 126, 234, 0.4)' 
+                : '1px solid rgba(102, 126, 234, 0.3)')
+            : '1px solid transparent',
+          minHeight: { xs: '40px', sm: '44px', md: '48px' },
+          position: 'relative',
+          overflow: 'hidden',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: '-100%',
+            width: '100%',
+            height: '100%',
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
+            transition: 'left 0.5s',
+          },
           '&:hover': {
             backgroundColor: theme.palette.mode === 'dark' 
-              ? 'rgba(255, 255, 255, 0.15)' 
-              : 'rgba(26, 32, 44, 0.08)',
-            transform: 'translateY(-2px) scale(1.02)',
-            color: theme.palette.mode === 'dark' ? '#fff' : '#1a202c',
+              ? 'rgba(102, 126, 234, 0.15)' 
+              : 'rgba(102, 126, 234, 0.08)',
+            transform: 'translateY(-1px)',
+            color: theme.palette.mode === 'dark' ? '#fff' : '#2d3748',
             backdropFilter: 'blur(10px)',
             border: theme.palette.mode === 'dark' 
-              ? '1px solid rgba(255, 255, 255, 0.3)' 
-              : '1px solid rgba(26, 32, 44, 0.2)',
+              ? '1px solid rgba(102, 126, 234, 0.4)' 
+              : '1px solid rgba(102, 126, 234, 0.3)',
+            '&::before': {
+              left: '100%',
+            },
           },
         }}
       >
@@ -186,17 +209,24 @@ const Header: React.FC = () => {
         position="fixed" 
         elevation={0}
         sx={{
-          background: theme.customColors.surface.header,
-          backdropFilter: 'blur(10px)',
-          borderBottom: `1px solid ${theme.customColors.border.header}`,
-          boxShadow: theme.customColors.shadow.header,
+          background: theme.palette.mode === 'dark' 
+            ? 'rgba(26, 32, 44, 0.95)' 
+            : 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(20px)',
+          borderBottom: `1px solid ${theme.palette.mode === 'dark' 
+            ? 'rgba(255, 255, 255, 0.1)' 
+            : 'rgba(0, 0, 0, 0.08)'}`,
+          boxShadow: theme.palette.mode === 'dark'
+            ? '0 4px 20px rgba(0, 0, 0, 0.3)'
+            : '0 4px 20px rgba(0, 0, 0, 0.08)',
           top: 0,
           left: 0,
           right: 0,
           width: '100vw',
           borderRadius: '0 !important',
-          minHeight: { xs: 56, sm: 64, md: 72, lg: 80 },
+          minHeight: { xs: 64, sm: 72, md: 80, lg: 88 },
           zIndex: theme.zIndex.appBar,
+          transition: 'all 0.3s ease',
         }}
       >
         <Container maxWidth={false} disableGutters sx={{
@@ -206,8 +236,8 @@ const Header: React.FC = () => {
           borderRadius: '0 !important',
         }}>
           <Toolbar sx={{ 
-            minHeight: { xs: 56, sm: 64, md: 72, lg: 80 },
-            height: { xs: 56, sm: 64, md: 72, lg: 80 },
+            minHeight: { xs: 64, sm: 72, md: 80, lg: 88 },
+            height: { xs: 64, sm: 72, md: 80, lg: 88 },
             px: 0,
             width: '100%',
             display: 'flex',
@@ -215,21 +245,25 @@ const Header: React.FC = () => {
             alignItems: 'center',
             gap: { xs: 2, sm: 3, md: 4, lg: 6 },
           }}>
-            <img
+            <Box
+              component="img"
               src={theme.palette.mode === 'dark' ? '/Logo Vector.png' : '/Logo Vector.svg'}
               alt="Logo"
-              style={{
-                height: 48,
+              sx={{
+                height: { xs: 40, sm: 44, md: 48, lg: 52 },
                 width: 'auto',
-                marginLeft: 16,
-                padding: 0,
-                boxShadow: 'none',
-                objectFit: 'contain',
                 cursor: 'pointer',
-                background: 'transparent'
+                transition: 'all 0.3s ease',
+                filter: theme.palette.mode === 'dark' ? 'brightness(0) invert(1)' : 'none',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                  filter: theme.palette.mode === 'dark' 
+                    ? 'brightness(0) invert(1) drop-shadow(0 4px 8px rgba(255,255,255,0.2))' 
+                    : 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))',
+                }
               }}
               onClick={() => navigate('/')}
-              onError={e => { e.currentTarget.style.display = 'none'; }}
+              onError={(e) => { e.currentTarget.style.display = 'none'; }}
             />
 
             {/* Navigation Menu - Desktop */}
@@ -267,21 +301,37 @@ const Header: React.FC = () => {
                     color="inherit"
                     onClick={toggleTheme}
                     sx={{
-                      borderRadius: 2,
-                      p: { xs: 0.75, sm: 1, md: 1.25 },
-                      fontSize: 18,
+                      borderRadius: 3,
+                      p: { xs: 1, sm: 1.25, md: 1.5 },
                       mr: { xs: 0.5, sm: 1 },
+                      background: theme.palette.mode === 'dark' 
+                        ? 'rgba(255, 255, 255, 0.05)' 
+                        : 'rgba(0, 0, 0, 0.04)',
+                      border: `1px solid ${theme.palette.mode === 'dark' 
+                        ? 'rgba(255, 255, 255, 0.1)' 
+                        : 'rgba(0, 0, 0, 0.08)'}`,
                       '& .MuiSvgIcon-root': { 
-                        fontSize: { xs: 20, sm: 22, md: 24 } 
+                        fontSize: { xs: 20, sm: 22, md: 24 },
+                        color: theme.palette.mode === 'dark' 
+                          ? 'rgba(255, 255, 255, 0.9)' 
+                          : 'rgba(0, 0, 0, 0.7)',
                       },
-                      transition: 'all 0.3s ease',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                       '&:hover': {
-                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                        transform: 'scale(1.05)',
+                        backgroundColor: theme.palette.mode === 'dark' 
+                          ? 'rgba(255, 255, 255, 0.1)' 
+                          : 'rgba(0, 0, 0, 0.08)',
+                        transform: 'scale(1.05) rotate(180deg)',
+                        border: `1px solid ${theme.palette.mode === 'dark' 
+                          ? 'rgba(255, 255, 255, 0.2)' 
+                          : 'rgba(0, 0, 0, 0.15)'}`,
+                        '& .MuiSvgIcon-root': {
+                          color: theme.palette.mode === 'dark' ? '#fff' : '#000',
+                        }
                       }
                     }}
                   >
-                    {isDark ? <LightMode /> : <DarkMode />}
+                    {isDarkMode ? <LightMode /> : <DarkMode />}
                   </IconButton>
 
                   {/* Mobile Menu Button */}
@@ -411,9 +461,16 @@ const Header: React.FC = () => {
           '& .MuiDrawer-paper': {
             width: { xs: '280px', sm: '320px', md: '360px' },
             pt: 2,
-            background: theme.customColors.surface.primary,
-            backdropFilter: 'blur(10px)',
-            borderLeft: `1px solid ${theme.customColors.border.primary}`,
+            background: theme.palette.mode === 'dark' 
+              ? 'rgba(26, 32, 44, 0.95)' 
+              : 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px)',
+            borderLeft: `1px solid ${theme.palette.mode === 'dark' 
+              ? 'rgba(255, 255, 255, 0.1)' 
+              : 'rgba(0, 0, 0, 0.08)'}`,
+            boxShadow: theme.palette.mode === 'dark'
+              ? '0 8px 32px rgba(0, 0, 0, 0.4)'
+              : '0 8px 32px rgba(0, 0, 0, 0.1)',
           },
         }}
       >
@@ -447,10 +504,10 @@ const Header: React.FC = () => {
                 }}
               >
                 <ListItemIcon sx={{ color: 'inherit', minWidth: 40 }}>
-                  {isDark ? <LightMode /> : <DarkMode />}
+                  {isDarkMode ? <LightMode /> : <DarkMode />}
                 </ListItemIcon>
                 <ListItemText 
-                  primary={`Modo ${isDark ? 'Claro' : 'Escuro'}`}
+                  primary={`Modo ${isDarkMode ? 'Claro' : 'Escuro'}`}
                   primaryTypographyProps={{
                     fontSize: { xs: '0.875rem', sm: '1rem' },
                     fontWeight: 500,
@@ -496,10 +553,16 @@ const Header: React.FC = () => {
         sx={{
           '& .MuiPaper-root': {
             borderRadius: 3,
-            background: theme.customColors.surface.primary,
-            backdropFilter: 'blur(10px)',
-            border: `1px solid ${theme.customColors.border.primary}`,
-            boxShadow: theme.customColors.shadow.primary,
+            background: theme.palette.mode === 'dark' 
+              ? 'rgba(26, 32, 44, 0.95)' 
+              : 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px)',
+            border: `1px solid ${theme.palette.mode === 'dark' 
+              ? 'rgba(255, 255, 255, 0.1)' 
+              : 'rgba(0, 0, 0, 0.08)'}`,
+            boxShadow: theme.palette.mode === 'dark'
+              ? '0 8px 32px rgba(0, 0, 0, 0.3)'
+              : '0 8px 32px rgba(0, 0, 0, 0.1)',
             mt: 1,
           },
         }}
