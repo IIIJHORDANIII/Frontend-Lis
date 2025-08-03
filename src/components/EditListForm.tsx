@@ -300,7 +300,7 @@ const EditListForm: React.FC = () => {
           elevation={0}
           sx={{
             p: { xs: 3, sm: 4, md: 5 },
-            borderRadius: 4,
+            borderRadius: 1,
             background: theme.customColors.surface.card,
             backdropFilter: 'blur(20px)',
             border: `1.5px solid ${theme.customColors.border.primary}`,
@@ -354,7 +354,7 @@ const EditListForm: React.FC = () => {
               severity="error"
               sx={{
                 mb: 4,
-                borderRadius: 2,
+                borderRadius: 1,
                 background: alpha(theme.customColors.status.error, 0.1),
                 border: `1px solid ${alpha(theme.customColors.status.error, 0.3)}`,
                 color: theme.customColors.status.error,
@@ -372,7 +372,7 @@ const EditListForm: React.FC = () => {
               severity="success"
               sx={{
                 mb: 4,
-                borderRadius: 2,
+                borderRadius: 1,
                 background: alpha(theme.customColors.status.success, 0.1),
                 border: `1px solid ${alpha(theme.customColors.status.success, 0.3)}`,
                 color: theme.customColors.status.success,
@@ -396,7 +396,7 @@ const EditListForm: React.FC = () => {
               variant="outlined"
               sx={{
                 '& .MuiOutlinedInput-root': {
-                  borderRadius: 3,
+                  borderRadius: 1,
                   backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                   '&:hover .MuiOutlinedInput-notchedOutline': {
                     borderColor: theme.customColors.primary.main,
@@ -429,7 +429,7 @@ const EditListForm: React.FC = () => {
               variant="outlined"
               sx={{
                 '& .MuiOutlinedInput-root': {
-                  borderRadius: 3,
+                  borderRadius: 1,
                   backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                   '&:hover .MuiOutlinedInput-notchedOutline': {
                     borderColor: theme.customColors.primary.main,
@@ -496,7 +496,7 @@ const EditListForm: React.FC = () => {
                   onClick={() => setAddProductDialogOpen(true)}
                   sx={{
                     mb: 2,
-                    borderRadius: 3,
+                    borderRadius: 1,
                     border: `2px dashed ${alpha(theme.customColors.primary.main, 0.3)}`,
                     color: theme.customColors.primary.main,
                     backgroundColor: alpha(theme.customColors.primary.main, 0.05),
@@ -531,7 +531,7 @@ const EditListForm: React.FC = () => {
                       elevation={0}
                       sx={{
                         p: 2,
-                        borderRadius: 2,
+                        borderRadius: 1,
                         border: `1px solid ${theme.customColors.border.primary}`,
                         backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                       }}
@@ -577,7 +577,7 @@ const EditListForm: React.FC = () => {
                           sx={{
                             minWidth: 32,
                             height: 32,
-                            borderRadius: 2,
+                            borderRadius: 1,
                             borderColor: theme.customColors.primary.main,
                             color: theme.customColors.primary.main,
                             '&:hover': {
@@ -604,7 +604,7 @@ const EditListForm: React.FC = () => {
                           sx={{
                             width: 60,
                             '& .MuiOutlinedInput-root': {
-                              borderRadius: 2,
+                              borderRadius: 1,
                               '& input': {
                                 textAlign: 'center',
                                 fontWeight: 600,
@@ -627,7 +627,7 @@ const EditListForm: React.FC = () => {
                           sx={{
                             minWidth: 32,
                             height: 32,
-                            borderRadius: 2,
+                            borderRadius: 1,
                             borderColor: theme.customColors.primary.main,
                             color: theme.customColors.primary.main,
                             '&:hover': {
@@ -669,7 +669,7 @@ const EditListForm: React.FC = () => {
                 sx={{
                   py: { xs: 1.5, sm: 2 },
                   px: { xs: 3, sm: 4 },
-                  borderRadius: 3,
+                  borderRadius: 1,
                   fontWeight: 600,
                   fontSize: { xs: '1rem', sm: '1.125rem' },
                   borderColor: theme.customColors.text.primary,
@@ -690,7 +690,7 @@ const EditListForm: React.FC = () => {
                 sx={{
                   py: { xs: 1.5, sm: 2 },
                   px: { xs: 3, sm: 4 },
-                  borderRadius: 3,
+                  borderRadius: 1,
                   fontWeight: 700,
                   fontSize: { xs: '1rem', sm: '1.125rem' },
                   background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
@@ -731,7 +731,7 @@ const EditListForm: React.FC = () => {
         }}
         PaperProps={{
           sx: {
-            borderRadius: 4,
+            borderRadius: 1,
             background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
             border: `1.5px solid ${theme.customColors.border.primary}`,
             boxShadow: theme.customColors.shadow.primary,
@@ -776,7 +776,7 @@ const EditListForm: React.FC = () => {
                 sx={{
                   background: alpha(theme.customColors.text.primary, 0.02),
                   border: `1px solid ${theme.customColors.border.primary}`,
-                  borderRadius: 3,
+                  borderRadius: 1,
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
                   '&:hover': {
@@ -851,7 +851,7 @@ const EditListForm: React.FC = () => {
           <Button
             onClick={() => setAddProductDialogOpen(false)}
             sx={{
-              borderRadius: 3,
+              borderRadius: 1,
               fontWeight: 600,
               color: theme.customColors.text.primary,
               '&:hover': {
@@ -878,7 +878,7 @@ const EditListForm: React.FC = () => {
         }}
         PaperProps={{
           sx: {
-            borderRadius: 4,
+            borderRadius: 1,
             background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
             border: `1.5px solid ${theme.customColors.border.primary}`,
             boxShadow: theme.customColors.shadow.primary,
@@ -926,7 +926,7 @@ const EditListForm: React.FC = () => {
                   sx={{
                     minWidth: 40,
                     height: 40,
-                    borderRadius: 2,
+                    borderRadius: 1,
                     borderColor: theme.customColors.primary.main,
                     color: theme.customColors.primary.main,
                     '&:hover': {
@@ -951,7 +951,7 @@ const EditListForm: React.FC = () => {
                   sx={{
                     width: 100,
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 2,
+                      borderRadius: 1,
                       '& input': {
                         textAlign: 'center',
                         fontWeight: 600,
@@ -968,7 +968,7 @@ const EditListForm: React.FC = () => {
                   sx={{
                     minWidth: 40,
                     height: 40,
-                    borderRadius: 2,
+                    borderRadius: 1,
                     borderColor: theme.customColors.primary.main,
                     color: theme.customColors.primary.main,
                     '&:hover': {
@@ -986,7 +986,7 @@ const EditListForm: React.FC = () => {
           <Button
             onClick={() => setAddQuantityDialogOpen(false)}
             sx={{
-              borderRadius: 3,
+              borderRadius: 1,
               fontWeight: 600,
               color: theme.customColors.text.primary,
               '&:hover': {
@@ -1000,7 +1000,7 @@ const EditListForm: React.FC = () => {
             onClick={handleConfirmAddProduct}
             variant="contained"
             sx={{
-              borderRadius: 3,
+              borderRadius: 1,
               fontWeight: 600,
               background: theme.customColors.primary.main,
               '&:hover': {

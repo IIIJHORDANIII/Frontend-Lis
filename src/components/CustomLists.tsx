@@ -188,7 +188,7 @@ const CustomLists: React.FC = () => {
             severity="error" 
             sx={{ 
               mb: 4,
-              borderRadius: 2,
+              borderRadius: 1,
               fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
               maxWidth: 900,
               mx: 'auto',
@@ -213,7 +213,7 @@ const CustomLists: React.FC = () => {
             sx={{
               py: { xs: 1.5, sm: 2 },
               px: { xs: 3, sm: 4 },
-              borderRadius: 3,
+              borderRadius: 1,
               fontWeight: 700,
               fontSize: { xs: '1rem', sm: '1.125rem' },
               background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
@@ -236,7 +236,7 @@ const CustomLists: React.FC = () => {
             severity="info" 
             sx={{ 
               mb: 4,
-              borderRadius: 2,
+              borderRadius: 1,
               fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
               maxWidth: 900,
               mx: 'auto',
@@ -273,7 +273,7 @@ const CustomLists: React.FC = () => {
                   flexDirection: 'column',
                   background: theme.customColors.surface.card,
                   border: `1.5px solid ${theme.customColors.border.primary}`,
-                  borderRadius: 4,
+                  borderRadius: 1,
                   overflow: 'hidden',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   boxShadow: theme.customColors.shadow.secondary,
@@ -343,7 +343,7 @@ const CustomLists: React.FC = () => {
                     <Accordion sx={{ 
                       boxShadow: 'none', 
                       border: `1px solid ${theme.customColors.border.primary}`,
-                      borderRadius: 2,
+                      borderRadius: 1,
                       '&:before': {
                         display: 'none',
                       },

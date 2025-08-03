@@ -107,7 +107,7 @@ const Header: React.FC = () => {
         to={item.path}
         startIcon={!isSmallMobile ? item.icon : undefined}
         sx={{
-          borderRadius: 3,
+          borderRadius: 1,
           px: { xs: 2, sm: 2.5, md: 3, lg: 3.5 },
           py: { xs: 1.25, sm: 1.5, md: 1.75, lg: 2 },
           fontWeight: 600,
@@ -172,7 +172,7 @@ const Header: React.FC = () => {
           selected={isActiveRoute(item.path)}
           onClick={() => setMobileMenuOpen(false)}
           sx={{
-            borderRadius: 2,
+            borderRadius: 1,
             mx: 1,
             mb: 0.5,
             py: { xs: 1.5, sm: 2 },
@@ -301,7 +301,7 @@ const Header: React.FC = () => {
                     color="inherit"
                     onClick={toggleTheme}
                     sx={{
-                      borderRadius: 3,
+                      borderRadius: 1,
                       p: { xs: 1, sm: 1.25, md: 1.5 },
                       mr: { xs: 0.5, sm: 1 },
                       background: theme.palette.mode === 'dark' 
@@ -340,7 +340,7 @@ const Header: React.FC = () => {
                       color="inherit"
                       onClick={handleMobileMenuToggle}
                       sx={{
-                        borderRadius: 2,
+                        borderRadius: 1,
                         p: { xs: 0.75, sm: 1, md: 1.25 },
                         fontSize: 18,
                         mr: { xs: 1, sm: 1.5 },
@@ -384,7 +384,7 @@ const Header: React.FC = () => {
                     <IconButton
                       onClick={handleMenu}
                       sx={{
-                        borderRadius: 2,
+                        borderRadius: 1,
                         p: { xs: 0.5, sm: 0.75, md: 1 },
                         transition: 'all 0.3s ease',
                         '&:hover': {
@@ -418,7 +418,7 @@ const Header: React.FC = () => {
                   variant="contained"
                   onClick={() => navigate('/login')}
                   sx={{
-                    borderRadius: 3,
+                    borderRadius: 1,
                     px: { xs: 2, sm: 2.5, md: 3, lg: 4, xl: 5 },
                     py: { xs: 0.75, sm: 1, md: 1.25, lg: 1.5 },
                     fontWeight: 700,
@@ -493,7 +493,7 @@ const Header: React.FC = () => {
               <ListItemButton
                 onClick={toggleTheme}
                 sx={{
-                  borderRadius: 2,
+                  borderRadius: 1,
                   mx: 1,
                   mb: 0.5,
                   py: { xs: 1.5, sm: 2 },
@@ -519,7 +519,7 @@ const Header: React.FC = () => {
               <ListItemButton
                 onClick={handleLogout}
                 sx={{
-                  borderRadius: 2,
+                  borderRadius: 1,
                   mx: 1,
                   mb: 0.5,
                   py: { xs: 1.5, sm: 2 },
@@ -552,7 +552,7 @@ const Header: React.FC = () => {
         onClose={handleClose}
         sx={{
           '& .MuiPaper-root': {
-            borderRadius: 3,
+            borderRadius: 1,
             background: theme.palette.mode === 'dark' 
               ? 'rgba(26, 32, 44, 0.95)' 
               : 'rgba(255, 255, 255, 0.95)',
@@ -568,7 +568,7 @@ const Header: React.FC = () => {
         }}
       >
         <MenuItem onClick={handleClose} sx={{ 
-          borderRadius: 2, 
+          borderRadius: 1, 
           mx: 1, 
           mb: 0.5,
           transition: 'all 0.3s ease',
@@ -585,7 +585,7 @@ const Header: React.FC = () => {
         </MenuItem>
         <Divider sx={{ my: 1 }} />
         <MenuItem onClick={handleLogout} sx={{ 
-          borderRadius: 2, 
+          borderRadius: 1, 
           mx: 1, 
           mb: 0.5,
           transition: 'all 0.3s ease',

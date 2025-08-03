@@ -42,7 +42,8 @@ import {
   PlayArrow as PlayArrowIcon,
   KeyboardArrowDown as KeyboardArrowDownIcon,
   Rocket as RocketIcon,
-  Diamond as DiamondIcon
+  Diamond as DiamondIcon,
+  Logout as LogoutIcon
 } from '@mui/icons-material';
 import { useNavigate } from "react-router-dom";
 import { useTheme as useAppTheme } from '../contexts/ThemeContext';
@@ -193,7 +194,7 @@ const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const { isDarkMode } = useAppTheme();
-  const { isAuthenticated, isAdmin, isLoading } = useAuth();
+  const { isAuthenticated, isAdmin, isLoading, logout } = useAuth();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
@@ -206,8 +207,8 @@ const LandingPage: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Não renderizar se estiver carregando ou se o usuário estiver logado
-  if (isLoading || isAuthenticated) {
+  // Não renderizar apenas se estiver carregando
+  if (isLoading) {
     return null;
   }
 
@@ -217,7 +218,11 @@ const LandingPage: React.FC = () => {
   };
 
   const handleGetStarted = () => {
-    navigate('/login');
+    if (isAuthenticated) {
+      navigate(isAdmin ? '/admin/products' : '/sales');
+    } else {
+      navigate('/login');
+    }
   };
 
   const handleScrollToFeatures = () => {
@@ -494,7 +499,7 @@ const LandingPage: React.FC = () => {
               variant="contained"
               size="large"
               onClick={handleGetStarted}
-              startIcon={<RocketIcon />}
+              startIcon={isAuthenticated ? <StoreIcon /> : <RocketIcon />}
               sx={{
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
                 backgroundSize: '200% 200%',
@@ -503,7 +508,7 @@ const LandingPage: React.FC = () => {
                 fontSize: { xs: '1rem', sm: '1.125rem' },
                 px: { xs: 4, sm: 6 },
                 py: { xs: 1.5, sm: 2 },
-                borderRadius: 3,
+                borderRadius: 1,
                 boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)',
                 transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                 position: 'relative',
@@ -546,14 +551,14 @@ const LandingPage: React.FC = () => {
                 }
               }}
             >
-              Começar Agora
+              {isAuthenticated ? (isAdmin ? 'Acessar Admin' : 'Acessar Sistema') : 'Começar Agora'}
             </Button>
             
             <Button
               variant="outlined"
               size="large"
-              onClick={handleScrollToFeatures}
-              endIcon={<KeyboardArrowDownIcon />}
+              onClick={isAuthenticated ? logout : handleScrollToFeatures}
+              endIcon={isAuthenticated ? <LogoutIcon /> : <KeyboardArrowDownIcon />}
               sx={{
                 borderColor: theme.palette.mode === 'dark' ? '#667eea' : '#667eea',
                 color: theme.palette.mode === 'dark' ? '#667eea' : '#667eea',
@@ -561,7 +566,7 @@ const LandingPage: React.FC = () => {
                 fontSize: { xs: '1rem', sm: '1.125rem' },
                 px: { xs: 4, sm: 6 },
                 py: { xs: 1.5, sm: 2 },
-                borderRadius: 3,
+                borderRadius: 1,
                 transition: 'all 0.3s ease',
                 position: 'relative',
                 overflow: 'hidden',
@@ -586,7 +591,7 @@ const LandingPage: React.FC = () => {
                 }
               }}
             >
-              Conhecer Funcionalidades
+              {isAuthenticated ? 'Sair' : 'Conhecer Funcionalidades'}
             </Button>
           </Stack>
         </Grow>
@@ -698,7 +703,7 @@ const LandingPage: React.FC = () => {
                       border: `1px solid ${theme.palette.mode === 'dark' 
                         ? 'rgba(255, 255, 255, 0.1)' 
                         : 'rgba(255, 255, 255, 0.2)'}`,
-                      borderRadius: 2,
+                      borderRadius: 1,
                       boxShadow: theme.palette.mode === 'dark'
                         ? '0 4px 20px rgba(0, 0, 0, 0.3)'
                         : '0 4px 20px rgba(0, 0, 0, 0.1)',
@@ -846,7 +851,7 @@ const LandingPage: React.FC = () => {
                       border: `1px solid ${theme.palette.mode === 'dark' 
                         ? 'rgba(255, 255, 255, 0.1)' 
                         : 'rgba(255, 255, 255, 0.2)'}`,
-                      borderRadius: 2,
+                      borderRadius: 1,
                       boxShadow: theme.palette.mode === 'dark'
                         ? '0 4px 20px rgba(0, 0, 0, 0.3)'
                         : '0 4px 20px rgba(0, 0, 0, 0.1)',
@@ -1012,7 +1017,7 @@ const LandingPage: React.FC = () => {
                 border: `1px solid ${theme.palette.mode === 'dark' 
                   ? 'rgba(255, 255, 255, 0.1)' 
                   : 'rgba(255, 255, 255, 0.2)'}`,
-                borderRadius: 2,
+                borderRadius: 1,
                 boxShadow: theme.palette.mode === 'dark'
                   ? '0 4px 20px rgba(0, 0, 0, 0.3)'
                   : '0 4px 20px rgba(0, 0, 0, 0.1)',
@@ -1052,7 +1057,7 @@ const LandingPage: React.FC = () => {
                 border: `1px solid ${theme.palette.mode === 'dark' 
                   ? 'rgba(255, 255, 255, 0.1)' 
                   : 'rgba(255, 255, 255, 0.2)'}`,
-                borderRadius: 2,
+                borderRadius: 1,
                 boxShadow: theme.palette.mode === 'dark'
                   ? '0 4px 20px rgba(0, 0, 0, 0.3)'
                   : '0 4px 20px rgba(0, 0, 0, 0.1)',
@@ -1092,7 +1097,7 @@ const LandingPage: React.FC = () => {
                 border: `1px solid ${theme.palette.mode === 'dark' 
                   ? 'rgba(255, 255, 255, 0.1)' 
                   : 'rgba(255, 255, 255, 0.2)'}`,
-                borderRadius: 2,
+                borderRadius: 1,
                 boxShadow: theme.palette.mode === 'dark'
                   ? '0 4px 20px rgba(0, 0, 0, 0.3)'
                   : '0 4px 20px rgba(0, 0, 0, 0.1)',
@@ -1132,7 +1137,7 @@ const LandingPage: React.FC = () => {
                 border: `1px solid ${theme.palette.mode === 'dark' 
                   ? 'rgba(255, 255, 255, 0.1)' 
                   : 'rgba(255, 255, 255, 0.2)'}`,
-                borderRadius: 2,
+                borderRadius: 1,
                 boxShadow: theme.palette.mode === 'dark'
                   ? '0 4px 20px rgba(0, 0, 0, 0.3)'
                   : '0 4px 20px rgba(0, 0, 0, 0.1)',
@@ -1202,7 +1207,7 @@ const LandingPage: React.FC = () => {
                   border: `1px solid ${theme.palette.mode === 'dark' 
                     ? 'rgba(255, 255, 255, 0.1)' 
                     : 'rgba(255, 255, 255, 0.2)'}`,
-                  borderRadius: 2,
+                  borderRadius: 1,
                   boxShadow: theme.palette.mode === 'dark'
                     ? '0 4px 20px rgba(0, 0, 0, 0.3)'
                     : '0 4px 20px rgba(0, 0, 0, 0.1)',
@@ -1352,7 +1357,7 @@ const LandingPage: React.FC = () => {
                 fontSize: { xs: '1.125rem', sm: '1.25rem' },
                 px: { xs: 6, sm: 8 },
                 py: { xs: 2, sm: 2.5 },
-                borderRadius: 3,
+                borderRadius: 1,
                 boxShadow: '0 8px 32px rgba(102, 126, 234, 0.3)',
                 transition: 'all 0.3s ease',
                 '&:hover': {

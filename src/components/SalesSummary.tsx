@@ -207,7 +207,7 @@ const SalesSummary: React.FC = () => {
         <Alert 
           severity="error" 
           sx={{ 
-            borderRadius: 2,
+            borderRadius: 1,
             background: alpha(theme.customColors.status.error, 0.1),
             border: `1px solid ${alpha(theme.customColors.status.error, 0.3)}`,
             color: theme.customColors.status.error,
@@ -225,7 +225,7 @@ const SalesSummary: React.FC = () => {
         <Alert 
           severity="info" 
           sx={{ 
-            borderRadius: 2,
+            borderRadius: 1,
             background: alpha(theme.customColors.status.info, 0.1),
             border: `1px solid ${alpha(theme.customColors.status.info, 0.3)}`,
             color: theme.customColors.status.info,
@@ -245,7 +245,7 @@ const SalesSummary: React.FC = () => {
         mb: 3,
         background: theme.customColors.surface.card,
         border: `1px solid ${theme.customColors.border.primary}`,
-        borderRadius: 3,
+        borderRadius: 1,
         boxShadow: theme.customColors.shadow.secondary,
       }}>
         <Typography variant="h5" sx={{ 
@@ -320,7 +320,7 @@ const SalesSummary: React.FC = () => {
           mb: 2,
           background: theme.customColors.surface.card,
           border: `1px solid ${theme.customColors.border.primary}`,
-          borderRadius: 3,
+          borderRadius: 1,
           boxShadow: theme.customColors.shadow.secondary,
           '&:before': {
             display: 'none',
@@ -330,7 +330,7 @@ const SalesSummary: React.FC = () => {
             expandIcon={<ExpandMoreIcon sx={{ color: theme.customColors.text.primary }} />}
             sx={{
               backgroundColor: alpha(theme.customColors.text.primary, 0.05),
-              borderRadius: 3,
+              borderRadius: 1,
             }}
           >
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
@@ -470,7 +470,7 @@ const SalesSummary: React.FC = () => {
                 </TableBody>
               </Table>
             </TableContainer>
-            <Box sx={{ mt: 2, p: 2, backgroundColor: alpha(theme.customColors.text.primary, 0.02), borderRadius: 2 }}>
+            <Box sx={{ mt: 2, p: 2, backgroundColor: alpha(theme.customColors.text.primary, 0.02), borderRadius: 1 }}>
               <Typography sx={{ 
                 color: theme.customColors.text.secondary,
                 fontSize: { xs: '0.875rem', sm: '1rem' },

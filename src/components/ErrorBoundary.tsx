@@ -93,7 +93,7 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, onRetry, onGoHome 
           elevation={0}
           sx={{
             p: { xs: 3, md: 6 },
-            borderRadius: 4,
+            borderRadius: 1,
             background: theme.palette.mode === 'dark' 
               ? 'rgba(255, 255, 255, 0.05)' 
               : 'rgba(255, 255, 255, 0.8)',
@@ -180,7 +180,7 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, onRetry, onGoHome 
                 startIcon={<RefreshIcon />}
                 onClick={onRetry}
                 sx={{
-                  borderRadius: 3,
+                  borderRadius: 1,
                   px: 4,
                   py: 1.5,
                   fontWeight: 600,
@@ -199,7 +199,7 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, onRetry, onGoHome 
                 startIcon={<HomeIcon />}
                 onClick={onGoHome}
                 sx={{
-                  borderRadius: 3,
+                  borderRadius: 1,
                   px: 4,
                   py: 1.5,
                   fontWeight: 600,

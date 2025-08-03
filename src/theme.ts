@@ -161,7 +161,7 @@ const commonTheme = {
     },
   },
   shape: {
-    borderRadius: 16,
+    borderRadius: 1,
   },
   spacing: 8,
   breakpoints: {
@@ -177,7 +177,7 @@ const commonTheme = {
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 16,
+          borderRadius: 1,
           textTransform: 'none',
           fontWeight: 600,
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -219,7 +219,7 @@ const commonTheme = {
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 20,
+          borderRadius: 1,
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           position: 'relative',
           overflow: 'hidden',
@@ -243,7 +243,7 @@ const commonTheme = {
     MuiPaper: {
       styleOverrides: {
         root: {
-          borderRadius: 20,
+          borderRadius: 1,
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         },
       },
@@ -261,7 +261,7 @@ const commonTheme = {
     MuiDialog: {
       styleOverrides: {
         paper: {
-          borderRadius: 24,
+          borderRadius: 1,
           backdropFilter: 'blur(20px)',
           background: 'rgba(255, 255, 255, 0.95)',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
@@ -283,7 +283,7 @@ const commonTheme = {
     MuiChip: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
+          borderRadius: 1,
           fontWeight: 600,
           transition: 'all 0.2s ease',
           '&:hover': {
@@ -310,7 +310,7 @@ const commonTheme = {
       styleOverrides: {
         root: {
           '& .MuiOutlinedInput-root': {
-            borderRadius: 12,
+            borderRadius: 1,
             transition: 'all 0.2s ease',
             '&:hover': {
               transform: 'translateY(-1px)',
@@ -326,7 +326,7 @@ const commonTheme = {
       styleOverrides: {
         root: {
           '& .MuiSnackbarContent-root': {
-            borderRadius: 16,
+            borderRadius: 1,
             backdropFilter: 'blur(20px)',
             background: 'rgba(255, 255, 255, 0.95)',
             boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1)',

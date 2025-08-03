@@ -117,7 +117,7 @@ const Register: React.FC = () => {
             sx={{
               width: '100%',
               p: { xs: 3, sm: 4, md: 5, lg: 6 },
-              borderRadius: 4,
+              borderRadius: 1,
               boxShadow: theme.customColors.shadow.primary,
               background: theme.customColors.surface.card,
               backdropFilter: 'blur(20px)',
@@ -186,7 +186,7 @@ const Register: React.FC = () => {
                 severity="error" 
                 sx={{ 
                   mb: 4,
-                  borderRadius: 2,
+                  borderRadius: 1,
                   background: alpha(theme.customColors.status.error, 0.1),
                   border: `1px solid ${alpha(theme.customColors.status.error, 0.3)}`,
                   color: theme.customColors.status.error,
@@ -308,7 +308,7 @@ const Register: React.FC = () => {
                   sx={{
                     py: { xs: 1.5, sm: 2 },
                     px: { xs: 3, sm: 4 },
-                    borderRadius: 3,
+                    borderRadius: 1,
                     fontWeight: 700,
                     fontSize: { xs: '1rem', sm: '1.125rem' },
                     background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
@@ -338,7 +338,7 @@ const Register: React.FC = () => {
                   sx={{
                     py: { xs: 1.5, sm: 2 },
                     px: { xs: 3, sm: 4 },
-                    borderRadius: 3,
+                    borderRadius: 1,
                     fontWeight: 700,
                     fontSize: { xs: '1rem', sm: '1.125rem' },
                     border: `2px solid ${alpha(theme.customColors.primary.main, 0.3)}`,

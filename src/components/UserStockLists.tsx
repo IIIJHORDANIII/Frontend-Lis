@@ -127,7 +127,7 @@ const UserStockLists: React.FC = () => {
             severity="error" 
             sx={{ 
               mb: 4,
-              borderRadius: 2,
+              borderRadius: 1,
               boxShadow: theme.customColors.shadow.secondary,
               '& .MuiAlert-icon': {
                 fontSize: '1.5rem'
@@ -162,7 +162,7 @@ const UserStockLists: React.FC = () => {
             severity="info" 
             sx={{ 
               mb: 4,
-              borderRadius: 2,
+              borderRadius: 1,
               fontSize: '1.1rem',
               maxWidth: 900,
               mx: 'auto',
@@ -204,7 +204,7 @@ const UserStockLists: React.FC = () => {
               mt: 0, // No top margin since AppLayout already provides padding
               mb: { xs: 1, sm: 2, md: 4 },
               p: { xs: 1, sm: 2, md: 4 },
-              borderRadius: 3,
+              borderRadius: 1,
               boxShadow: theme.customColors.shadow.secondary,
               background: theme.customColors.surface.card,
               backdropFilter: 'blur(12px)',
@@ -263,7 +263,7 @@ const UserStockLists: React.FC = () => {
             severity="error" 
             sx={{ 
               mb: 4,
-              borderRadius: 2,
+              borderRadius: 1,
               fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
               maxWidth: 900,
               mx: 'auto',
@@ -288,7 +288,7 @@ const UserStockLists: React.FC = () => {
           <ButtonGroup
             variant="outlined"
             sx={{
-              borderRadius: 3,
+              borderRadius: 1,
               boxShadow: theme.customColors.shadow.secondary,
               background: theme.customColors.surface.card,
               border: `1px solid ${theme.customColors.border.primary}`,
@@ -382,7 +382,7 @@ const UserStockLists: React.FC = () => {
                 sx={{
                   background: theme.customColors.surface.card,
                   border: `1.5px solid ${(product.availableQuantity || 0) === 0 ? theme.customColors.status.error : theme.customColors.border.primary}`,
-                  borderRadius: 4,
+                  borderRadius: 1,
                   overflow: 'hidden',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   boxShadow: theme.customColors.shadow.secondary,
@@ -404,7 +404,7 @@ const UserStockLists: React.FC = () => {
                   sx={{
                     objectFit: 'cover',
                     aspectRatio: '3/5',
-                    borderRadius: 3,
+                    borderRadius: 1,
                     transition: 'transform 0.3s ease',
                     '&:hover': {
                       transform: 'scale(1.05)',

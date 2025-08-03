@@ -275,7 +275,7 @@ const ProductList: React.FC = () => {
             mt: 0, // No top margin since AppLayout already provides padding
             mb: { xs: 2, sm: 3, md: 4, lg: 5, xl: 6 },
             p: { xs: 3, sm: 4, md: 5, lg: 6, xl: 7 }, // Increased padding
-            borderRadius: 4,
+            borderRadius: 1,
             boxShadow: theme.customColors.shadow.primary,
             background: theme.customColors.surface.header,
             backdropFilter: 'blur(12px)',
@@ -344,7 +344,7 @@ const ProductList: React.FC = () => {
                   fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem', lg: '1.25rem', xl: '1.375rem' },
                   px: { xs: 2.5, sm: 3, md: 3.5, lg: 4, xl: 4.5 },
                   py: { xs: 1.25, sm: 1.5, md: 1.75, lg: 2, xl: 2.25 },
-                  borderRadius: 3,
+                  borderRadius: 1,
                   boxShadow: '0 6px 20px 0 rgba(102,126,234,0.15)',
                   border: '1.5px solid rgba(255,255,255,0.25)',
                   transition: 'all 0.3s ease',
@@ -369,7 +369,7 @@ const ProductList: React.FC = () => {
               gap: 4,
               background: theme.palette.mode === 'dark' ? alpha(theme.palette.primary.main, 0.08) : alpha(theme.palette.primary.light, 0.12),
               border: `1.5px solid ${theme.palette.primary.main}`,
-              borderRadius: 3,
+              borderRadius: 1,
               boxShadow: theme.customColors.shadow.secondary,
               p: 3,
               mt: 2,
@@ -416,7 +416,7 @@ const ProductList: React.FC = () => {
           severity="error" 
           sx={{ 
             mb: 4,
-            borderRadius: 2,
+            borderRadius: 1,
             fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
             maxWidth: 900,
             mx: 'auto',
@@ -470,7 +470,7 @@ const ProductList: React.FC = () => {
                 sx={{
                   background: theme.customColors.surface.card,
                   border: `1.5px solid ${isAdmin && product.isFullyReserved ? theme.customColors.status.error : theme.customColors.border.primary}`,
-                  borderRadius: 4,
+                  borderRadius: 1,
                   overflow: 'hidden',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   boxShadow: hoveredCard === product._id 
@@ -500,7 +500,7 @@ const ProductList: React.FC = () => {
                       aspectRatio: '3/5',
                       transition: 'transform 0.3s ease',
                       transform: hoveredCard === product._id ? 'scale(1.05)' : 'scale(1)',
-                      borderRadius: 3,
+                      borderRadius: 1,
                     }}
                   />
                 </Box>
@@ -872,7 +872,7 @@ const ProductList: React.FC = () => {
               startIcon={<UploadIcon />}
               sx={{
                 mb: 1,
-                borderRadius: 2,
+                borderRadius: 1,
                 borderColor: theme.customColors.border.primary,
                 color: theme.customColors.text.primary,
                 '&:hover': {
@@ -899,7 +899,7 @@ const ProductList: React.FC = () => {
                 fullWidth
                 startIcon={<RemoveIcon />}
                 sx={{
-                  borderRadius: 2,
+                  borderRadius: 1,
                   borderColor: theme.customColors.status.error,
                   color: theme.customColors.status.error,
                   '&:hover': {
@@ -971,7 +971,7 @@ const ProductList: React.FC = () => {
           severity="success" 
           sx={{ 
             width: '100%',
-            borderRadius: 2,
+            borderRadius: 1,
             fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
           }}
         >

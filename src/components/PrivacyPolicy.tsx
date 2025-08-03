@@ -115,7 +115,7 @@ const PrivacyPolicy: React.FC = () => {
               mb: 6,
               p: 4,
               background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
-              borderRadius: 4,
+              borderRadius: 1,
               color: theme.customColors.text.inverse,
               textAlign: 'center',
               boxShadow: theme.customColors.shadow.primary,
@@ -155,7 +155,7 @@ const PrivacyPolicy: React.FC = () => {
               mb: 6,
               background: theme.customColors.surface.card,
               backdropFilter: 'blur(10px)',
-              borderRadius: 4,
+              borderRadius: 1,
               border: `1px solid ${theme.customColors.border.primary}`,
               boxShadow: theme.customColors.shadow.secondary,
             }}>
@@ -201,7 +201,7 @@ const PrivacyPolicy: React.FC = () => {
                   <Card sx={{
                     background: theme.customColors.surface.card,
                     backdropFilter: 'blur(10px)',
-                    borderRadius: 4,
+                    borderRadius: 1,
                     border: `1px solid ${theme.customColors.border.primary}`,
                     boxShadow: theme.customColors.shadow.secondary,
                     transition: 'all 0.3s ease',
@@ -259,7 +259,7 @@ const PrivacyPolicy: React.FC = () => {
                 mt: 6,
                 background: theme.customColors.surface.card,
                 backdropFilter: 'blur(10px)',
-                borderRadius: 4,
+                borderRadius: 1,
                 border: `1px solid ${theme.customColors.border.primary}`,
                 boxShadow: theme.customColors.shadow.secondary,
               }}>
@@ -316,7 +316,7 @@ const PrivacyPolicy: React.FC = () => {
                 p: 3, 
                 textAlign: 'center',
                 background: alpha(theme.customColors.text.primary, 0.02),
-                borderRadius: 3,
+                borderRadius: 1,
                 border: `1px solid ${theme.customColors.border.primary}`,
               }}>
                 <Typography variant="body2" sx={{ 

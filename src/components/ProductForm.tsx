@@ -165,7 +165,7 @@ const ProductForm: React.FC = () => {
             maxWidth: { xs: '100%', sm: 600, md: 700, lg: 800 },
             width: '100%',
             p: { xs: 3, sm: 4, md: 5, lg: 6 },
-            borderRadius: 4,
+            borderRadius: 1,
             boxShadow: theme.customColors.shadow.primary,
             background: theme.customColors.surface.card,
             backdropFilter: 'blur(20px)',
@@ -234,7 +234,7 @@ const ProductForm: React.FC = () => {
                 severity="error" 
                 sx={{ 
                   mb: 4,
-                  borderRadius: 2,
+                  borderRadius: 1,
                   background: alpha(theme.customColors.status.error, 0.1),
                   border: `1px solid ${alpha(theme.customColors.status.error, 0.3)}`,
                   color: theme.customColors.status.error,
@@ -265,7 +265,7 @@ const ProductForm: React.FC = () => {
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 3,
+                      borderRadius: 1,
                       backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                       '&:hover .MuiOutlinedInput-notchedOutline': {
                         borderColor: alpha(theme.customColors.primary.main, 0.5),
@@ -305,7 +305,7 @@ const ProductForm: React.FC = () => {
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 3,
+                      borderRadius: 1,
                       backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                       '&:hover .MuiOutlinedInput-notchedOutline': {
                         borderColor: alpha(theme.customColors.primary.main, 0.5),
@@ -345,7 +345,7 @@ const ProductForm: React.FC = () => {
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
-                        borderRadius: 3,
+                        borderRadius: 1,
                         backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                         '&:hover .MuiOutlinedInput-notchedOutline': {
                           borderColor: alpha(theme.customColors.primary.main, 0.5),
@@ -384,7 +384,7 @@ const ProductForm: React.FC = () => {
                     }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
-                        borderRadius: 3,
+                        borderRadius: 1,
                         backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                         '&:hover .MuiOutlinedInput-notchedOutline': {
                           borderColor: alpha(theme.customColors.primary.main, 0.5),
@@ -458,7 +458,7 @@ const ProductForm: React.FC = () => {
                       fullWidth
                       sx={{
                         py: 2,
-                        borderRadius: 3,
+                        borderRadius: 1,
                         border: `2px dashed ${alpha(theme.customColors.primary.main, 0.3)}`,
                         color: theme.customColors.primary.main,
                         backgroundColor: alpha(theme.customColors.primary.main, 0.05),
@@ -479,7 +479,7 @@ const ProductForm: React.FC = () => {
                         style={{
                           maxWidth: '100%',
                           maxHeight: 200,
-                          borderRadius: 8,
+                          borderRadius: 1,
                           border: `2px solid ${theme.customColors.border.primary}`
                         }}
                       />
@@ -491,7 +491,7 @@ const ProductForm: React.FC = () => {
                   <Card sx={{ 
                     background: alpha(theme.customColors.primary.main, 0.05),
                     border: `1px solid ${alpha(theme.customColors.primary.main, 0.2)}`,
-                    borderRadius: 3
+                    borderRadius: 1
                   }}>
                     <CardContent>
                       <Typography variant="h6" sx={{ 
@@ -550,7 +550,7 @@ const ProductForm: React.FC = () => {
                     sx={{
                       py: { xs: 1.5, sm: 2 },
                       px: { xs: 3, sm: 4 },
-                      borderRadius: 3,
+                      borderRadius: 1,
                       fontWeight: 700,
                       fontSize: { xs: '1rem', sm: '1.125rem' },
                       background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
@@ -580,7 +580,7 @@ const ProductForm: React.FC = () => {
                     sx={{
                       py: { xs: 1.5, sm: 2 },
                       px: { xs: 3, sm: 4 },
-                      borderRadius: 3,
+                      borderRadius: 1,
                       fontWeight: 700,
                       fontSize: { xs: '1rem', sm: '1.125rem' },
                       border: `2px solid ${alpha(theme.customColors.primary.main, 0.3)}`,

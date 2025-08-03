@@ -103,7 +103,7 @@ const Tutorial: React.FC<TutorialProps> = ({
           width: '90%',
           maxHeight: '80vh',
           overflow: 'hidden',
-          borderRadius: 4,
+          borderRadius: 1,
           background: theme.palette.mode === 'dark' 
             ? 'rgba(255, 255, 255, 0.05)' 
             : 'rgba(255, 255, 255, 0.95)',
@@ -244,7 +244,7 @@ const Tutorial: React.FC<TutorialProps> = ({
             disabled={activeStep === 0}
             onClick={handleBack}
             sx={{
-              borderRadius: 2,
+              borderRadius: 1,
               px: 3,
               py: 1,
               fontWeight: 600,
@@ -257,7 +257,7 @@ const Tutorial: React.FC<TutorialProps> = ({
             variant="contained"
             onClick={handleNext}
             sx={{
-              borderRadius: 2,
+              borderRadius: 1,
               px: 4,
               py: 1,
               fontWeight: 600,

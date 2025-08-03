@@ -89,7 +89,7 @@ const ShareListDialog: React.FC<ShareListDialogProps> = ({
       }}
       PaperProps={{
         sx: {
-          borderRadius: 4,
+          borderRadius: 1,
           background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
           border: `1.5px solid ${theme.customColors.border.primary}`,
           boxShadow: theme.customColors.shadow.primary,
@@ -133,7 +133,7 @@ const ShareListDialog: React.FC<ShareListDialogProps> = ({
             severity="error" 
             sx={{ 
               mb: 3,
-              borderRadius: 2,
+              borderRadius: 1,
               background: alpha(theme.customColors.status.error, 0.1),
               border: `1px solid ${alpha(theme.customColors.status.error, 0.3)}`,
               color: theme.customColors.status.error,
@@ -158,7 +158,7 @@ const ShareListDialog: React.FC<ShareListDialogProps> = ({
           sx={{
             mb: 3,
             '& .MuiOutlinedInput-root': {
-              borderRadius: 3,
+              borderRadius: 1,
               backgroundColor: alpha(theme.customColors.text.primary, 0.02),
               '&:hover .MuiOutlinedInput-notchedOutline': {
                 borderColor: theme.customColors.primary.main,
@@ -187,7 +187,7 @@ const ShareListDialog: React.FC<ShareListDialogProps> = ({
                 key={userEmail}
                 sx={{
                   backgroundColor: alpha(theme.customColors.text.primary, 0.02),
-                  borderRadius: 2,
+                  borderRadius: 1,
                   mb: 1,
                   border: `1px solid ${theme.customColors.border.primary}`,
                 }}
@@ -228,7 +228,7 @@ const ShareListDialog: React.FC<ShareListDialogProps> = ({
           onClick={onClose} 
           disabled={loading}
           sx={{
-            borderRadius: 3,
+            borderRadius: 1,
             fontWeight: 600,
             color: theme.customColors.text.primary,
             '&:hover': {
@@ -242,7 +242,7 @@ const ShareListDialog: React.FC<ShareListDialogProps> = ({
           onClick={handleShare}
           disabled={loading || !email}
           sx={{
-            borderRadius: 3,
+            borderRadius: 1,
             fontWeight: 700,
             background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
             color: theme.customColors.text.inverse,

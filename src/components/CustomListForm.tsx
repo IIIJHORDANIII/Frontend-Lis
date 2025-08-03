@@ -187,7 +187,7 @@ const CustomListForm: React.FC = () => {
           elevation={0}
           sx={{
             p: { xs: 3, sm: 4, md: 5 },
-            borderRadius: 4,
+            borderRadius: 1,
             background: theme.customColors.surface.card,
             backdropFilter: 'blur(20px)',
             border: `1.5px solid ${theme.customColors.border.primary}`,
@@ -253,7 +253,7 @@ const CustomListForm: React.FC = () => {
               severity="error"
               sx={{
                 mb: 4,
-                borderRadius: 2,
+                borderRadius: 1,
                 background: alpha(theme.customColors.status.error, 0.1),
                 border: `1px solid ${alpha(theme.customColors.status.error, 0.3)}`,
                 color: theme.customColors.status.error,
@@ -271,7 +271,7 @@ const CustomListForm: React.FC = () => {
               severity="success"
               sx={{
                 mb: 4,
-                borderRadius: 2,
+                borderRadius: 1,
                 background: alpha(theme.customColors.status.success, 0.1),
                 border: `1px solid ${alpha(theme.customColors.status.success, 0.3)}`,
                 color: theme.customColors.status.success,
@@ -302,7 +302,7 @@ const CustomListForm: React.FC = () => {
               }}
               sx={{
                 '& .MuiOutlinedInput-root': {
-                  borderRadius: 3,
+                  borderRadius: 1,
                   backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                   '&:hover .MuiOutlinedInput-notchedOutline': {
                     borderColor: theme.customColors.primary.main,
@@ -342,7 +342,7 @@ const CustomListForm: React.FC = () => {
               }}
               sx={{
                 '& .MuiOutlinedInput-root': {
-                  borderRadius: 3,
+                  borderRadius: 1,
                   backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                   '&:hover .MuiOutlinedInput-notchedOutline': {
                     borderColor: theme.customColors.primary.main,
@@ -393,7 +393,7 @@ const CustomListForm: React.FC = () => {
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 3,
+                      borderRadius: 1,
                       backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                       '&:hover .MuiOutlinedInput-notchedOutline': {
                         borderColor: theme.customColors.primary.main,
@@ -481,7 +481,7 @@ const CustomListForm: React.FC = () => {
                       elevation={0}
                       sx={{
                         p: 2,
-                        borderRadius: 2,
+                        borderRadius: 1,
                         border: `1px solid ${theme.customColors.border.primary}`,
                         backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                       }}
@@ -528,7 +528,7 @@ const CustomListForm: React.FC = () => {
                             sx={{
                               minWidth: 40,
                               height: 40,
-                              borderRadius: 2,
+                              borderRadius: 1,
                               borderColor: theme.customColors.primary.main,
                               color: theme.customColors.primary.main,
                               '&:hover': {
@@ -555,7 +555,7 @@ const CustomListForm: React.FC = () => {
                             sx={{
                               width: 80,
                               '& .MuiOutlinedInput-root': {
-                                borderRadius: 2,
+                                borderRadius: 1,
                                 '& input': {
                                   textAlign: 'center',
                                   fontWeight: 600,
@@ -577,7 +577,7 @@ const CustomListForm: React.FC = () => {
                             sx={{
                               minWidth: 40,
                               height: 40,
-                              borderRadius: 2,
+                              borderRadius: 1,
                               borderColor: theme.customColors.primary.main,
                               color: theme.customColors.primary.main,
                               '&:hover': {
@@ -617,7 +617,7 @@ const CustomListForm: React.FC = () => {
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 3,
+                      borderRadius: 1,
                       backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                       '&:hover .MuiOutlinedInput-notchedOutline': {
                         borderColor: theme.customColors.primary.main,
@@ -699,7 +699,7 @@ const CustomListForm: React.FC = () => {
                 sx={{
                   py: { xs: 1.5, sm: 2 },
                   px: { xs: 3, sm: 4 },
-                  borderRadius: 3,
+                  borderRadius: 1,
                   fontWeight: 600,
                   fontSize: { xs: '1rem', sm: '1.125rem' },
                   borderColor: theme.customColors.text.primary,
@@ -720,7 +720,7 @@ const CustomListForm: React.FC = () => {
                 sx={{
                   py: { xs: 1.5, sm: 2 },
                   px: { xs: 3, sm: 4 },
-                  borderRadius: 3,
+                  borderRadius: 1,
                   fontWeight: 700,
                   fontSize: { xs: '1rem', sm: '1.125rem' },
                   background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,

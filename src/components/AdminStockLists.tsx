@@ -136,7 +136,7 @@ const AdminStockLists: React.FC = () => {
               mt: 0, // No top margin since AppLayout already provides padding
               mb: { xs: 1, sm: 2, md: 4 },
               p: { xs: 1, sm: 2, md: 4 },
-              borderRadius: 3,
+              borderRadius: 1,
               boxShadow: theme.customColors.shadow.secondary,
               background: theme.customColors.surface.card,
               backdropFilter: 'blur(12px)',
@@ -197,7 +197,7 @@ const AdminStockLists: React.FC = () => {
                   mt: 2,
                   px: 3,
                   py: 1.5,
-                  borderRadius: 2,
+                  borderRadius: 1,
                   background: theme.customColors.primary.main,
                   color: theme.customColors.primary.contrastText,
                   '&:hover': {
@@ -219,7 +219,7 @@ const AdminStockLists: React.FC = () => {
             severity="error" 
             sx={{ 
               mb: 4,
-              borderRadius: 2,
+              borderRadius: 1,
               background: alpha(theme.customColors.status.error, 0.1),
               border: `1px solid ${alpha(theme.customColors.status.error, 0.3)}`,
               color: theme.customColors.status.error,
@@ -236,7 +236,7 @@ const AdminStockLists: React.FC = () => {
             severity="info" 
             sx={{ 
               mb: 4,
-              borderRadius: 2,
+              borderRadius: 1,
               fontSize: '1.1rem',
               maxWidth: 900,
               mx: 'auto',
@@ -261,7 +261,7 @@ const AdminStockLists: React.FC = () => {
                   mb: 3,
                   background: theme.customColors.surface.card,
                   border: `1.5px solid ${theme.customColors.border.primary}`,
-                  borderRadius: 4,
+                  borderRadius: 1,
                   overflow: 'hidden',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   boxShadow: theme.customColors.shadow.secondary,
@@ -354,7 +354,7 @@ const AdminStockLists: React.FC = () => {
                     sx={{
                       boxShadow: 'none',
                       border: `1px solid ${theme.customColors.border.primary}`,
-                      borderRadius: 2,
+                      borderRadius: 1,
                       '&:before': {
                         display: 'none',
                       },
@@ -393,7 +393,7 @@ const AdminStockLists: React.FC = () => {
                               sx={{
                                 background: alpha(theme.customColors.text.primary, 0.02),
                                 border: `1px solid ${theme.customColors.border.primary}`,
-                                borderRadius: 2,
+                                borderRadius: 1,
                                 overflow: 'hidden',
                                 transition: 'all 0.3s ease',
                                 '&:hover': {
@@ -540,7 +540,7 @@ const AdminStockLists: React.FC = () => {
           severity="success" 
           onClose={() => setSuccess(null)}
           sx={{ 
-            borderRadius: 2,
+            borderRadius: 1,
             background: alpha(theme.customColors.status.success, 0.1),
             border: `1px solid ${alpha(theme.customColors.status.success, 0.3)}`,
             color: theme.customColors.status.success,

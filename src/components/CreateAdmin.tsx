@@ -83,7 +83,7 @@ const CreateAdmin: React.FC = () => {
             sx={{ 
               width: '100%',
               p: { xs: 3, sm: 5 },
-              borderRadius: 4,
+              borderRadius: 1,
               background: theme.customColors.surface.card,
               backdropFilter: 'blur(20px)',
               boxShadow: theme.customColors.shadow.primary,
@@ -155,7 +155,7 @@ const CreateAdmin: React.FC = () => {
                 severity="error" 
                 sx={{ 
                   mb: 3,
-                  borderRadius: 2,
+                  borderRadius: 1,
                   background: alpha(theme.customColors.status.error, 0.1),
                   border: `1px solid ${alpha(theme.customColors.status.error, 0.3)}`,
                   color: theme.customColors.status.error,
@@ -173,7 +173,7 @@ const CreateAdmin: React.FC = () => {
                 severity="success" 
                 sx={{ 
                   mb: 3,
-                  borderRadius: 2,
+                  borderRadius: 1,
                   background: alpha(theme.customColors.status.success, 0.1),
                   border: `1px solid ${alpha(theme.customColors.status.success, 0.3)}`,
                   color: theme.customColors.status.success,
@@ -205,7 +205,7 @@ const CreateAdmin: React.FC = () => {
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 3,
+                      borderRadius: 1,
                       backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                       transition: 'all 0.3s ease',
                       '&:hover .MuiOutlinedInput-notchedOutline': {
@@ -252,7 +252,7 @@ const CreateAdmin: React.FC = () => {
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 3,
+                      borderRadius: 1,
                       backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                       transition: 'all 0.3s ease',
                       '&:hover .MuiOutlinedInput-notchedOutline': {
@@ -302,7 +302,7 @@ const CreateAdmin: React.FC = () => {
                 }}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: 3,
+                    borderRadius: 1,
                     backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                     transition: 'all 0.3s ease',
                     '&:hover .MuiOutlinedInput-notchedOutline': {
@@ -352,7 +352,7 @@ const CreateAdmin: React.FC = () => {
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 3,
+                      borderRadius: 1,
                       backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                       transition: 'all 0.3s ease',
                       '&:hover .MuiOutlinedInput-notchedOutline': {
@@ -400,7 +400,7 @@ const CreateAdmin: React.FC = () => {
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 3,
+                      borderRadius: 1,
                       backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                       transition: 'all 0.3s ease',
                       '&:hover .MuiOutlinedInput-notchedOutline': {
@@ -441,7 +441,7 @@ const CreateAdmin: React.FC = () => {
                   mt: 4,
                   py: { xs: 1.5, sm: 2, md: 2.5 },
                   px: { xs: 3, sm: 4, md: 5 },
-                  borderRadius: 3,
+                  borderRadius: 1,
                   fontWeight: 700,
                   fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
                   background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,

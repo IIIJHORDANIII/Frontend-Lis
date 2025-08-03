@@ -699,7 +699,7 @@ const Sales: React.FC = () => {
             mt: 0, // No top margin since AppLayout already provides padding
             mb: { xs: 2, sm: 3, md: 4, lg: 5, xl: 6 },
             p: { xs: 3, sm: 4, md: 5, lg: 6, xl: 7 }, // Increased padding
-            borderRadius: 4,
+            borderRadius: 1,
             boxShadow: theme.customColors.shadow.primary,
             background: theme.customColors.surface.header,
             backdropFilter: 'blur(12px)',
@@ -774,7 +774,7 @@ const Sales: React.FC = () => {
                   fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem', lg: '1.25rem', xl: '1.375rem' },
                   px: { xs: 2.5, sm: 3, md: 3.5, lg: 4, xl: 4.5 },
                   py: { xs: 1.25, sm: 1.5, md: 1.75, lg: 2, xl: 2.25 },
-                  borderRadius: 3,
+                  borderRadius: 1,
                   boxShadow: '0 6px 20px 0 rgba(102,126,234,0.15)',
                   border: '1.5px solid rgba(255,255,255,0.25)',
                   transition: 'all 0.3s ease',
@@ -800,7 +800,7 @@ const Sales: React.FC = () => {
           severity="error" 
           sx={{ 
             mb: 4,
-            borderRadius: 2,
+            borderRadius: 1,
             fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
             maxWidth: 900,
             mx: 'auto',
@@ -825,7 +825,7 @@ const Sales: React.FC = () => {
         <ButtonGroup
           variant="outlined"
           sx={{
-            borderRadius: 3,
+            borderRadius: 1,
             boxShadow: theme.customColors.shadow.secondary,
             background: theme.customColors.surface.card,
             border: `1px solid ${theme.customColors.border.primary}`,
@@ -930,7 +930,7 @@ const Sales: React.FC = () => {
                 sx={{
                   background: theme.customColors.surface.card,
                   border: `1.5px solid ${theme.customColors.border.primary}`,
-                  borderRadius: 4,
+                  borderRadius: 1,
                   overflow: 'hidden',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   boxShadow: hoveredCard === product._id 
@@ -959,7 +959,7 @@ const Sales: React.FC = () => {
                       aspectRatio: '3/5',
                       transition: 'transform 0.3s ease',
                       transform: hoveredCard === product._id ? 'scale(1.05)' : 'scale(1)',
-                      borderRadius: 3,
+                      borderRadius: 1,
                     }}
                   />
                 </Box>
@@ -1183,7 +1183,7 @@ const Sales: React.FC = () => {
               mt: { xs: 4, sm: 5, md: 6, lg: 7, xl: 8 },
               mb: { xs: 2, sm: 3, md: 4, lg: 5, xl: 6 },
               p: { xs: 3, sm: 4, md: 5, lg: 6, xl: 7 },
-              borderRadius: 4,
+              borderRadius: 1,
               boxShadow: theme.customColors.shadow.primary,
               background: theme.customColors.surface.card,
               backdropFilter: 'blur(12px)',
@@ -1233,7 +1233,7 @@ const Sales: React.FC = () => {
               {/* Total Sales */}
               <Box sx={{
                 p: { xs: 2, sm: 2.5, md: 3, lg: 3.5, xl: 4 },
-                borderRadius: 3,
+                borderRadius: 1,
                 background: alpha(theme.customColors.status.success, 0.1),
                 border: `1px solid ${alpha(theme.customColors.status.success, 0.3)}`,
                 textAlign: 'center',
@@ -1263,7 +1263,7 @@ const Sales: React.FC = () => {
               {/* Commission */}
               <Box sx={{
                 p: { xs: 2, sm: 2.5, md: 3, lg: 3.5, xl: 4 },
-                borderRadius: 3,
+                borderRadius: 1,
                 background: alpha(theme.customColors.status.warning, 0.1),
                 border: `1px solid ${alpha(theme.customColors.status.warning, 0.3)}`,
                 textAlign: 'center',
@@ -1293,7 +1293,7 @@ const Sales: React.FC = () => {
               {/* Products Count */}
               <Box sx={{
                 p: { xs: 2, sm: 2.5, md: 3, lg: 3.5, xl: 4 },
-                borderRadius: 3,
+                borderRadius: 1,
                 background: alpha(theme.customColors.status.info, 0.1),
                 border: `1px solid ${alpha(theme.customColors.status.info, 0.3)}`,
                 textAlign: 'center',
@@ -1323,7 +1323,7 @@ const Sales: React.FC = () => {
               {/* Average Price */}
               <Box sx={{
                 p: { xs: 2, sm: 2.5, md: 3, lg: 3.5, xl: 4 },
-                borderRadius: 3,
+                borderRadius: 1,
                 background: alpha(theme.customColors.primary.main, 0.1),
                 border: `1px solid ${alpha(theme.customColors.primary.main, 0.3)}`,
                 textAlign: 'center',
@@ -1355,7 +1355,7 @@ const Sales: React.FC = () => {
             <Box sx={{
               mt: 4,
               p: { xs: 2, sm: 2.5, md: 3 },
-              borderRadius: 3,
+              borderRadius: 1,
               background: alpha(theme.customColors.text.primary, 0.05),
               border: `1px solid ${alpha(theme.customColors.text.primary, 0.1)}`,
             }}>
@@ -1387,7 +1387,7 @@ const Sales: React.FC = () => {
         }}
         PaperProps={{
           sx: {
-            borderRadius: 3,
+            borderRadius: 1,
             background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
             boxShadow: theme.customColors.shadow.primary,
             border: `1px solid ${theme.customColors.border.primary}`,
@@ -1465,7 +1465,7 @@ const Sales: React.FC = () => {
               <Card key={product._id} sx={{
                 p: 2,
                 border: `1px solid ${theme.customColors.border.primary}`,
-                borderRadius: 2,
+                borderRadius: 1,
                 background: theme.palette.mode === 'dark' ? '#2d3748 !important' : '#ffffff !important',
                 transition: 'all 0.3s ease',
                 '&:hover': {
@@ -1564,7 +1564,7 @@ const Sales: React.FC = () => {
             onClick={handleCloseCondicional}
             variant="outlined"
             sx={{
-              borderRadius: 2,
+              borderRadius: 1,
               px: 3,
               py: 1,
               borderColor: theme.customColors.border.primary,
@@ -1584,7 +1584,7 @@ const Sales: React.FC = () => {
             startIcon={<PdfIcon />}
             disabled={Object.keys(selectedProducts).length === 0 || !recipientName.trim()}
             sx={{
-              borderRadius: 2,
+              borderRadius: 1,
               px: 3,
               py: 1,
               background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -1617,7 +1617,7 @@ const Sales: React.FC = () => {
           severity="success" 
           sx={{ 
             width: '100%',
-            borderRadius: 2,
+            borderRadius: 1,
             fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
             boxShadow: theme.customColors.shadow.secondary,
             '& .MuiAlert-icon': {

@@ -40,7 +40,7 @@ const CustomListDisplay: React.FC = () => {
           mb: 4,
           p: 3,
           background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,
-          borderRadius: 3,
+          borderRadius: 1,
           color: theme.customColors.text.inverse,
           boxShadow: theme.customColors.shadow.secondary,
         }}>
@@ -64,7 +64,7 @@ const CustomListDisplay: React.FC = () => {
             severity="error" 
             sx={{ 
               mb: 3,
-              borderRadius: 2,
+              borderRadius: 1,
               background: alpha(theme.customColors.status.error, 0.1),
               border: `1px solid ${alpha(theme.customColors.status.error, 0.3)}`,
               color: theme.customColors.status.error,
@@ -87,7 +87,7 @@ const CustomListDisplay: React.FC = () => {
               width: '100%',
               background: theme.customColors.surface.card,
               border: `1.5px solid ${theme.customColors.border.primary}`,
-              borderRadius: 3,
+              borderRadius: 1,
               transition: 'all 0.3s ease',
               boxShadow: theme.customColors.shadow.secondary,
               '&:hover': {
@@ -110,7 +110,7 @@ const CustomListDisplay: React.FC = () => {
                 <List>
                   {list.products.map((productItem) => (
                     <ListItem key={productItem.productId} sx={{
-                      borderRadius: 2,
+                      borderRadius: 1,
                       mb: 1,
                       backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                       border: `1px solid ${theme.customColors.border.primary}`,

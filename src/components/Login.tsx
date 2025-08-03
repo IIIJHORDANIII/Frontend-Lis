@@ -91,7 +91,7 @@ const Login: React.FC = () => {
             elevation={0}
             sx={{
               p: { xs: 3, sm: 4, md: 5, lg: 6 },
-              borderRadius: 4,
+              borderRadius: 1,
               boxShadow: theme.customColors.shadow.primary,
               background: theme.customColors.surface.card,
               backdropFilter: 'blur(12px)',
@@ -145,7 +145,7 @@ const Login: React.FC = () => {
                 severity="error"
                 sx={{
                   mb: 3,
-                  borderRadius: 2,
+                  borderRadius: 1,
                   fontSize: { xs: '0.875rem', sm: '1rem' },
                   boxShadow: theme.customColors.shadow.secondary,
                 }}
@@ -166,7 +166,7 @@ const Login: React.FC = () => {
                 sx={{
                   mb: 3,
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: 3,
+                    borderRadius: 1,
                     backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                     '&:hover .MuiOutlinedInput-notchedOutline': {
                       borderColor: theme.customColors.primary.main,
@@ -203,7 +203,7 @@ const Login: React.FC = () => {
                 sx={{
                   mb: 4,
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: 3,
+                    borderRadius: 1,
                     backgroundColor: alpha(theme.customColors.text.primary, 0.02),
                     '&:hover .MuiOutlinedInput-notchedOutline': {
                       borderColor: theme.customColors.primary.main,
@@ -248,7 +248,7 @@ const Login: React.FC = () => {
                 sx={{
                   py: { xs: 1.5, sm: 2, md: 2.5 },
                   px: { xs: 3, sm: 4, md: 5 },
-                  borderRadius: 3,
+                  borderRadius: 1,
                   fontWeight: 700,
                   fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
                   background: `linear-gradient(135deg, ${theme.customColors.primary.main} 0%, ${theme.customColors.primary.light} 100%)`,

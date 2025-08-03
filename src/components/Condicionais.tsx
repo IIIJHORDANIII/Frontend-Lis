@@ -230,33 +230,105 @@ const Condicionais: React.FC = () => {
       </Box>
 
       {/* Lista de Condicionais */}
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{
+        background: theme.palette.mode === 'dark' 
+          ? 'rgba(45, 55, 72, 0.8)' 
+          : 'rgba(255, 255, 255, 0.9)',
+        backdropFilter: 'blur(10px)',
+        border: `1px solid ${theme.palette.mode === 'dark' 
+          ? 'rgba(255, 255, 255, 0.1)' 
+          : 'rgba(0, 0, 0, 0.1)'}`,
+        borderRadius: 1,
+        boxShadow: theme.palette.mode === 'dark'
+          ? '0 8px 32px rgba(0, 0, 0, 0.3)'
+          : '0 8px 32px rgba(0, 0, 0, 0.1)'
+      }}>
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell>Cliente</TableCell>
-              <TableCell>Data</TableCell>
-              <TableCell>Produtos</TableCell>
-              <TableCell>Total Original</TableCell>
-              <TableCell>Desconto</TableCell>
-              <TableCell>Total Final</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Ações</TableCell>
+            <TableRow sx={{
+              background: theme.palette.mode === 'dark' 
+                ? 'rgba(102, 126, 234, 0.1)' 
+                : 'rgba(102, 126, 234, 0.05)'
+            }}>
+                              <TableCell sx={{
+                  color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748',
+                  fontWeight: 600,
+                  fontSize: '0.875rem'
+                }}>Cliente</TableCell>
+                <TableCell sx={{
+                  color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748',
+                  fontWeight: 600,
+                  fontSize: '0.875rem'
+                }}>Data</TableCell>
+                <TableCell sx={{
+                  color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748',
+                  fontWeight: 600,
+                  fontSize: '0.875rem'
+                }}>Produtos</TableCell>
+                <TableCell sx={{
+                  color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748',
+                  fontWeight: 600,
+                  fontSize: '0.875rem'
+                }}>Total Original</TableCell>
+                <TableCell sx={{
+                  color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748',
+                  fontWeight: 600,
+                  fontSize: '0.875rem'
+                }}>Desconto</TableCell>
+                <TableCell sx={{
+                  color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748',
+                  fontWeight: 600,
+                  fontSize: '0.875rem'
+                }}>Total Final</TableCell>
+                <TableCell sx={{
+                  color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748',
+                  fontWeight: 600,
+                  fontSize: '0.875rem'
+                }}>Status</TableCell>
+                <TableCell sx={{
+                  color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748',
+                  fontWeight: 600,
+                  fontSize: '0.875rem'
+                }}>Ações</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {condicionais.map((condicional) => (
-              <TableRow key={condicional._id}>
-                <TableCell>{condicional.clientName}</TableCell>
-                <TableCell>
+              <TableRow 
+                key={condicional._id}
+                sx={{
+                  '&:hover': {
+                    background: theme.palette.mode === 'dark' 
+                      ? 'rgba(255, 255, 255, 0.05)' 
+                      : 'rgba(102, 126, 234, 0.02)',
+                    transition: 'background-color 0.2s ease'
+                  }
+                }}
+              >
+                <TableCell sx={{
+                  color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748'
+                }}>{condicional.clientName}</TableCell>
+                <TableCell sx={{
+                  color: theme.palette.mode === 'dark' ? '#a0aec0' : '#718096'
+                }}>
                   {new Date(condicional.createdAt).toLocaleDateString('pt-BR')}
                 </TableCell>
-                <TableCell>
+                <TableCell sx={{
+                  color: theme.palette.mode === 'dark' ? '#a0aec0' : '#718096'
+                }}>
                   {condicional.products.length} produto(s)
                 </TableCell>
-                <TableCell>{formatCurrency(condicional.totalOriginal)}</TableCell>
-                <TableCell>{formatCurrency(condicional.discount)}</TableCell>
-                <TableCell>{formatCurrency(condicional.totalWithDiscount)}</TableCell>
+                <TableCell sx={{
+                  color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748',
+                  fontWeight: 500
+                }}>{formatCurrency(condicional.totalOriginal)}</TableCell>
+                <TableCell sx={{
+                  color: theme.palette.mode === 'dark' ? '#a0aec0' : '#718096'
+                }}>{formatCurrency(condicional.discount)}</TableCell>
+                <TableCell sx={{
+                  color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748',
+                  fontWeight: 600
+                }}>{formatCurrency(condicional.totalWithDiscount)}</TableCell>
                 <TableCell>
                   <Chip
                     label={getStatusText(condicional.status)}
@@ -264,11 +336,22 @@ const Condicionais: React.FC = () => {
                     size="small"
                   />
                 </TableCell>
-                <TableCell>
+                <TableCell sx={{
+                  color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748'
+                }}>
                   <IconButton
                     onClick={() => handleView(condicional._id)}
                     size="small"
                     title="Visualizar"
+                    sx={{
+                      color: theme.palette.mode === 'dark' ? '#a0aec0' : '#718096',
+                      '&:hover': {
+                        backgroundColor: theme.palette.mode === 'dark' 
+                          ? 'rgba(102, 126, 234, 0.2)' 
+                          : 'rgba(102, 126, 234, 0.1)',
+                        color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748'
+                      }
+                    }}
                   >
                     <ViewIcon />
                   </IconButton>
@@ -279,6 +362,15 @@ const Condicionais: React.FC = () => {
                         onClick={() => handleEdit(condicional)}
                         size="small"
                         title="Editar"
+                        sx={{
+                          color: theme.palette.mode === 'dark' ? '#a0aec0' : '#718096',
+                          '&:hover': {
+                            backgroundColor: theme.palette.mode === 'dark' 
+                              ? 'rgba(102, 126, 234, 0.2)' 
+                              : 'rgba(102, 126, 234, 0.1)',
+                            color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748'
+                          }
+                        }}
                       >
                         <EditIcon />
                       </IconButton>
@@ -286,7 +378,15 @@ const Condicionais: React.FC = () => {
                         onClick={() => handleClose(condicional)}
                         size="small"
                         title="Fechar"
-                        color="success"
+                        sx={{
+                          color: theme.palette.mode === 'dark' ? '#48bb78' : '#38a169',
+                          '&:hover': {
+                            backgroundColor: theme.palette.mode === 'dark' 
+                              ? 'rgba(72, 187, 120, 0.2)' 
+                              : 'rgba(72, 187, 120, 0.1)',
+                            color: theme.palette.mode === 'dark' ? '#9ae6b4' : '#2f855a'
+                          }
+                        }}
                       >
                         <CheckCircleIcon />
                       </IconButton>
@@ -294,7 +394,15 @@ const Condicionais: React.FC = () => {
                         onClick={() => handleDelete(condicional)}
                         size="small"
                         title="Excluir"
-                        color="error"
+                        sx={{
+                          color: theme.palette.mode === 'dark' ? '#f56565' : '#e53e3e',
+                          '&:hover': {
+                            backgroundColor: theme.palette.mode === 'dark' 
+                              ? 'rgba(245, 101, 101, 0.2)' 
+                              : 'rgba(245, 101, 101, 0.1)',
+                            color: theme.palette.mode === 'dark' ? '#fed7d7' : '#c53030'
+                          }
+                        }}
                       >
                         <DeleteIcon />
                       </IconButton>
@@ -313,11 +421,33 @@ const Condicionais: React.FC = () => {
         onClose={() => setViewDialogOpen(false)}
         maxWidth="md"
         fullWidth
+        PaperProps={{
+          sx: {
+            background: theme.palette.mode === 'dark' 
+              ? 'rgba(45, 55, 72, 0.95)' 
+              : 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px)',
+            border: `1px solid ${theme.palette.mode === 'dark' 
+              ? 'rgba(255, 255, 255, 0.1)' 
+              : 'rgba(0, 0, 0, 0.1)'}`,
+            boxShadow: theme.palette.mode === 'dark'
+              ? '0 25px 50px rgba(0, 0, 0, 0.5)'
+              : '0 25px 50px rgba(0, 0, 0, 0.15)'
+          }
+        }}
       >
-        <DialogTitle>
+        <DialogTitle sx={{
+          color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748',
+          fontWeight: 600,
+          borderBottom: `1px solid ${theme.palette.mode === 'dark' 
+            ? 'rgba(255, 255, 255, 0.1)' 
+            : 'rgba(0, 0, 0, 0.1)'}`
+        }}>
           Detalhes do Condicional - {selectedCondicional?.clientName}
         </DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{
+          color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748'
+        }}>
           {selectedCondicional && (
             <Box>
               <Grid container spacing={2} sx={{ mb: 2 }}>
@@ -385,8 +515,25 @@ const Condicionais: React.FC = () => {
             </Box>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setViewDialogOpen(false)}>Fechar</Button>
+        <DialogActions sx={{
+          borderTop: `1px solid ${theme.palette.mode === 'dark' 
+            ? 'rgba(255, 255, 255, 0.1)' 
+            : 'rgba(0, 0, 0, 0.1)'}`,
+          padding: 2
+        }}>
+          <Button 
+            onClick={() => setViewDialogOpen(false)}
+            sx={{
+              color: theme.palette.mode === 'dark' ? '#a0aec0' : '#718096',
+              '&:hover': {
+                backgroundColor: theme.palette.mode === 'dark' 
+                  ? 'rgba(255, 255, 255, 0.1)' 
+                  : 'rgba(0, 0, 0, 0.05)'
+              }
+            }}
+          >
+            Fechar
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -396,9 +543,33 @@ const Condicionais: React.FC = () => {
         onClose={() => setEditDialogOpen(false)}
         maxWidth="sm"
         fullWidth
+        PaperProps={{
+          sx: {
+            background: theme.palette.mode === 'dark' 
+              ? 'rgba(45, 55, 72, 0.95)' 
+              : 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px)',
+            border: `1px solid ${theme.palette.mode === 'dark' 
+              ? 'rgba(255, 255, 255, 0.1)' 
+              : 'rgba(0, 0, 0, 0.1)'}`,
+            boxShadow: theme.palette.mode === 'dark'
+              ? '0 25px 50px rgba(0, 0, 0, 0.5)'
+              : '0 25px 50px rgba(0, 0, 0, 0.15)'
+          }
+        }}
       >
-        <DialogTitle>Editar Condicional</DialogTitle>
-        <DialogContent>
+        <DialogTitle sx={{
+          color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748',
+          fontWeight: 600,
+          borderBottom: `1px solid ${theme.palette.mode === 'dark' 
+            ? 'rgba(255, 255, 255, 0.1)' 
+            : 'rgba(0, 0, 0, 0.1)'}`
+        }}>
+          Editar Condicional
+        </DialogTitle>
+        <DialogContent sx={{
+          color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748'
+        }}>
           <TextField
             fullWidth
             label="Nome do Cliente"
@@ -427,9 +598,37 @@ const Condicionais: React.FC = () => {
             rows={3}
           />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setEditDialogOpen(false)}>Cancelar</Button>
-          <Button onClick={handleSaveEdit} variant="contained">
+        <DialogActions sx={{
+          borderTop: `1px solid ${theme.palette.mode === 'dark' 
+            ? 'rgba(255, 255, 255, 0.1)' 
+            : 'rgba(0, 0, 0, 0.1)'}`,
+          padding: 2
+        }}>
+          <Button 
+            onClick={() => setEditDialogOpen(false)}
+            sx={{
+              color: theme.palette.mode === 'dark' ? '#a0aec0' : '#718096',
+              '&:hover': {
+                backgroundColor: theme.palette.mode === 'dark' 
+                  ? 'rgba(255, 255, 255, 0.1)' 
+                  : 'rgba(0, 0, 0, 0.05)'
+              }
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button 
+            onClick={handleSaveEdit} 
+            variant="contained"
+            sx={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%)',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)'
+              }
+            }}
+          >
             Salvar
           </Button>
         </DialogActions>
@@ -439,17 +638,70 @@ const Condicionais: React.FC = () => {
       <Dialog
         open={closeDialogOpen}
         onClose={() => setCloseDialogOpen(false)}
+        PaperProps={{
+          sx: {
+            background: theme.palette.mode === 'dark' 
+              ? 'rgba(45, 55, 72, 0.95)' 
+              : 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px)',
+            border: `1px solid ${theme.palette.mode === 'dark' 
+              ? 'rgba(255, 255, 255, 0.1)' 
+              : 'rgba(0, 0, 0, 0.1)'}`,
+            boxShadow: theme.palette.mode === 'dark'
+              ? '0 25px 50px rgba(0, 0, 0, 0.5)'
+              : '0 25px 50px rgba(0, 0, 0, 0.15)'
+          }
+        }}
       >
-        <DialogTitle>Confirmar Fechamento</DialogTitle>
-        <DialogContent>
+        <DialogTitle sx={{
+          color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748',
+          fontWeight: 600,
+          borderBottom: `1px solid ${theme.palette.mode === 'dark' 
+            ? 'rgba(255, 255, 255, 0.1)' 
+            : 'rgba(0, 0, 0, 0.1)'}`
+        }}>
+          Confirmar Fechamento
+        </DialogTitle>
+        <DialogContent sx={{
+          color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748'
+        }}>
           <Typography>
             Tem certeza que deseja fechar este condicional? 
             Isso irá criar uma nova venda com os produtos selecionados.
           </Typography>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setCloseDialogOpen(false)}>Cancelar</Button>
-          <Button onClick={handleConfirmClose} variant="contained" color="success">
+        <DialogActions sx={{
+          borderTop: `1px solid ${theme.palette.mode === 'dark' 
+            ? 'rgba(255, 255, 255, 0.1)' 
+            : 'rgba(0, 0, 0, 0.1)'}`,
+          padding: 2
+        }}>
+          <Button 
+            onClick={() => setCloseDialogOpen(false)}
+            sx={{
+              color: theme.palette.mode === 'dark' ? '#a0aec0' : '#718096',
+              '&:hover': {
+                backgroundColor: theme.palette.mode === 'dark' 
+                  ? 'rgba(255, 255, 255, 0.1)' 
+                  : 'rgba(0, 0, 0, 0.05)'
+              }
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button 
+            onClick={handleConfirmClose} 
+            variant="contained" 
+            color="success"
+            sx={{
+              background: 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #38a169 0%, #2f855a 100%)',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 4px 12px rgba(72, 187, 120, 0.4)'
+              }
+            }}
+          >
             Fechar Condicional
           </Button>
         </DialogActions>
@@ -459,17 +711,70 @@ const Condicionais: React.FC = () => {
       <Dialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
+        PaperProps={{
+          sx: {
+            background: theme.palette.mode === 'dark' 
+              ? 'rgba(45, 55, 72, 0.95)' 
+              : 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px)',
+            border: `1px solid ${theme.palette.mode === 'dark' 
+              ? 'rgba(255, 255, 255, 0.1)' 
+              : 'rgba(0, 0, 0, 0.1)'}`,
+            boxShadow: theme.palette.mode === 'dark'
+              ? '0 25px 50px rgba(0, 0, 0, 0.5)'
+              : '0 25px 50px rgba(0, 0, 0, 0.15)'
+          }
+        }}
       >
-        <DialogTitle>Confirmar Exclusão</DialogTitle>
-        <DialogContent>
+        <DialogTitle sx={{
+          color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748',
+          fontWeight: 600,
+          borderBottom: `1px solid ${theme.palette.mode === 'dark' 
+            ? 'rgba(255, 255, 255, 0.1)' 
+            : 'rgba(0, 0, 0, 0.1)'}`
+        }}>
+          Confirmar Exclusão
+        </DialogTitle>
+        <DialogContent sx={{
+          color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#2d3748'
+        }}>
           <Typography>
             Tem certeza que deseja excluir este condicional? 
             Esta ação não pode ser desfeita.
           </Typography>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)}>Cancelar</Button>
-          <Button onClick={handleConfirmDelete} variant="contained" color="error">
+        <DialogActions sx={{
+          borderTop: `1px solid ${theme.palette.mode === 'dark' 
+            ? 'rgba(255, 255, 255, 0.1)' 
+            : 'rgba(0, 0, 0, 0.1)'}`,
+          padding: 2
+        }}>
+          <Button 
+            onClick={() => setDeleteDialogOpen(false)}
+            sx={{
+              color: theme.palette.mode === 'dark' ? '#a0aec0' : '#718096',
+              '&:hover': {
+                backgroundColor: theme.palette.mode === 'dark' 
+                  ? 'rgba(255, 255, 255, 0.1)' 
+                  : 'rgba(0, 0, 0, 0.05)'
+              }
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button 
+            onClick={handleConfirmDelete} 
+            variant="contained" 
+            color="error"
+            sx={{
+              background: 'linear-gradient(135deg, #f56565 0%, #e53e3e 100%)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #e53e3e 0%, #c53030 100%)',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 4px 12px rgba(245, 101, 101, 0.4)'
+              }
+            }}
+          >
             Excluir
           </Button>
         </DialogActions>
