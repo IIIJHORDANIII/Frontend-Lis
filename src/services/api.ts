@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Product, AuthResponse, CustomList, Condicional } from '../types';
 
-const API_URL = 'http://localhost:3001/api';
+const API_URL = 'https://backend-888rsr3n.b4a.run/api';
 
 // Create axios instance with default config
 const api = axios.create({
