@@ -17,7 +17,8 @@ import {
   Paper,
   alpha
 } from '@mui/material';
-import { getCustomLists } from '../services/api';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import { getCustomLists, closeUserStock } from '../services/api';
 import { Product, CustomList } from '../types';
 
 const UserStockLists: React.FC = () => {
@@ -28,6 +29,8 @@ const UserStockLists: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [closingStock, setClosingStock] = useState<{ [listId: string]: boolean }>({});
+  const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchLists = async () => {
@@ -52,44 +55,40 @@ const UserStockLists: React.FC = () => {
     fetchLists();
   }, []);
 
-  // Extrair todos os produtos de todas as listas com informações de estoque
-  const allProductsWithStock = lists.reduce((products: any[], list) => {
-    if (list.products) {
-      const productList = list.products.map(item => ({
-        ...item.product,
-        availableQuantity: item.availableQuantity || item.quantity,
-        listQuantity: item.quantity
-      })).filter(Boolean);
-      return [...products, ...productList];
-    }
-    return products;
-  }, []);
 
-  // Agrupar produtos por ID e somar estoque disponível
-  const productStockMap = new Map();
-  allProductsWithStock.forEach(product => {
-    if (productStockMap.has(product._id)) {
-      const existing = productStockMap.get(product._id);
-      existing.availableQuantity += product.availableQuantity || 0;
-      existing.listQuantity += product.listQuantity || 0;
-    } else {
-      productStockMap.set(product._id, {
-        ...product,
-        availableQuantity: product.availableQuantity || 0,
-        listQuantity: product.listQuantity || 0
-      });
-    }
-  });
-
-  const uniqueProducts = Array.from(productStockMap.values());
-
-  // Filtrar produtos por categoria
-  const filteredProducts = selectedCategory === 'all' 
-    ? uniqueProducts 
-    : uniqueProducts.filter((product: Product) => product.category === selectedCategory);
 
   const handleCategoryFilter = (category: string) => {
     setSelectedCategory(category);
+  };
+
+  const handleCloseStock = async (listId: string, listName: string) => {
+    // Confirmação antes de fechar o estoque
+    const confirmed = window.confirm(
+      `Tem certeza que deseja fechar o estoque da lista "${listName}"? ` +
+      'Todos os produtos não vendidos desta lista retornarão ao estoque do administrador. ' +
+      'Esta ação não pode ser desfeita.'
+    );
+    
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setClosingStock(prev => ({ ...prev, [listId]: true }));
+      setError(null);
+      setSuccess(null);
+      
+      const result = await closeUserStock();
+      setSuccess(result.message);
+      
+      // Recarregar as listas para atualizar os dados
+      const updatedLists = await getCustomLists();
+      setLists(updatedLists);
+    } catch (err: any) {
+      setError(err.message || 'Erro ao fechar estoque. Tente novamente.');
+    } finally {
+      setClosingStock(prev => ({ ...prev, [listId]: false }));
+    }
   };
 
   if (loading) {
@@ -141,7 +140,7 @@ const UserStockLists: React.FC = () => {
     );
   }
 
-  if (!uniqueProducts.length) {
+  if (!lists.length) {
     return (
       <Box sx={{ 
         minHeight: '100vh',
@@ -276,6 +275,25 @@ const UserStockLists: React.FC = () => {
             {error}
           </Alert>
         )}
+
+        {success && (
+          <Alert 
+            severity="success" 
+            sx={{ 
+              mb: 4,
+              borderRadius: 1,
+              fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+              maxWidth: 900,
+              mx: 'auto',
+              boxShadow: theme.customColors.shadow.secondary,
+              '& .MuiAlert-icon': {
+                fontSize: { xs: '1.25rem', sm: '1.5rem' }
+              }
+            }}
+          >
+            {success}
+          </Alert>
+        )}
         
         {/* Category Filter */}
         <Box sx={{
@@ -361,144 +379,260 @@ const UserStockLists: React.FC = () => {
           </ButtonGroup>
         </Box>
 
-        {/* Products Grid */}
+
+
+        {/* Listas Separadas */}
         <Box sx={{
-          display: 'grid',
-          gridTemplateColumns: {
-            xs: '1fr',
-            sm: 'repeat(2, 1fr)',
-            md: 'repeat(3, 1fr)',
-            lg: 'repeat(4, 1fr)',
-            xl: 'repeat(5, 1fr)'
-          },
+          display: 'flex',
+          flexDirection: 'column',
           gap: { xs: 3, sm: 4, md: 5, lg: 6, xl: 7 },
           maxWidth: { xs: '100%', sm: 900, md: 1400, lg: 1600, xl: 1800 },
           mx: 'auto',
           width: '100%',
         }}>
-          {filteredProducts.map((product) => (
-            <Fade in key={product._id} timeout={400}>
-              <Card
-                sx={{
-                  background: theme.customColors.surface.card,
-                  border: `1.5px solid ${(product.availableQuantity || 0) === 0 ? theme.customColors.status.error : theme.customColors.border.primary}`,
-                  borderRadius: 1,
-                  overflow: 'hidden',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: theme.customColors.shadow.secondary,
-                  opacity: (product.availableQuantity || 0) === 0 ? 0.6 : 1,
-                  '&:hover': {
-                    boxShadow: theme.customColors.shadow.primary,
-                    border: `2px solid ${(product.availableQuantity || 0) === 0 ? theme.customColors.status.error : theme.customColors.primary.main}`,
-                    transform: (product.availableQuantity || 0) === 0 ? 'none' : 'translateY(-8px) scale(1.03)',
-                  },
-                  p: { xs: 2, sm: 2.5, md: 3, lg: 3.5, xl: 4 },
-                  minHeight: { xs: '320px', sm: '360px', md: '400px', lg: '440px', xl: '480px' },
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  width="100%"
-                  image={product.image}
-                  alt={product.name}
+          {lists.map((list) => {
+            // Filtrar produtos da lista por categoria
+            const listProducts = list.products?.filter(item => {
+              if (selectedCategory === 'all') return true;
+              return item.product?.category === selectedCategory;
+            }) || [];
+
+            if (listProducts.length === 0) return null;
+
+            return (
+              <Fade in key={list._id} timeout={400}>
+                <Paper
+                  elevation={0}
                   sx={{
-                    objectFit: 'cover',
-                    aspectRatio: '3/5',
+                    background: theme.customColors.surface.card,
+                    border: `1.5px solid ${theme.customColors.border.primary}`,
                     borderRadius: 1,
-                    transition: 'transform 0.3s ease',
+                    overflow: 'hidden',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    boxShadow: theme.customColors.shadow.secondary,
                     '&:hover': {
-                      transform: 'scale(1.05)',
+                      boxShadow: theme.customColors.shadow.primary,
+                      border: `2px solid ${theme.customColors.primary.main}`,
                     },
                   }}
-                />
-                <CardContent sx={{ p: { xs: 1.5, sm: 2, md: 2.5, lg: 3 }, pb: { xs: 1.5, sm: 2, md: 2.5, lg: 3 } }}>
-                  <Typography
-                    variant="h6"
-                    component="h3"
-                    sx={{
-                      fontWeight: 700,
-                      color: theme.customColors.text.primary,
-                      mb: 1.5,
-                      fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.375rem', lg: '1.5rem' },
-                      lineHeight: 1.3,
-                      minHeight: '2.6em',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                    }}
-                  >
-                    {product.name}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{
-                      mb: 2.5,
-                      fontSize: { xs: '0.875rem', sm: '0.9375rem', md: '1rem', lg: '1.0625rem' },
-                      lineHeight: 1.4,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                    }}
-                  >
-                    {product.description}
-                  </Typography>
-                  
-                  <Box sx={{ mb: 2 }}>
-                    <Typography variant="h6" sx={{ 
-                      fontWeight: 700, 
-                      color: theme.customColors.status.success,
-                      fontSize: { xs: '1.1rem', sm: '1.2rem', md: '1.3rem' },
+                >
+                  {/* Header da Lista */}
+                  <Box sx={{
+                    p: { xs: 2, sm: 3, md: 4 },
+                    background: alpha(theme.customColors.primary.main, 0.05),
+                    borderBottom: `1px solid ${theme.customColors.border.primary}`,
+                  }}>
+                    <Box sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      gap: 2,
                     }}>
-                      R$ {product.finalPrice?.toFixed(2) || '0.00'}
-                    </Typography>
-                    <Typography variant="body2" sx={{ 
-                      color: theme.customColors.status.warning,
-                      fontWeight: 600,
-                      fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' },
-                    }}>
-                      Comissão: R$ {((product.finalPrice || 0) * 0.30).toFixed(2)}
-                    </Typography>
+                      <Box>
+                        <Typography
+                          variant="h5"
+                          component="h2"
+                          sx={{
+                            fontWeight: 700,
+                            color: theme.customColors.text.primary,
+                            mb: 0.5,
+                            fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem' },
+                          }}
+                        >
+                          {list.name}
+                        </Typography>
+                        {list.description && (
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              color: theme.customColors.text.secondary,
+                              fontSize: { xs: '0.875rem', sm: '1rem' },
+                            }}
+                          >
+                            {list.description}
+                          </Typography>
+                        )}
+                      </Box>
+                      
+                      {/* Botão de Fechamento de Estoque da Lista */}
+                      <Button
+                        variant="contained"
+                        color="warning"
+                        onClick={() => handleCloseStock(list._id, list.name)}
+                        disabled={closingStock[list._id]}
+                        startIcon={closingStock[list._id] ? <CircularProgress size={20} color="inherit" /> : <InventoryIcon />}
+                        sx={{
+                          borderRadius: 1,
+                          px: 3,
+                          py: 1,
+                          fontSize: { xs: '0.8rem', sm: '0.9rem', md: '1rem' },
+                          fontWeight: 600,
+                          boxShadow: theme.customColors.shadow.secondary,
+                          background: theme.customColors.status.warning,
+                          '&:hover': {
+                            background: theme.customColors.status.warning,
+                            boxShadow: theme.customColors.shadow.primary,
+                            transform: 'translateY(-2px)',
+                          },
+                          '&:disabled': {
+                            background: theme.customColors.status.warning,
+                            opacity: 0.7,
+                          },
+                        }}
+                      >
+                        {closingStock[list._id] ? 'Fechando...' : 'Fechar Estoque'}
+                      </Button>
+                    </Box>
                   </Box>
 
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
-                    <Chip
-                      label={product.category}
-                      size="small"
-                      sx={{
-                        background: alpha(theme.customColors.primary.main, 0.1),
-                        color: theme.customColors.primary.main,
-                        fontWeight: 600,
-                        fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem', lg: '0.9rem' }
-                      }}
-                    />
-                    {(product.availableQuantity || 0) === 0 && (
-                      <Chip
-                        label="ESGOTADO"
-                        size="small"
-                        sx={{
-                          background: alpha(theme.customColors.status.error, 0.1),
-                          color: theme.customColors.status.error,
-                          fontWeight: 'bold',
-                          fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.8rem', lg: '0.9rem' }
-                        }}
-                      />
-                    )}
-                    <Typography variant="body2" color="text.secondary" sx={{ 
-                      fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.9rem', lg: '1rem' },
-                      fontWeight: 600,
+                  {/* Produtos da Lista */}
+                  <Box sx={{
+                    p: { xs: 2, sm: 3, md: 4 },
+                  }}>
+                    <Box sx={{
+                      display: 'grid',
+                      gridTemplateColumns: {
+                        xs: '1fr',
+                        sm: 'repeat(2, 1fr)',
+                        md: 'repeat(3, 1fr)',
+                        lg: 'repeat(4, 1fr)',
+                        xl: 'repeat(5, 1fr)'
+                      },
+                      gap: { xs: 2, sm: 3, md: 4 },
                     }}>
-                      Disponível: {product.availableQuantity || 0}
-                    </Typography>
+                      {listProducts.map((item) => {
+                        const product = item.product;
+                        if (!product) return null;
+
+                        return (
+                          <Fade in key={product._id} timeout={400}>
+                            <Card
+                              sx={{
+                                background: theme.customColors.surface.card,
+                                border: `1.5px solid ${(item.availableQuantity || 0) === 0 ? theme.customColors.status.error : theme.customColors.border.primary}`,
+                                borderRadius: 1,
+                                overflow: 'hidden',
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                boxShadow: theme.customColors.shadow.secondary,
+                                opacity: (item.availableQuantity || 0) === 0 ? 0.6 : 1,
+                                '&:hover': {
+                                  boxShadow: theme.customColors.shadow.primary,
+                                  border: `2px solid ${(item.availableQuantity || 0) === 0 ? theme.customColors.status.error : theme.customColors.primary.main}`,
+                                  transform: (item.availableQuantity || 0) === 0 ? 'none' : 'translateY(-4px) scale(1.02)',
+                                },
+                                minHeight: { xs: '280px', sm: '320px', md: '360px' },
+                              }}
+                            >
+                              <CardMedia
+                                component="img"
+                                width="100%"
+                                image={product.image}
+                                alt={product.name}
+                                sx={{
+                                  objectFit: 'cover',
+                                  aspectRatio: '3/5',
+                                  transition: 'transform 0.3s ease',
+                                  '&:hover': {
+                                    transform: 'scale(1.05)',
+                                  },
+                                }}
+                              />
+                              <CardContent sx={{ p: { xs: 1.5, sm: 2 }, pb: { xs: 1.5, sm: 2 } }}>
+                                <Typography
+                                  variant="h6"
+                                  component="h3"
+                                  sx={{
+                                    fontWeight: 700,
+                                    color: theme.customColors.text.primary,
+                                    mb: 1,
+                                    fontSize: { xs: '1rem', sm: '1.125rem' },
+                                    lineHeight: 1.3,
+                                    minHeight: '2.4em',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: 'vertical',
+                                  }}
+                                >
+                                  {product.name}
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  color="text.secondary"
+                                  sx={{
+                                    mb: 1.5,
+                                    fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                                    lineHeight: 1.4,
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: 'vertical',
+                                  }}
+                                >
+                                  {product.description}
+                                </Typography>
+                                
+                                <Box sx={{ mb: 1.5 }}>
+                                  <Typography variant="h6" sx={{ 
+                                    fontWeight: 700, 
+                                    color: theme.customColors.status.success,
+                                    fontSize: { xs: '1rem', sm: '1.1rem' },
+                                  }}>
+                                    R$ {product.finalPrice?.toFixed(2) || '0.00'}
+                                  </Typography>
+                                  <Typography variant="body2" sx={{ 
+                                    color: theme.customColors.status.warning,
+                                    fontWeight: 600,
+                                    fontSize: { xs: '0.8rem', sm: '0.85rem' },
+                                  }}>
+                                    Comissão: R$ {((product.finalPrice || 0) * 0.30).toFixed(2)}
+                                  </Typography>
+                                </Box>
+
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+                                  <Chip
+                                    label={product.category}
+                                    size="small"
+                                    sx={{
+                                      background: alpha(theme.customColors.primary.main, 0.1),
+                                      color: theme.customColors.primary.main,
+                                      fontWeight: 600,
+                                      fontSize: { xs: '0.65rem', sm: '0.7rem' }
+                                    }}
+                                  />
+                                  {(item.availableQuantity || 0) === 0 && (
+                                    <Chip
+                                      label="ESGOTADO"
+                                      size="small"
+                                      sx={{
+                                        background: alpha(theme.customColors.status.error, 0.1),
+                                        color: theme.customColors.status.error,
+                                        fontWeight: 'bold',
+                                        fontSize: { xs: '0.65rem', sm: '0.7rem' }
+                                      }}
+                                    />
+                                  )}
+                                  <Typography variant="body2" color="text.secondary" sx={{ 
+                                    fontSize: { xs: '0.75rem', sm: '0.8rem' },
+                                    fontWeight: 600,
+                                  }}>
+                                    Disponível: {item.availableQuantity || 0}
+                                  </Typography>
+                                </Box>
+                              </CardContent>
+                            </Card>
+                          </Fade>
+                        );
+                      })}
+                    </Box>
                   </Box>
-                </CardContent>
-              </Card>
-            </Fade>
-          ))}
+                </Paper>
+              </Fade>
+            );
+          })}
         </Box>
       </Container>
     </Box>

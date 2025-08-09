@@ -86,6 +86,7 @@ const Header: React.FC = () => {
     { path: '/custom-lists/new', label: 'Nova Lista', icon: <ListIcon /> },
     { path: '/admin/stock-lists', label: 'Listas de Estoque', icon: <Inventory /> },
     { path: '/sales/summary', label: 'Resumo de Vendas', icon: <TrendingUp /> },
+    { path: '/sales/closed-report', label: 'Vendas Fechadas', icon: <TrendingUp /> },
   ];
 
   const userMenuItems = [

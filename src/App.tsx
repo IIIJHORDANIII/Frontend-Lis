@@ -19,6 +19,7 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import Condicionais from './components/Condicionais';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorBoundary from './components/ErrorBoundary';
+import ClosedSalesReport from './components/ClosedSalesReport';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -69,6 +70,7 @@ const AppContent: React.FC = () => {
       <Route path="/admin/register" element={<AdminRoute><AppLayout><Register /></AppLayout></AdminRoute>} />
       <Route path="/admin/stock-lists" element={<AdminRoute><AppLayout><AdminStockLists /></AppLayout></AdminRoute>} />
       <Route path="/sales/summary" element={<AdminRoute><AppLayout><SalesSummary /></AppLayout></AdminRoute>} />
+      <Route path="/sales/closed-report" element={<AdminRoute><AppLayout><ClosedSalesReport /></AppLayout></AdminRoute>} />
       
       {/* User Routes */}
       <Route path="/custom-lists" element={<ProtectedRoute><AppLayout><CustomLists /></AppLayout></ProtectedRoute>} />

@@ -303,6 +303,46 @@ export const initializeCustomListStock = async (): Promise<{ message: string; up
   }
 };
 
+export const closeUserStock = async (): Promise<{ message: string; returnedProducts: number }> => {
+  try {
+    const response = await api.post('/custom-lists/close-stock');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getClosedSalesReport = async (month?: string, year?: string): Promise<any[]> => {
+  try {
+    const params: any = {};
+    if (month) params.month = month;
+    if (year) params.year = year;
+    
+    const response = await api.get('/sales/closed-report', { params });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const closeUserInventory = async (userId: string): Promise<{ message: string; returnedProducts: number }> => {
+  try {
+    const response = await api.post('/sales/close-user-inventory', { userId });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const migrateData = async (): Promise<{ message: string; summary: any }> => {
+  try {
+    const response = await api.post('/migrate-data');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const deleteUserSales = async (userId: string): Promise<{ deletedCount: number; message: string }> => {
   try {
     const response = await api.delete(`/sales/user/${userId}`);

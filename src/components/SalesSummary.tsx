@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useAuth } from '../contexts/AuthContext';
-import { api, deleteUserSales } from '../services/api';
+import { api, deleteUserSales, closeUserInventory, migrateData } from '../services/api';
 
 interface SaleProduct {
   productId: string;
@@ -56,58 +56,61 @@ const SalesSummary: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
   const [deletedCount, setDeletedCount] = useState<number | null>(null);
+  const [closingInventory, setClosingInventory] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [migrating, setMigrating] = useState(false);
+
+  const fetchSales = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const response = await api.get('/sales/summary');
+      
+      // Garantir que os dados estejam no formato correto
+      const formattedSales = response.data.map((sale: any) => {
+        
+        // Agrupar produtos iguais
+        const groupedProducts = sale.products.reduce((acc: any, product: any) => {
+          const key = product.productId;
+          if (!acc[key]) {
+            acc[key] = {
+              productId: product.productId,
+              name: product.name,
+              quantity: 0,
+              price: product.price, // Usar price da API
+              subtotal: 0
+            };
+          }
+          acc[key].quantity += product.quantity;
+          acc[key].subtotal += product.quantity * product.price; // Usar price da API
+          return acc;
+        }, {});
+
+        // Calcular comissão se não estiver definida
+        const total = Number(sale.total) || 0;
+        const commission = Number(sale.commission) || Number((total * 0.3).toFixed(2));
+
+        const formattedSale = {
+          _id: sale._id,
+          userId: sale.userId,
+          userName: sale.userName || 'Usuário não identificado',
+          products: Object.values(groupedProducts),
+          total,
+          commission,
+          createdAt: sale.createdAt
+        };
+        return formattedSale;
+      });
+      
+      setSales(formattedSales);
+    } catch (err) {
+      setError('Erro ao carregar vendas');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchSales = async () => {
-      try {
-        setLoading(true);
-        setError('');
-        const response = await api.get('/sales/summary');
-        
-        // Garantir que os dados estejam no formato correto
-        const formattedSales = response.data.map((sale: any) => {
-          
-          // Agrupar produtos iguais
-          const groupedProducts = sale.products.reduce((acc: any, product: any) => {
-            const key = product.productId;
-            if (!acc[key]) {
-              acc[key] = {
-                productId: product.productId,
-                name: product.name,
-                quantity: 0,
-                price: product.price, // Usar price da API
-                subtotal: 0
-              };
-            }
-            acc[key].quantity += product.quantity;
-            acc[key].subtotal += product.quantity * product.price; // Usar price da API
-            return acc;
-          }, {});
-
-          // Calcular comissão se não estiver definida
-          const total = Number(sale.total) || 0;
-          const commission = Number(sale.commission) || Number((total * 0.3).toFixed(2));
-
-          const formattedSale = {
-            _id: sale._id,
-            userId: sale.userId,
-            userName: sale.userName || 'Usuário não identificado',
-            products: Object.values(groupedProducts),
-            total,
-            commission,
-            createdAt: sale.createdAt
-          };
-          return formattedSale;
-        });
-        
-        setSales(formattedSales);
-      } catch (err) {
-        setError('Erro ao carregar vendas');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchSales();
   }, []);
 
@@ -193,6 +196,71 @@ const SalesSummary: React.FC = () => {
     }
   };
 
+  const handleCloseUserInventory = async (userId: string, userName: string) => {
+    const confirmed = window.confirm(
+      `Tem certeza que deseja fechar o inventário de ${userName}?\n\n` +
+      'Esta ação irá:\n' +
+      '• Calcular produtos não vendidos\n' +
+      '• Devolver produtos ao estoque do admin\n' +
+      '• Salvar vendas na página de vendas fechadas\n' +
+      '• Separar por usuário\n\n' +
+      'Esta ação não pode ser desfeita.'
+    );
+    
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setClosingInventory(userId);
+      setError(null);
+      setSuccess(null);
+      
+      const result = await closeUserInventory(userId);
+      setSuccess(result.message);
+      
+      // Recarregar vendas
+      await fetchSales();
+    } catch (err: any) {
+      setError(err.message || 'Erro ao fechar inventário do usuário');
+    } finally {
+      setClosingInventory(null);
+    }
+  };
+
+  const handleMigrateData = async () => {
+    const confirmed = window.confirm(
+      'Tem certeza que deseja executar a migração de dados?\n\n' +
+      'Esta ação irá:\n' +
+      '• Processar listas fechadas existentes\n' +
+      '• Retornar produtos não vendidos ao estoque do admin\n' +
+      '• Excluir listas fechadas\n' +
+      '• Corrigir vendas órfãs\n' +
+      '• Corrigir estoques negativos\n\n' +
+      'Esta ação não pode ser desfeita.'
+    );
+    
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setMigrating(true);
+      setError(null);
+      setSuccess(null);
+      
+      const result = await migrateData();
+      setSuccess(result.message);
+      
+      // Recarregar vendas
+      await fetchSales();
+    } catch (err: any) {
+      setError(err.message || 'Erro ao executar migração');
+    } finally {
+      setMigrating(false);
+    }
+  };
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
@@ -239,6 +307,21 @@ const SalesSummary: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
+      {success && (
+        <Alert 
+          severity="success" 
+          sx={{ 
+            mb: 3,
+            borderRadius: 1,
+            background: alpha(theme.customColors.status.success, 0.1),
+            border: `1px solid ${alpha(theme.customColors.status.success, 0.3)}`,
+            color: theme.customColors.status.success,
+          }}
+        >
+          {success}
+        </Alert>
+      )}
+      
       {/* Resumo Geral */}
       <Paper sx={{
         p: 3,
@@ -248,14 +331,32 @@ const SalesSummary: React.FC = () => {
         borderRadius: 1,
         boxShadow: theme.customColors.shadow.secondary,
       }}>
-        <Typography variant="h5" sx={{ 
-          color: theme.customColors.text.primary, 
-          fontWeight: 700, 
-          mb: 2,
-          fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem' },
-        }}>
-          Resumo Geral
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h5" sx={{ 
+            color: theme.customColors.text.primary, 
+            fontWeight: 700, 
+            fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem' },
+          }}>
+            Resumo Geral
+          </Typography>
+          <Button
+            variant="outlined"
+            color="warning"
+            onClick={handleMigrateData}
+            disabled={migrating}
+            startIcon={migrating ? <CircularProgress size={20} /> : null}
+            sx={{
+              borderColor: theme.customColors.status.warning,
+              color: theme.customColors.status.warning,
+              '&:hover': {
+                borderColor: theme.customColors.status.warning,
+                backgroundColor: alpha(theme.customColors.status.warning, 0.1),
+              },
+            }}
+          >
+            {migrating ? 'Migrando...' : 'Migrar Dados'}
+          </Button>
+        </Box>
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' }, gap: 2 }}>
           <Box sx={{ textAlign: 'center', p: 2 }}>
             <Typography variant="h6" sx={{ 
@@ -349,25 +450,46 @@ const SalesSummary: React.FC = () => {
                 }}>
                   {formatCurrency(group.totalValue)}
                 </Typography>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteUserSales(group.userId);
-                  }}
-                  disabled={deletingUserId === group.userId}
-                  sx={{
-                    borderColor: theme.customColors.status.error,
-                    color: theme.customColors.status.error,
-                    '&:hover': {
-                      backgroundColor: alpha(theme.customColors.status.error, 0.1),
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCloseUserInventory(group.userId, group.userName);
+                    }}
+                    disabled={closingInventory === group.userId}
+                    sx={{
+                      borderColor: theme.customColors.status.warning,
+                      color: theme.customColors.status.warning,
+                      '&:hover': {
+                        backgroundColor: alpha(theme.customColors.status.warning, 0.1),
+                        borderColor: theme.customColors.status.warning,
+                      },
+                    }}
+                  >
+                    {closingInventory === group.userId ? 'Fechando...' : 'Fechar Inventário'}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteUserSales(group.userId);
+                    }}
+                    disabled={deletingUserId === group.userId}
+                    sx={{
                       borderColor: theme.customColors.status.error,
-                    },
-                  }}
-                >
-                  {deletingUserId === group.userId ? 'Zerando...' : 'Zerar Vendas'}
-                </Button>
+                      color: theme.customColors.status.error,
+                      '&:hover': {
+                        backgroundColor: alpha(theme.customColors.status.error, 0.1),
+                        borderColor: theme.customColors.status.error,
+                      },
+                    }}
+                  >
+                    {deletingUserId === group.userId ? 'Zerando...' : 'Zerar Vendas'}
+                  </Button>
+                </Box>
               </Box>
             </Box>
           </AccordionSummary>
